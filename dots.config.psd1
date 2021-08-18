@@ -38,6 +38,10 @@
 
         # Scoop
         @{
+            Compress = ''
+            Expand   = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
+        }
+        @{
             Compress = 'scoop export'
             Expand   = 'scoop install $_'
         }
