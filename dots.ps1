@@ -29,7 +29,7 @@ data Message {
 data Setting {
     @{
         ArchivePath = 'dots.xml'
-        ErrorActionPreference = 'Stop'
+        ErrorActionPreference = 'Continue'
         VerbosePreference = 'Continue'
         BindingVariable = 'Config'
         FileName = 'dots.config.psd1'
@@ -109,7 +109,7 @@ class DotEntry : Entry {
             }
 
         if ($this.TargetObject.Exists -or ($b -and $isValidPath)) {
-            $this.Content | Out-File $this.TargetObject.FullName -Encoding UTF8 -Verbose
+            $this.Content | Out-File (New-Item $this.TargetObject.FullName -Force) -Encoding UTF8 -Verbose
         }
     }
 
