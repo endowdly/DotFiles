@@ -27,6 +27,9 @@
         '"$env:USERPROFILE\.vim\general.vim"'
         '"$env:USERPROFILE\.vim\keys.vim"'
         '"$env:USERPROFILE\.vim\autocommands.vim"'
+
+        # GoPS
+        '"$env:USERPROFILE\.gops"'
     ) 
 
     Command       = @(

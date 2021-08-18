@@ -15,8 +15,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\Code\User\settings.json"</S>
-          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\Code\User\settings.json</S>
-          <S N="TargetObject">C:\Users\endow\AppData\Roaming\Code\User\settings.json</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\Code\User\settings.json</S>
+          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\Code\User\settings.json</S>
           <Obj N="Content" RefId="2">
             <TN RefId="2">
               <T>System.String[]</T>
@@ -684,8 +684,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"</S>
-          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\Code\User\snippets\endow.code-snippets</S>
-          <S N="TargetObject">C:\Users\endow\AppData\Roaming\Code\User\snippets\endow.code-snippets</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\Code\User\snippets\endowdly.code-snippets</S>
+          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\Code\User\snippets\endowdly.code-snippets</S>
           <Obj N="Content" RefId="4">
             <TNRef RefId="2" />
             <LST>
@@ -733,8 +733,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\alacritty\alacritty.yml"</S>
-          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\alacritty\alacritty.yml</S>
-          <S N="TargetObject">C:\Users\endow\AppData\Roaming\alacritty\alacritty.yml</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\alacritty\alacritty.yml</S>
+          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\alacritty\alacritty.yml</S>
           <Obj N="Content" RefId="6">
             <TNRef RefId="2" />
             <LST>
@@ -1602,8 +1602,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\profile.ps1</S>
-          <S N="TargetObject">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\profile.ps1</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\profile.ps1</S>
+          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\profile.ps1</S>
           <Obj N="Content" RefId="8">
             <TNRef RefId="2" />
             <LST>
@@ -1865,8 +1865,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.psm1"</S>
-          <S N="ExpandedTarget">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\profile.psm1</S>
-          <S N="TargetObject">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\profile.psm1</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\profile.psm1</S>
+          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\profile.psm1</S>
           <Obj N="Content" RefId="10">
             <TNRef RefId="2" />
             <LST>
@@ -2279,8 +2279,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.config.psd1"</S>
-          <S N="ExpandedTarget">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\profile.config.psd1</S>
-          <S N="TargetObject">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\profile.config.psd1</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\profile.config.psd1</S>
+          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\profile.config.psd1</S>
           <Obj N="Content" RefId="12">
             <TNRef RefId="2" />
             <LST>
@@ -2389,8 +2389,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\psreadline.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\psreadline.ps1</S>
-          <S N="TargetObject">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\psreadline.ps1</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\psreadline.ps1</S>
+          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\psreadline.ps1</S>
           <Obj N="Content" RefId="14">
             <TNRef RefId="2" />
             <LST>
@@ -2630,8 +2630,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\prompt.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\prompt.ps1</S>
-          <S N="TargetObject">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\prompt.ps1</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\prompt.ps1</S>
+          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\prompt.ps1</S>
           <Obj N="Content" RefId="16">
             <TNRef RefId="2" />
             <LST>
@@ -2651,8 +2651,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\argumentcompleter.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\argumentcompleter.ps1</S>
-          <S N="TargetObject">C:\Users\endow\OneDrive\Documents\WindowsPowerShell\argumentcompleter.ps1</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\argumentcompleter.ps1</S>
+          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\argumentcompleter.ps1</S>
           <Obj N="Content" RefId="18">
             <TNRef RefId="2" />
             <LST>
@@ -2734,8 +2734,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"</S>
-          <S N="ExpandedTarget">C:\Users\endow\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
-          <S N="TargetObject">C:\Users\endow\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
+          <S N="TargetObject">C:\Users\endowdly\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
           <Obj N="Content" RefId="20">
             <TNRef RefId="2" />
             <LST>
@@ -2998,8 +2998,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vimrc"</S>
-          <S N="ExpandedTarget">C:\Users\endow\.vimrc</S>
-          <S N="TargetObject">C:\Users\endow\.vimrc</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\.vimrc</S>
+          <S N="TargetObject">C:\Users\endowdly\.vimrc</S>
           <Obj N="Content" RefId="22">
             <TNRef RefId="2" />
             <LST />
@@ -3012,8 +3012,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\general.vim"</S>
-          <S N="ExpandedTarget">C:\Users\endow\.vim\general.vim</S>
-          <S N="TargetObject">C:\Users\endow\.vim\general.vim</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\.vim\general.vim</S>
+          <S N="TargetObject">C:\Users\endowdly\.vim\general.vim</S>
           <Obj N="Content" RefId="24">
             <TNRef RefId="2" />
             <LST>
@@ -3111,8 +3111,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\keys.vim"</S>
-          <S N="ExpandedTarget">C:\Users\endow\.vim\keys.vim</S>
-          <S N="TargetObject">C:\Users\endow\.vim\keys.vim</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\.vim\keys.vim</S>
+          <S N="TargetObject">C:\Users\endowdly\.vim\keys.vim</S>
           <Obj N="Content" RefId="26">
             <TNRef RefId="2" />
             <LST>
@@ -3178,8 +3178,8 @@
         <ToString>DotEntry</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\autocommands.vim"</S>
-          <S N="ExpandedTarget">C:\Users\endow\.vim\autocommands.vim</S>
-          <S N="TargetObject">C:\Users\endow\.vim\autocommands.vim</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\.vim\autocommands.vim</S>
+          <S N="TargetObject">C:\Users\endowdly\.vim\autocommands.vim</S>
           <Obj N="Content" RefId="28">
             <TNRef RefId="2" />
             <LST>
@@ -3209,6 +3209,33 @@
         </Props>
       </Obj>
       <Obj RefId="29">
+        <TNRef RefId="1" />
+        <ToString>DotEntry</ToString>
+        <Props>
+          <S N="Target">"$env:USERPROFILE\.gops"</S>
+          <S N="ExpandedTarget">C:\Users\endowdly\.gops</S>
+          <S N="TargetObject">C:\Users\endowdly\.gops</S>
+          <Obj N="Content" RefId="30">
+            <TNRef RefId="2" />
+            <LST>
+              <S>"Token","Path","IsValid"</S>
+              <S>"trading","C:\Users\endowdly\Google Drive\Trading\","True"</S>
+              <S>"github","C:\Users\endowdly\Documents\GitHub\","True"</S>
+              <S>"home","C:\Users\endowdly","True"</S>
+              <S>"drive","C:\Users\endowdly\Google Drive\","True"</S>
+              <S>"posh","C:\Users\endowdly\Documents\WindowsPowerShell\","True"</S>
+              <S>"bets","C:\Users\endowdly\Google Drive\Bets","True"</S>
+              <S>"minCore","C:\Users\endowdly\AppData\Local\min\app-1.18.0","True"</S>
+              <S>"min","C:\Users\endowdly\AppData\Roaming\Min","True"</S>
+              <S>"recipes","C:\Users\endowdly\Google Drive\Recipes\","True"</S>
+              <S>"exer","C:\Users\endowdly\Exercism\","True"</S>
+              <S>"cfg","C:\Users\endowdly\AppData\","True"</S>
+            </LST>
+          </Obj>
+          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+        </Props>
+      </Obj>
+      <Obj RefId="31">
         <TN RefId="3">
           <T>DotCommand</T>
           <T>Entry</T>
@@ -3217,36 +3244,44 @@
         <ToString>DotCommand</ToString>
         <Props>
           <SBK N="ExpandCommand"></SBK>
-          <Obj N="Content" RefId="30">
+          <Obj N="Content" RefId="32">
             <TNRef RefId="2" />
             <LST>
               <S>aaron-bond.better-comments@2.1.0</S>
+              <S>aeschli.vscode-css-formatter@1.0.1</S>
               <S>AlanWalk.markdown-toc@1.5.6</S>
+              <S>ark120202.vscode-typescript-to-lua@0.2.0</S>
               <S>asciidoctor.asciidoctor-vscode@2.8.9</S>
               <S>Bauke.horizon-vscode@3.0.3</S>
+              <S>bierner.markdown-checkbox@0.1.3</S>
               <S>cake-build.cake-vscode@1.0.0</S>
-              <S>darkriszty.markdown-table-prettify@3.0.0</S>
-              <S>DavidAnson.vscode-markdownlint@0.40.3</S>
+              <S>darkriszty.markdown-table-prettify@3.4.0</S>
+              <S>DavidAnson.vscode-markdownlint@0.42.1</S>
               <S>DotJoshJohnson.xml@2.5.1</S>
+              <S>endowdly.vscode-endowdly-icons@0.0.2</S>
               <S>enkia.tokyo-night@0.7.9</S>
               <S>fabiospampinato.vscode-todo-plus@4.18.4</S>
+              <S>fizzybreezy.gnuplot@0.1.2</S>
+              <S>gregoire.dance@0.4.1</S>
               <S>hawkeyegold.bonsai@1.4.0</S>
-              <S>Ionide.Ionide-fsharp@5.7.1</S>
-              <S>jamesmaj.easy-icons@0.3.1</S>
+              <S>Ionide.Ionide-fsharp@4.17.0</S>
+              <S>Ionide.Ionide-Paket@2.0.0</S>
               <S>jerry.theme-dark-starry-night@1.0.2</S>
+              <S>julialang.language-julia@1.2.8</S>
               <S>k--kato.docomment@0.1.20</S>
               <S>lunarlimbo.banner-comments-plus@0.3.1</S>
               <S>mdickin.markdown-shortcuts@0.12.0</S>
-              <S>ms-dotnettools.csharp@1.23.11</S>
-              <S>ms-python.python@2020.9.114305</S>
-              <S>ms-vscode.powershell@2020.6.0</S>
-              <S>RandomFractalsInc.vscode-vega-viewer@9.3.0</S>
+              <S>ms-dotnettools.csharp@1.23.12</S>
+              <S>ms-vscode.powershell@2021.8.0</S>
+              <S>PabloBelin.fsharp-notebook@1.0.2</S>
+              <S>Perkovec.emoji@1.0.1</S>
+              <S>RandomFractalsInc.vscode-vega-viewer@9.4.0</S>
               <S>rust-lang.rust@0.7.8</S>
-              <S>streetsidesoftware.code-spell-checker@1.9.0</S>
+              <S>ryuta46.multi-command@1.5.1</S>
+              <S>streetsidesoftware.code-spell-checker@1.10.2</S>
               <S>sygene.auto-correct@0.2.2</S>
-              <S>teabyii.ayu@0.20.1</S>
+              <S>teabyii.ayu@0.20.2</S>
               <S>vscodevim.vim@1.21.5</S>
-              <S>wwm.better-align@1.1.6</S>
               <S>XadillaX.viml@1.0.1</S>
               <S>yannpapouin.theme-monolivia@1.0.5</S>
             </LST>
@@ -3254,71 +3289,72 @@
           <SBK N="CompressCommand">code --list-extensions --show-versions</SBK>
         </Props>
       </Obj>
-      <Obj RefId="31">
+      <Obj RefId="33">
         <TNRef RefId="3" />
         <ToString>DotCommand</ToString>
         <Props>
           <SBK N="ExpandCommand">scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git</SBK>
-          <Obj N="Content" RefId="32">
+          <Obj N="Content" RefId="34">
             <TNRef RefId="2" />
             <LST />
           </Obj>
           <SBK N="CompressCommand"></SBK>
         </Props>
       </Obj>
-      <Obj RefId="33">
+      <Obj RefId="35">
         <TNRef RefId="3" />
         <ToString>DotCommand</ToString>
         <Props>
           <SBK N="ExpandCommand">scoop install $_</SBK>
-          <Obj N="Content" RefId="34">
+          <Obj N="Content" RefId="36">
             <TNRef RefId="2" />
             <LST>
               <S>7zip (v:19.00) [main]</S>
-              <S>agave-nf (v:2.1.0)</S>
-              <S>alacritty (v:0.5.0) [extras]</S>
-              <S>bat (v:0.15.4) [main]</S>
+              <S>agave-nf (v:2.1.0) [nerd-fonts]</S>
+              <S>alacritty (v:0.7.1) [extras]</S>
+              <S>bat (v:0.16.0) [main]</S>
               <S>bigblueterminal-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>BigBlueTerminal-NF-Mono (v:2.1.0)</S>
-              <S>cacert (v:2021-04-13) [main]</S>
+              <S>BigBlueTerminal-NF-Mono (v:2.1.0) [nerd-fonts]</S>
+              <S>cacert (v:2020-07-22) [main]</S>
               <S>colortool (v:1904.29002) [main]</S>
               <S>concfg (v:0.2020.03.15) [main]</S>
               <S>dark (v:3.11.2) [main]</S>
-              <S>delta (v:0.7.1) [main]</S>
+              <S>delta (v:0.4.4) [main]</S>
               <S>dotnet-sdk (v:3.1.402) [main]</S>
               <S>exercism (v:3.0.13) [main]</S>
-              <S>fd (v:8.1.1) [main]</S>
+              <S>fd (v:8.1.1) [main] {32bit}</S>
               <S>firacode-nf (v:2.1.0) [nerd-fonts]</S>
               <S>forge (v:2.2.0) [main]</S>
-              <S>git (v:2.27.0.windows.1) [main]</S>
-              <S>gnuplot (v:5.4.1) [main]</S>
+              <S>git (v:2.28.0.windows.1) [main]</S>
+              <S>gnuplot (v:5.2.8) [C:\Users\endowdly\scoop\workspace\gnuplot.json]</S>
               <S>gohu-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>gops (v:2.2.0) [endo-scoop]</S>
-              <S>hasklig-nf (v:2.1.0)</S>
+              <S>gops (v:2.2.0) [endowdly]</S>
+              <S>hasklig-nf (v:2.1.0) [nerd-fonts]</S>
               <S>hexed (v:1.0.32) [main]</S>
-              <S>innounp (v:0.50) [main]</S>
-              <S>insect (v:5.4.0) [main]</S>
+              <S>innounp (v:0.49) [main]</S>
+              <S>insect (v:5.4.0) [main] {32bit}</S>
               <S>kicad (v:5.1.10_1) [extras]</S>
-              <S>less (v:562.0) [main]</S>
-              <S>lessmsi (v:1.7.0) [main]</S>
+              <S>less (v:550) {32bit}</S>
+              <S>lessmsi (v:1.6.91) [main]</S>
+              <S>licecap (v:1.28) [extras]</S>
               <S>neovim (v:0.4.4) [main]</S>
-              <S>nodejs (v:14.9.0) [main]</S>
+              <S>nodejs (v:14.13.1) [main]</S>
               <S>ntop (v:0.3.4) [main]</S>
               <S>openscad (v:2021.01) [extras]</S>
-              <S>openssh (v:8.2p1-1) [main]</S>
-              <S>openssl (v:1.1.1k) [main]</S>
-              <S>paint.net (v:4.2.13) [extras]</S>
-              <S>pandoc (v:2.11.4) [main]</S>
+              <S>openssh (v:7.6p1)</S>
+              <S>openssl (v:1.1.1d) [main]</S>
+              <S>paint.net (v:4.2.15) [extras]</S>
+              <S>pandoc (v:2.10.1) [main]</S>
               <S>pixie (v:4.1) [extras]</S>
-              <S>psparklines (v:1.0.0) [endo-scoop]</S>
-              <S>pwsh (v:7.1.3) [main]</S>
-              <S>rustup (v:1.24.1) [main]</S>
-              <S>sudo (v:0.2020.01.26) [main]</S>
+              <S>psparklines (v:1.0.0) [endowdly]</S>
+              <S>pwsh (v:7.0.3) [main]</S>
+              <S>rustup (v:1.21.1) [main]</S>
+              <S>sudo (v:0.2020.01.26) [main] {32bit}</S>
               <S>terminus-nf (v:2.1.0) [nerd-fonts]</S>
               <S>vcredist2019 (v:14.27.29016.0) [extras]</S>
-              <S>vlc (v:3.0.16) [extras]</S>
-              <S>vscode (v:1.48.2) [extras]</S>
-              <S>windows-terminal (v:1.2.2381.0) [extras]</S>
+              <S>vlc (v:3.0.12) [extras]</S>
+              <S>vscode (v:1.55.2) [extras]</S>
+              <S>windows-terminal (v:1.6.10571.0) [extras]</S>
               <S>winfetch (v:2.2.0) [extras]</S>
             </LST>
           </Obj>
