@@ -12,6 +12,7 @@ param(
     [switch] $Force
 ) 
 
+#region Data and Literals ------------------------------------------------------
 data Message {
     @{
         InvalidConfig = '''{0}'' {1} not a valid config key. Valid keys are: {2}'
@@ -51,6 +52,11 @@ $ErrorActionPreference = $Setting.ErrorActionPreference
 $VerbosePreference = $Setting.VerbosePreference
 
 Join-Path $PSScriptRoot $Setting.ArchivePath | Set-Variable DotsFile -Option ReadOnly
+
+#endregion
+
+#region Classes ----------------------------------------------------------------
+
 
 class Entry {
     [string[]] $Content
@@ -139,6 +145,11 @@ class DotCommand : Entry {
 }
 
 
+#endregion
+
+#region Config -----------------------------------------------------------------
+
+
 function Assert-Config ($x, $y) {
     $xs = [HashSet[string]] $x
     $ys = [HashSet[string]] $y
@@ -168,6 +179,7 @@ catch {
     Write-Error ($Message.TerminatingError.ConfigNotFound -f $ConfigFile.FileName) 
 }
 
+#endregion
 
 #region Setup ------------------------------------------------------------------ 
 $Config.PathVariable.GetEnumerator().ForEach{
@@ -214,11 +226,13 @@ function Expand-DotFiles {
     $file = $dots.
         Where{ $_.PSObject.TypeNames -contains 'Deserialized.DotEntry' }.
         ForEach{ ([DotEntry]::new($_.Target, $_.Content)) }
-    $cmd = $dots.Where{ $_.PSObject.TypeNames -contains 'Deserialized.DotCommand' }.ForEach{
-        [DotCommand] @{
-            ExpandCommand = [scriptblock]::Create($_.ExpandCommand)
-            CompressCommand = [scriptblock]::Create($_.CompressCommand)
-            Content = $_.Content
+    $cmd = $dots.
+        Where{ $_.PSObject.TypeNames -contains 'Deserialized.DotCommand' }.
+        ForEach{
+            [DotCommand] @{
+                ExpandCommand = [scriptblock]::Create($_.ExpandCommand)
+                CompressCommand = [scriptblock]::Create($_.CompressCommand)
+                Content = $_.Content
         }
     }
     $dots = @($file + $cmd)

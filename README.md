@@ -27,12 +27,13 @@ Profile.psm1                 | PowerShell         | Profile custom functions    
 PSReadLine.ps1               | PowerShell         | PSReadLine key handlers        | Active
 prompt.ps1                   | PowerShell         | PowerShell prompt file         | Active
 ArgumentCompleter.ps1        | PowerShell         | ArgumentCompleter file         | Active
-settings.json                | Windows Terminal   | Windows Terminal settings file | Inactive
+settings.json                | Windows Terminal   | Windows Terminal settings file | Semi-Active
 scoop.txt                    | scoop              | scoop packages list            | Active
 .vimrc                       | neovim/vim         | Vim configuration file         | Semi-Active
 keys.vim                     | neovim/vim         | Vim keybindings file           | Semi-Active
 general.vim                  | neovim/vim         | Vim General/UI configuration   | Semi-Active
 autocommands.vim             | neovim/vim         | Vim Autocommands configuration | Semi-Active
+.gops                        | PowerShell/GoPS    | GoPS module jump file          | Active
 
 _* Will replace `endowdly` with the current `USERNAME`_
 
