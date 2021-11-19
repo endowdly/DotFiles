@@ -27,6 +27,10 @@
         '"$env:USERPROFILE\.vim\general.vim"'
         '"$env:USERPROFILE\.vim\keys.vim"'
         '"$env:USERPROFILE\.vim\autocommands.vim"'
+
+        # Grafx2
+        '"$env:APPDATA\GrafX2\gfx2-win32.cfg"'
+        '"$env:APPDATA\GrafX2\gfx2.ini"'
     ) 
 
     Command       = @(
