@@ -6,7 +6,7 @@ param(
     [Parameter(
         Mandatory,
         HelpMessage = 'Enter a mode, Update or Backup')]
-    [ValidateSet('Update', 'Backup')]
+    [ValidateSet('Update', 'Backup', 'Debug')]
     [string] $Mode
     ,
     [switch] $Force
@@ -24,6 +24,10 @@ data Message {
             ExpandDotFiles = 'Continue? This will likely overwrite your dot files; backup recommended.'
             CompressDotFile = 'Continue? You will overwrite the dotfile archive.'
         }
+        ShouldProcess = @{
+            ExportDotFile = 'Export dot entries?'
+        }
+        Sourced = 'The dots script has been sourced.'
     }
 }
 
@@ -58,28 +62,65 @@ Join-Path $PSScriptRoot $Setting.ArchivePath | Set-Variable DotsFile -Option Rea
 #region Classes ----------------------------------------------------------------
 
 
-class Entry {
+class DotEntry {
     [string[]] $Content
     [scriptblock] $CompressCommand 
+    [scriptblock] $ExpandCommand
+
+    DotEntry([scriptblock] $ExpandCommand, [scriptblock] $CompressCommand, [string[]] $Content) {
+        $this.ExpandCommand = $ExpandCommand
+        $this.CompressCommand = $CompressCommand
+        $this.Content = $Content
+    }
+
+    DotEntry([scriptblock] $ExpandCommand, [scriptblock] $CompressCommand) {
+        $this.ExpandCommand = $ExpandCommand
+        $this.CompressCommand = $CompressCommand
+        $this.Content = $null
+    }
+
+    DotEntry([hashtable] $x) {
+        $this.Content = 
+            if ($x.ContainsKey('Content')) {
+                $x.Content
+            }
+            else {
+                $null
+            }
+        $this.ExpandCommand = $x.ExpandCommand
+        $this.CompressCommand = $x.CompressCommand
+    }
+
+    [void] SetContent($Content) {
+        $this.Content = $Content
+    }
 
     [void] Compress() {
         $this.Content = $this.CompressCommand.Invoke()
     } 
 
-    [void] SetContent($s) {
-        $this.Content = $s
+    [void] Expand() {
+        if (!$this.Content) {
+            $this.ExpandCommand.Invoke()
+        }
+        else { 
+            $this.Content.ForEach($this.ExpandCommand)
+        }
+    } 
+
+    [void] Expand([bool] $b) { 
+        $this.Expand()
     }
 }
 
 
-class DotEntry : Entry {
+class DotFile : DotEntry {
     [string] $Target
     [string] $ExpandedTarget
+    [FileInfo] $TargetObject
 
-    hidden [FileInfo] $TargetObject
-
-    DotEntry([string] $s) { 
-        $this.Target = $s
+    DotFile([string] $Target) { 
+        $this.Target = $Target
 
         $this.ExpandTarget()
 
@@ -88,9 +129,9 @@ class DotEntry : Entry {
         }
     } 
 
-    DotEntry([string] $s, [string[]] $x) {
-        $this.Content = $x 
-        $this.Target = $s
+    DotFile([string] $Target, [string[]] $Content) {
+        $this.Content = $Content
+        $this.Target = $Target
 
         $this.ExpandTarget()
 
@@ -98,6 +139,25 @@ class DotEntry : Entry {
             $this.CompressCommand = { Get-Content -Path $this.TargetObject.FullName -Verbose }
         }
     }
+
+    DotFile([hashtable] $x) {
+        $this.Target = $x.Target
+        $this.Content = 
+            if ($x.ContainsKey('Content')) {
+                $x.Content
+            }
+            else {
+                $null
+            }
+
+        $this.ExpandTarget()
+
+        if ($this.TargetObject.Exists) {
+            $this.CompressCommand = { Get-Content -Path $this.TargetObject.FullName -Verbose }
+        }
+    }
+
+    [void] Expand() { }  # Do nothing
 
     [void] Expand([bool] $b) {
         $this.ExpandTarget()
@@ -115,7 +175,11 @@ class DotEntry : Entry {
             }
 
         if ($this.TargetObject.Exists -or ($b -and $isValidPath)) {
-            $this.Content | Out-File (New-Item $this.TargetObject.FullName -Force) -Encoding UTF8 -Verbose
+            @{
+                Content = $this.Content
+                Path = $this.TargetObject.FullName
+            }
+            # $this.Content | Out-File (New-Item $this.TargetObject.FullName -Force) -Encoding UTF8 -Verbose
         }
     }
 
@@ -127,28 +191,90 @@ class DotEntry : Entry {
 }
 
 
-class DotCommand : Entry {
-    [scriptblock] $ExpandCommand
 
-    [void] Expand() {
-        if (!$this.Content) {
-            $this.ExpandCommand.Invoke()
-        }
-        else { 
-            $this.Content.ForEach($this.ExpandCommand)
-        }
-    } 
+# A do-nothing converter, just to hide the "object" methods
+class PSObjectConverter : System.Management.Automation.PSTypeConverter {
+    [bool] CanConvertFrom([PSObject]$psSourceValue, [Type]$destinationType) {
+        return $false
+    }
 
-    [void] Expand([bool] $b) { 
-        $this.Expand()
+    [object] ConvertFrom([PSObject]$psSourceValue, [Type]$destinationType, [IFormatProvider]$formatProvider, [bool]$ignoreCase) {
+        throw [NotImplementedException]       
+    }
+
+    # These things down here are just never used. Why they must be here, I have no idea.
+    [bool] CanConvertFrom([object]$sourceValue, [Type]$destinationType) {
+        return $false
+    }
+
+    [object] ConvertFrom([object]$sourceValue, [Type]$destinationType, [IFormatProvider]$formatProvider, [bool]$ignoreCase) {
+        throw [NotImplementedException]
+    }
+
+    [bool] CanConvertTo([object]$sourceValue, [Type]$destinationType) {
+        throw [NotImplementedException]
+    }
+
+    [object] ConvertTo([object]$sourceValue, [Type]$destinationType, [IFormatProvider]$formatProvider, [bool]$ignoreCase) {
+        throw [NotImplementedException]
     }
 }
 
+
+class DotFileConverter : PSObjectConverter {
+    [bool] CanConvertFrom([PSObject] $psSourceValue, [Type] $destinationType) {
+        return $psSourceValue.PSTypeNames.Contains("Deserialized.DotFile")
+    }
+
+    [object] ConvertFrom([PSObject] $psSourceValue, [Type] $destinationType, [IFormatProvider] $formatProvider, [bool] $ignoreCase) {
+        return [DotFile] @{
+            Target = $psSourceValue.Target
+            Content = $psSourceValue.Content
+        }
+    }
+}
+
+
+class DotEntryConverter : PSObjectConverter {
+    [bool] CanConvertFrom([PSObject] $psSourceValue, [Type] $destinationType) {
+        return $psSourceValue.PSTypeNames.Contains("Deserialized.DotEntry")
+    }
+
+    [object] ConvertFrom([PSObject] $psSourceValue, [Type] $destinationType, [IFormatProvider] $formatProvider, [bool] $ignoreCase) {
+        return [DotEntry] @{
+            ExpandCommand = [scriptblock]::Create($psSourceValue.ExpandCommand)
+            CompressCommand = [scriptblock]::Create($psSourceValue.CompressCommand)
+            Content = $psSourceValue.Content
+        }
+    }
+}
+
+Update-TypeData -TypeName 'Deserialized.DotEntry' -TargetTypeForDeserialization 'DotEntry'
+Update-TypeData -TypeName 'Deserialized.DotFile' -TargetTypeForDeserialization 'DotFile'
+Update-TypeData -TypeName 'DotEntry' -TypeConverter 'DotEntryConverter'
+Update-TypeData -TypeName 'DotFile' -TypeConverter 'DotFileConverter'
 
 #endregion
 
 #region Config -----------------------------------------------------------------
 
+function New-Scriptblock {
+    [Alias('Get-Scriptblock')]
+    param(
+        [Parameter(ValueFromPipeline)]
+        [string[]] $InputObject
+    )
+
+    begin {
+        $f = {
+            [scriptblock]::Create($_)
+        }
+    }
+
+    process {
+        $InputObject.ForEach($f)
+    }
+}
 
 function Assert-Config ($x, $y) {
     $xs = [HashSet[string]] $x
@@ -189,71 +315,154 @@ $Config.PathVariable.GetEnumerator().ForEach{
     Set-Variable $_.Key $v -Option ReadOnly
 }
 
-$File = $Config.Path.ForEach{ [DotEntry] $_ }
+$File = $Config.Path.ForEach{ [DotFile] $_ }
 $Command = $Config.Command.ForEach{
-    [DotCommand] @{
-        CompressCommand = [Scriptblock]::Create($_.Compress)
-        ExpandCommand = [Scriptblock]::Create($_.Expand)
+    [DotEntry] @{
+        CompressCommand = Scriptblock $_.Compress
+        ExpandCommand = Scriptblock $_.Expand
     }
 } 
-$Entry = [Entry[]] @($File + $Command)
+$Entry = [DotEntry[]] @($File + $Command)
 
 
-function Compress-DotFiles {
-    [CmdletBinding(
-        SupportsShouldProcess,
-        ConfirmImpact = 'Low')]
+function Import-DotFile {
+    [CmdletBinding()]
 
-    param()
+    param(
+        # Specifies a path to one existing location.
+        [Parameter(Mandatory,
+                   ValueFromPipeline,
+                   ValueFromPipelineByPropertyName,
+                   HelpMessage = 'Path to one valid location.')]
+        [Alias('Path', 'PSPath')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({
+            if (Test-Path $_) {
+                return $true
+            }
 
-    $Entry.ForEach{ if ($null -ne $_.CompressCommand) { $_.Compress() } } 
+            throw 'Invalid file.'
+        })]
+        [string] $InputObject
+    )
 
-    if ($PSCmdlet.ShouldContinue($Message.ShouldContinue.CompressDotFile, $DotsFile)) {
-        [PSSerializer]::Serialize($Entry) | Out-File $DotsFile -Encoding utf8 -Verbose
+    process {
+        $raw = Get-Content -Raw -Encoding UTF8 -Path $InputObject
+
+        [PSSerializer]::Deserialize($raw)
     }
 }
 
-function Expand-DotFiles { 
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '')] # it's RIGHT there!?
-    [CmdletBinding(
-        SupportsShouldProcess,
-        ConfirmImpact = 'Low')]
 
-    param([switch] $Force)
+function Export-DotFile {
+    [CmdletBinding(SupportsShouldProcess)]
 
-    $raw = Get-Content -Raw -Encoding UTF8 -Path $DotsFile
-    $dots = [PSSerializer]::Deserialize($raw)
-    $file = $dots.
-        Where{ $_.PSObject.TypeNames -contains 'Deserialized.DotEntry' }.
-        ForEach{ ([DotEntry]::new($_.Target, $_.Content)) }
-    $cmd = $dots.
-        Where{ $_.PSObject.TypeNames -contains 'Deserialized.DotCommand' }.
-        ForEach{
-            [DotCommand] @{
-                ExpandCommand = [scriptblock]::Create($_.ExpandCommand)
-                CompressCommand = [scriptblock]::Create($_.CompressCommand)
-                Content = $_.Content
+    param(
+        # Specifies a path to one valid location.
+        [Parameter(Mandatory,
+                   HelpMessage = 'Path to one valid location.')]
+        [Alias('PSPath')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({
+            if (Test-Path -IsValid $_) {
+                return $true
+            }
+
+            throw 'Invalid location'
+        })]
+        [string] $Path
+        ,
+        [Parameter(ValueFromPipeline,
+                   ValueFromPipelineByPropertyName)]
+        [DotEntry[]] $InputObject
+    )
+    
+    begin {
+        $a = [List[DotEntry]] @()
+        $f = { 
+            [void] $a.Add($_)
         }
     }
-    $dots = @($file + $cmd)
-    $f = 
-        if ($Force.IsPresent) {
-            { $_.Expand($true) }
-        }
-        else {
-            { $_.Expand($false) }
-        }
 
-    if ($PSCmdlet.ShouldContinue($Message.ShouldContinue.ExpandDotFiles, $DotsFile)) {
-        $dots.Foreach($f)
+    process {
+        $InputObject.ForEach($f)
+    }
+
+    end {
+        if ($PSCmdlet.ShouldProcess($Path, $Message.ShouldProcess.ExportDotFile)) {
+            [PSSerializer]::Serialize($a.ToArray()) | Out-File $Path -Encoding utf8 -Verbose
+        }
     }
 }
 
+
+function Compress-DotEntry {
+    [CmdletBinding()]
+    param (
+        [Parameter(ValueFromPipeline,
+                   ValueFromPipelineByPropertyName)]
+        [DotEntry[]] $InputObject
+    )
+    
+    begin {
+        $a = [List[DotEntry]] @()
+        $f = {
+            if ($null -ne $_.CompressCommand) { $_.Compress() } 
+        }
+        $g = {
+            [void] $a.Add($_)
+        }
+    }
+    
+    process {
+        $InputObject.ForEach($f).ForEach($g)
+    }
+    
+    end {
+        $a.ToArray()
+    }
+}
+
+
+function Expand-DotEntry {
+    [CmdletBinding()]
+    param (
+        [Parameter(ValueFromPipeline,
+                   ValueFromPipelineByPropertyName)]
+        [DotEntry[]] $InputObject
+        ,
+        [switch] $Force
+    )
+    
+    begin {
+        $a = [List[DotEntry]] @()
+        $f = {
+            if ($Force.IsPresent) {
+                $_.Expand($true)
+            }
+            else {
+                $_.Expand($false)
+            }
+        }
+        $g = {
+            [void] $a.Add($_)
+        }
+    }
+    
+    process {
+        $InputObject.ForEach($f).ForEach($g)
+    }
+    
+    end {
+        $a.ToArray()
+    }
+}
 
 #endregion
 
 switch ($Mode) {
     Update { Expand-DotFiles -Force:$Force }
     Backup { Compress-DotFiles }
-    default { Write-Error $message.What }
+    Debug { Write-Output $Message.Sourced }
+    default { Write-Error $Message.TerminatingError.What }
 }

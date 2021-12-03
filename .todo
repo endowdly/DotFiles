@@ -1,0 +1,37 @@
+Pipeline the commands:
+    ✔ Import-DotFile @done(21-11-29 14:26)
+        -- Import an xml file with Entry objects
+    ✔ Export-DotFile @started(21-11-29 14:59) @done(21-11-29 15:31) @lasted(32m37s)
+        -- Export Entry objects to an xml file
+    ✔ Compress-DotEntry @started(21-11-29 15:46) @done(21-11-29 16:04) @lasted(18m40s)
+        -- Call Compress() method on Entry objects and return the compressed object
+    ✔ Expand-DotEntry @done(21-11-29 16:28)
+        -- Call Expand() method on Entry objects and return the expanded object
+    ☐ Out-DotEntry
+        -- Set the Value of an Item at the Target of an Entry object to the objects Content property
+        -- or 
+        -- Invoke the ExpandCommand on the objects Content property
+
+Class:
+    ✔ Remove the DotCommand Class @started(21-11-29 12:34) @done(21-11-29 12:40) @lasted(6m55s)
+        -- Roll it into the Entry Class
+    ✔ Update the DotEntry Class @started(21-11-29 12:34) @done(21-11-29 12:58) @lasted(24m27s)
+    ✔ Rename classes @started(21-11-29 12:34) @done(21-11-29 12:37) @lasted(3m50s)
+    ✔ Add deserializers @done(21-11-29 13:02)
+
+DotEntry Class:
+    ✘ Change the Compress() method so it does not perform IO @cancelled(21-11-29 12:29)
+    ✘ Change the Expand() method so it does not perform IO @cancelled(21-11-29 12:29)
+    ✔ Add Hashtable constructors @done(21-11-19 14:59)
+
+DotCommand Class:
+    ✔ Add Hashtable constructors @done(21-11-19 14:59)
+
+Deserializer Class:
+    ✔ Add a Converter Class @done(21-11-19 15:07)
+
+General:
+    ☐ Reset Code (Refactor)
+        -- Do this last
+    ✔ Add Mode that will allow source and single calls @started(21-11-19 14:32) @done(21-11-19 14:35) @lasted(3m16s)
+    ✔ Get-Scriptblock @done(21-11-19 15:14)
