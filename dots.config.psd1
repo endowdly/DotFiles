@@ -36,16 +36,19 @@
     Command       = @(
         # Visual Studio Code
         @{
+            Description = 'Install Visual Studio Code Extensions'
             Compress = 'code --list-extensions --show-versions'
             # Expand   = 'write-verbose "code extension install, this is silent"; code --install-extension $_'
         } 
 
         # Scoop
         @{
+            Description = 'Add endo-scoop bucket to scoop'
             Compress = ''
             Expand   = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
         }
         @{
+            Description = 'Install scoop apps'
             Compress = 'scoop export'
             Expand   = 'scoop install $_'
         }

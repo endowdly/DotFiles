@@ -1,4 +1,5 @@
 using namespace System.IO
+using namespace System.Collections
 using namespace System.Collections.Generic
 using namespace System.Management.Automation
 
@@ -6,8 +7,13 @@ param(
     [Parameter(
         Mandatory,
         HelpMessage = 'Enter a mode, Update or Backup')]
-    [ValidateSet('Update', 'Backup', 'Debug')]
+    [ValidateSet('Pull', 'Push', 'Debug')]
     [string] $Mode
+    ,
+    [ValidateSet('File', 'Entry', 'Both')]
+    [string] $DotType = 'Both'
+    ,
+    [switch] $Select
     ,
     [switch] $Force
 ) 
@@ -25,9 +31,18 @@ data Message {
             CompressDotFile = 'Continue? You will overwrite the dotfile archive.'
         }
         ShouldProcess    = @{
-            ExportDotFile = 'Export dot entries?'
+            ExportDotFile = 'Export dot entries'
+        }
+        Warning = @{
+            TypeDateAlreadyDeclared = 'TypeData seems to be already declared for my internal types.'
         }
         Sourced          = 'The dots script has been sourced.'
+
+        Menu             = @{
+            Empty = 'Nothing was passed to ''Invoke-Menu''' 
+            TooMany = 'The incoming array has more items than the console window can display! Damn.'
+            Exit = 'Press any key to exit...'
+        }
     }
 }
 
@@ -38,6 +53,13 @@ data Setting {
         VerbosePreference     = 'Continue'
         BindingVariable       = 'Config'
         FileName              = 'dots.config.psd1'
+        MenuKeys              = @{
+            MoveDownKey        = 38, 75
+            MoveUpKey          = 40, 74
+            SelectItemKey      = 32
+            ReturnSelectionKey = 13
+            ExitKey            = 27, 81
+        }
     }
 }
 
@@ -50,6 +72,7 @@ data Validation {
 data CommandValidation {
     'Compress'
     'Expand'
+    'Description'
 }
 
 data IsAre {
@@ -57,8 +80,13 @@ data IsAre {
     'are'
 }
 
-data CommaSpace {
-    ', '
+data Character {
+    @{
+        Space = ' '
+        CommaSpace = ', '
+        CheckMark = '✔'
+        Current = '►'
+    }
 }
 
 
@@ -69,27 +97,7 @@ Join-Path $PSScriptRoot $Setting.ArchivePath | Set-Variable DotsFile -Option Rea
 
 #endregion
 
-#region Helpers
-
-function Invoke-NullCoalesce ($a, $b) {
-
-    if ($null -ne $a) {
-        return $a
-    }
-
-    $b
-}
-
-
-function Invoke-Ternary ([scriptblock] $p, $a, $b) {
-    if (&$p) {
-        return $a
-    }
-
-    $b
-}
-
-
+#region Helpers 
 function New-Scriptblock {
     param(
         [Parameter(ValueFromPipeline)]
@@ -115,12 +123,48 @@ function Assert-Config ($x, $y) {
     if (!$xs.IsSubsetOf($ys)) {
         [void] $xs.ExceptWith($ys) 
 
-        $isAre = $IsAre[$xs.Count -gt 0]
+        $isAre = $IsAre[$xs.Count -gt 1]
 
-        throw ($Message.InvalidConfig -f ($xs -join $CommaSpace), $isAre, ($ys -join $CommaSpace)) 
+        throw ($Message.InvalidConfig -f ($xs -join $Character.CommaSpace),
+               $isAre,
+               ($ys -join $Character.CommaSpace)) 
     } 
 }
 
+
+# Console helper functions
+function CenterString ($s) {
+    $x = $Host.UI.RawUI.BufferSize.Width
+    $s.PadLeft(((($x - 1) - $s.Length) / 2) + $s.Length).PadRight($x - 1)
+}
+
+function WriteColorString ($s, [ConsoleColor] $c) {
+    $oc = [Console]::ForegroundColor
+    [Console]::ForegroundColor = $c 
+    [Console]::WriteLine($s) 
+    [Console]::ForegroundColor = $oc
+}
+
+function WriteColorStringSegment ($s, [ConsoleColor] $c) {
+    $oc = [Console]::ForegroundColor
+    [Console]::ForegroundColor = $c 
+    [Console]::Write($s) 
+    [Console]::ForegroundColor = $oc
+}
+
+function CursorOff { [Console]::CursorVisible = $false }
+function CursorOn { [Console]::CursorVisible = $true }
+function GetKeyPress { $Host.UI.RawUI.ReadKey('NoEcho, IncludeKeyDown') } 
+function Await { GetKeyPress > $null }
+function ConsoleWrite ($s) { [Console]::Write($s) }
+function WriteLine ($s) { [Console]::WriteLine($s) }
+function SetCursorPosition ($x, $y) { [Console]::SetCursorPosition($x, $y) } 
+function HalfWindowHeight { [int] [Console]::WindowHeight / 2 }
+function WindowHeight { [int] [Console]::WindowHeight }
+function BufferWidth { [Console]::BufferWidth }
+function ClearConsoleRow ($n) { SetCursorPosition 0 $n; ConsoleWrite ($Character.Space * (BufferWidth)) }
+function CursorTop { [Console]::CursorTop }
+function EvenSpace ($n) { [int] [Console]::WindowWidth / $n }
 
 #region Classes ----------------------------------------------------------------
 
@@ -150,27 +194,21 @@ class Dot {
 
 
 class DotEntry : Dot {
-
-    DotEntry([scriptblock] $ExpandCommand, [scriptblock] $CompressCommand, [string[]] $Content) {
-        $this.ExpandCommand = $ExpandCommand
-        $this.CompressCommand = $CompressCommand
-        $this.Content = $Content
-    }
-
-    DotEntry([scriptblock] $ExpandCommand, [scriptblock] $CompressCommand) {
-        $this.ExpandCommand = $ExpandCommand
-        $this.CompressCommand = $CompressCommand
-        $this.Content = $null
-    }
+    [string] $Description
 
     DotEntry([hashtable] $x) {
-        $this.Content = $x.Content  # If null, should happily assign null to this.Content
+        $this.Content = $x.Content
         $this.ExpandCommand = $x.ExpandCommand
         $this.CompressCommand = $x.CompressCommand
+        $this.Description = $x.Description
     }
 
     [void] Expand([bool] $b) {
         $this.Expand()
+    }
+
+    [string] ToString() {
+        return $this.Description
     }
 }
 
@@ -190,17 +228,6 @@ class DotFile : Dot {
         }
     } 
 
-    DotFile([string] $Target, [string[]] $Content) {
-        $this.Content = $Content
-        $this.Target = $Target
-
-        $this.ExpandTarget()
-
-        if ($this.TargetObject.Exists) {
-            $this.CompressCommand = { Get-Content -Path $this.TargetObject.FullName -Verbose }
-        }
-    }
-
     DotFile([hashtable] $x) {
         $this.Target = $x.Target
         $this.Content = $x.Content
@@ -214,7 +241,7 @@ class DotFile : Dot {
 
     [void] Expand() { }  # Do nothing
 
-    [hashtable] Expand([bool] $b) {
+    [hashtable] Expand([bool] $force) {
         $this.ExpandTarget()
 
         $isValidPath = 
@@ -229,7 +256,7 @@ class DotFile : Dot {
                 $false 
             }
 
-        if ($this.TargetObject.Exists -or ($b -and $isValidPath)) {
+        if ($this.TargetObject.Exists -or ($force -and $isValidPath)) {
             return @{
                 Content = $this.Content
                 Path    = $this.TargetObject.FullName
@@ -239,6 +266,10 @@ class DotFile : Dot {
         }
 
         return @{} 
+    }
+
+    [string] ToString() {
+        return $this.TargetObject.Name
     }
 
     hidden [void] ExpandTarget() {
@@ -267,7 +298,7 @@ class PSObjectConverter : System.Management.Automation.PSTypeConverter {
         throw [NotImplementedException]       
     }
 
-    # These things down here are just never used.
+    # The do-nothing parts.
     [bool] CanConvertFrom([object] $sourceValue, [type] $destinationType) {
         return $false
     }
@@ -302,15 +333,16 @@ class DotEntryConverter : PSObjectConverter {
         return $psSourceValue.PSTypeNames.Contains('Deserialized.DotEntry')
     }
 
-    [object] ConvertFrom(
+    [DotEntry] ConvertFrom(
         [psobject] $psSourceValue, 
         [type] $destinationType, 
         [IFormatProvider] $formatProvider, 
         [bool] $ignoreCase) {
 
-        $obj = @{
+        $obj = [DotEntry] @{
             Content         = $psSourceValue.Content
             CompressCommand = $psSourceValue.CompressCommand
+            Description     = $psSourceValue.Description
             ExpandCommand   = $psSourceValue.ExpandCommand
         }
 
@@ -325,25 +357,25 @@ class DotFileConverter : PSObjectConverter {
         return $psSourceValue.PSTypeNames.Contains('Deserialized.DotFile')
     }
 
-    [object] ConvertFrom(
+    [DotFile] ConvertFrom(
         [psobject] $psSourceValue, 
         [type] $destinationType, 
         [IFormatProvider] $formatProvider, 
         [bool] $ignoreCase) {
 
-        $obj = @{
+        $obj = [DotFile] @{
             Target  = $psSourceValue.Target
             Content = $psSourceValue.Content
         }
 
-        return [DotFile] $obj
+        return [DotFile] $obj 
     }
 }
 
-Update-TypeData -TypeName 'Deserialized.DotEntry' -TargetTypeForDeserialization 'DotEntry'
-Update-TypeData -TypeName 'Deserialized.DotFile' -TargetTypeForDeserialization 'DotFile'
-Update-TypeData -TypeName 'DotEntry' -TypeConverter 'DotEntryConverter'
-Update-TypeData -TypeName 'DotFile' -TypeConverter 'DotFileConverter'
+Update-TypeData -TypeName 'Deserialized.DotEntry' -TargetTypeForDeserialization 'DotEntry' -Force
+Update-TypeData -TypeName 'Deserialized.DotFile' -TargetTypeForDeserialization 'DotFile' -Force
+Update-TypeData -TypeName 'DotEntry' -TypeConverter 'DotEntryConverter' -Force
+Update-TypeData -TypeName 'DotFile' -TypeConverter 'DotFileConverter' -Force
 
 #endregion
 
@@ -367,25 +399,48 @@ catch {
 #endregion
 
 #region Setup ------------------------------------------------------------------ 
-$Config.PathVariable.GetEnumerator().ForEach{
-    $p = New-Scriptblock $_.Value
-    $v = $p.Invoke() -as [string]
+
+
+function Get-Dots {
+    [CmdletBinding(DefaultParameterSetName = 'Default')]
+    param(
+        [Parameter(ParameterSetName = 'File')]
+        [Alias('DotFile')]
+        [switch] $FileOnly
+        ,
+        [Parameter(ParameterSetName = 'Entry')]
+        [Alias('DotEntry')]
+        [switch] $CommandOnly
+    )
+
+
+    $Config.PathVariable.GetEnumerator().ForEach{
+        $p = New-Scriptblock $_.Value
+        $v = $p.Invoke() -as [string]
     
-    Set-Variable $_.Key $v -Option ReadOnly
+        Set-Variable $_.Key $v -Option ReadOnly
+    }
+
+    $File = $Config.Path.ForEach{ [DotFile] $_ }
+    $Command = $Config.Command.ForEach{
+        [DotEntry] @{
+            Description     = $_.Description
+            CompressCommand = New-Scriptblock $_.Compress
+            ExpandCommand   = New-Scriptblock $_.Expand
+        }
+    } 
+
+    switch ($PSCmdlet.ParameterSetName) {
+        File { [Dot[]] @($File) }
+        Entry { [Dot[]] @($Command ) }
+        default { [Dot[]] @($File + $Command) }
+    } 
 }
 
-$File = $Config.Path.ForEach{ [DotFile] $_ }
-$Command = $Config.Command.ForEach{
-    [DotEntry] @{
-        CompressCommand = New-Scriptblock $_.Compress
-        ExpandCommand = New-Scriptblock $_.Expand
-    }
-} 
-$Entry = [Dot[]] @($File + $Command)
 
 
 function Import-DotFile {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Default')]
 
     param(
         # Specifies a path to one existing location.
@@ -404,18 +459,36 @@ function Import-DotFile {
             throw 'Invalid file.'
         })]
         [string] $InputObject
+        ,
+        [Parameter(ParameterSetName = 'File')]
+        [Alias('DotFile')]
+        [switch] $FileOnly
+        ,
+        [Parameter(ParameterSetName = 'Entry')]
+        [Alias('DotEntry')]
+        [switch] $CommandOnly
     )
-
+    
+    begin {
+        $isFile = { $null -ne $_.ExpandedTarget }
+        $isEntry = { !$_.ExpandedTarget }
+    }
+    
+     
     process {
         $raw = Get-Content -Raw -Encoding UTF8 -Path $InputObject
 
-        [PSSerializer]::Deserialize($raw)
+        switch ($PSCmdlet.ParameterSetName) {
+            File { [PSSerializer]::Deserialize($raw).Where($isFile) }
+            Entry { [PSSerializer]::Deserialize($raw).Where($isEntry) }
+            default { [PSSerializer]::Deserialize($raw) }
+        }
     }
 }
 
 
 function Export-DotFile {
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
 
     param(
         # Specifies a path to one valid location.
@@ -470,6 +543,7 @@ function Compress-DotEntry {
     begin {
         $f = {
             if ($null -ne $_.CompressCommand) { $_.Compress() } 
+
             $_
         }
     }
@@ -499,6 +573,8 @@ function Expand-DotEntry {
             else {
                 $_.Expand($false)
             }
+
+            $_
         }
     }
     
@@ -507,11 +583,452 @@ function Expand-DotEntry {
     }
 }
 
+
+function Invoke-Menu {
+    <#
+    .Synopsis
+      Invokes a command-line selection menu
+    .Description
+      
+    .Example
+      
+    #>
+
+    [CmdletBinding()]
+    param (
+        # The incoming objects to choose from.
+        [Parameter(
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [AllowEmptyCollection()]
+        [array] $InputObject
+        ,
+        [Parameter(Position = 0)]
+        [string] $Title = 'Menu'
+    )
+
+    begin {
+        # Create lists
+        $menuItems = [ArrayList] @()
+        $selection = [List[int]] @()
+
+        # Grab the console screen contents to restore later
+        $x = $Host.UI.RawUI.BufferSize.Width
+        $y = $Host.UI.RawUI.CursorPosition.Y
+        $z = [System.Management.Automation.Host.Rectangle]::new(0, 0, $x - 1, $y)
+        $o = [System.Management.Automation.Host.Coordinates]::new(0, 0)
+        $conBuffer = $Host.UI.RawUI.GetBufferContents($z)         
+
+        # The key being pressed
+        $vKeyCode = 0
+
+        # The row relative position in the console buffer
+        $pos = 0 
+        
+        $add = {
+            [void] $menuItems.Add($_)
+        }
+ 
+        # Menu Helpers 
+
+        # I didn't want to use a class, but this little guy made lazy redrawing easier.
+        class Row {
+            [int] $Row
+            [string] $String
+            [ConsoleColor] $Color
+            [bool] $Current
+            [bool] $Selected 
+
+            Row([int] $n) {
+                $this.Row = $n
+                $this.Color = [ConsoleColor]::Magenta
+                $this.Current = $false
+                $this.Selected = $false
+            }
+
+            [void] SetString($s) {
+                $this.String = $s
+            }
+
+            [void] ToggleSelect() {
+                $this.Selected = !$this.Selected
+            }
+
+            [void] ToggleCurrent() { 
+                $this.Current= !$this.Current
+                
+                if ($this.Current) {
+                    $this.Color = [ConsoleColor]::Cyan
+
+                    return
+                }
+
+                $this.Color = [ConsoleColor]::Magenta 
+            }
+
+            [void] Draw() {
+                ClearConsoleRow $this.Row
+
+                if ($this.Current) {
+                    SetCursorPosition 1 $this.Row
+                    ConsoleWrite '>'
+                }
+
+                if ($this.Selected) {
+                    SetCursorPosition 3 $this.Row
+                    ConsoleWrite '-'
+                }
+
+                SetCursorPosition 5 $this.Row
+                WriteColorString $this.String $this.Color 
+            }
+        }
+  
+        
+        # Pegs the row index to relative pos for accurate selections
+        # Then maps a new row array from the inputobjects and returns the rows
+        function GetRows ($startRow) {
+            $index = 0 
+            $rowIndex = $startRow
+
+            foreach ($item in $menuItems) {
+                $row = [Row] $rowIndex
+
+                $row.SetString($item.ToString())
+
+                if ($pos -eq $index) {
+                    $row.ToggleCurrent()
+                }
+
+                if ($selection.Contains($index)) {
+                    $row.ToggleSelect()
+                } 
+
+                $index++
+                $rowIndex++
+
+                $row
+            }
+        }
+
+        function SelectRow ($rows, $n) { $row = $rows[$n]; $row.ToggleSelect() } 
+        function ToggleRow ($rows, $n) { $row = $rows[$n]; $row.ToggleCurrent() } 
+        function DrawRow ($rows, $n) { $row = $rows[$n]; $row.Draw() } 
+
+        function ToggleSelection ($n) {
+            if ($selection.Contains($n)) {
+                [void] $selection.Remove($n)
+
+                return
+            }
+
+            $selection.Add($n) 
+        }
+
+        function ResetPositionOnOverflow ($ls, $pos) {
+            if ($pos -lt 0) { $pos = $ls.Count - 1 }
+            if ($pos -gt $ls.Count - 1) { $pos = 0} 
+
+            $pos
+        }
+
+        function ExitMenu { 
+            Clear-Host
+
+            $Host.UI.RawUI.SetBufferContents($o, $conBuffer)
+
+            SetCursorPosition 0 $y
+            CursorOn       
+        }
+
+
+        # Do some aesthetic stuff
+        CursorOff
+        Clear-Host
+    }
+
+    process {
+        $InputObject.ForEach($add)
+    }
+
+    end {
+        SetCursorPosition 0 1 
+        WriteColorString (CenterString $Title) Cyan
+
+        if ($menuItems.Count -lt 1) {
+            WriteLine (CenterString $Message.Menu.Empty)
+            WriteLine
+            WriteLine (CenterString $Message.Menu.Exit) 
+            Await
+            ExitMenu 
+
+            return 
+        }
+
+        # Todo: It will be a lot of work, but wrap overflow horizontally so we use a 2d row col grid
+        # Todo: Implement <left> and <right> keys
+        # Todo: Truncate string lengths with a max col width etc...
+        if ($menuItems.Count -gt (WindowHeight)) {
+            WriteLine (CenterString $Message.Menu.TooMany)
+            WriteLine
+            WriteLine (CenterString $Message.Menu.Exit)
+            Await
+            ExitMenu
+
+            return
+        }
+        
+        $rows = GetRows 3
+        $rows.ForEach('Draw')
+
+        while ($vKeyCode -ne $Setting.MenuKeys.ReturnSelectionKey) {
+            $vKeyCode = (GetKeyPress).VirtualKeyCode
+
+            if ($Setting.MenuKeys.ExitKey -contains $vKeyCode) {
+                $pos = $null
+
+                break
+            }
+
+            switch ($vKeyCode) {
+                { $Setting.MenuKeys.MoveUpKey -contains $_ } {
+                    ToggleRow $rows $pos
+                    DrawRow $rows $pos
+                    $pos++
+                    $pos = ResetPositionOnOverflow $rows $pos
+                    ToggleRow $rows $pos
+                    DrawRow $rows $pos 
+                }
+                { $Setting.MenuKeys.MoveDownKey -contains $_ } {
+                    ToggleRow $rows $pos
+                    DrawRow $rows $pos
+                    $pos--
+                    $pos = ResetPositionOnOverflow $Rows $pos  # Technically underflow...
+                    ToggleRow $rows $pos
+                    DrawRow $rows $pos 
+                }
+                { $Setting.MenuKeys.SelectItemKey -contains $_ } {
+                    ToggleSelection $pos
+                    SelectRow $rows $pos
+                    DrawRow $rows $pos 
+                }
+            } 
+        }
+
+        ExitMenu 
+        
+        if ($null -ne $pos) {
+            $menuItems[$selection.ToArray()]
+        } 
+    }
+}
+
+function Invoke-Dotter {
+    # Grab the console screen contents to restore later
+    $x = $Host.UI.RawUI.BufferSize.Width
+    $y = $Host.UI.RawUI.CursorPosition.Y
+    $z = [System.Management.Automation.Host.Rectangle]::new(0, 0, $x - 1, $y)
+    $o = [System.Management.Automation.Host.Coordinates]::new(0, 0)
+    $conBuffer = $Host.UI.RawUI.GetBufferContents($z)   
+
+
+    function ExitDotter {
+        Clear-Host 
+
+        $Host.UI.RawUI.SetBufferContents($o, $conBuffer)
+        
+        SetCursorPosition 0 $y
+        CursorOn
+    }
+    
+    Clear-Host
+
+    SetCursorPosition 0 1 
+    WriteColorString (CenterString 'Endo Dotter') Cyan 
+    WriteLine
+    WriteLine
+    $doRow = CursorTop
+    WriteColorString (CenterString 'What Do?') Magenta 
+    WriteLine
+    WriteLine
+
+    $s = 'Pull' + 'Push'.PadLeft((EvenSpace 3)) + 'Sync'.PadLeft((EvenSpace 3))
+    $s1 = CenterString $s
+    $i = $s1.IndexOf('l')
+    $j = $s1.IndexOf('s')
+    $k = $s1.IndexOf('y')
+
+    $qRow = CursorTop
+    ConsoleWrite $s1
+    SetCursorPosition $i (CursorTop)
+    WriteColorStringSegment l Green
+    SetCursorPosition $j (CursorTop)
+    WriteColorStringSegment s Green
+    SetCursorPosition $k (CursorTop)
+    WriteColorStringSegment y Red
+    WriteLine
+    WriteLine
+    CursorOff
+
+    function ChooseFileOrCommand {
+        ClearConsoleRow $doRow
+        SetCursorPosition 0 $doRow 
+        WriteColorString (CenterString 'Work with Files or Commands?') Cyan
+        ClearConsoleRow $qRow
+        SetCursorPosition 0 $qRow
+
+        $s = 'Files' + 'Commands'.PadLeft((EvenSpace 4)) + 'Both'.PadLeft((EvenSpace 4))
+        $s1 = CenterString $s
+        $i = $s1.IndexOf('F')
+        $j = $s1.IndexOf('C')
+        $k = $s1.IndexOf('B')
+
+        ConsoleWrite $s1
+        SetCursorPosition $i (CursorTop)
+        WriteColorStringSegment F Green
+        SetCursorPosition $j (CursorTop)
+        WriteColorStringSegment C Green
+        SetCursorPosition $k (CursorTop)
+        WriteColorStringSegment B Green
+        WriteLine
+    }
+
+    function ChooseAllOrSelect {
+        ClearConsoleRow $doRow
+        SetCursorPosition 0 $doRow
+        WriteColorString (CenterString 'choose') Cyan 
+        ClearConsoleRow $qRow
+        SetCursorPosition 0 $qRow 
+
+        $s = 'All' + 'Select'.PadLeft((EvenSpace 4))
+        $s1 = CenterString $s 
+        $i = $s1.IndexOf('A')
+        $j = $s1.IndexOf('S')
+
+        ConsoleWrite $s1
+        SetCursorPosition $i (CursorTop)
+        WriteColorStringSegment A Green
+        SetCursorPosition $j (CursorTop)
+        WriteColorStringSegment S Green 
+        WriteLine 
+    }
+
+    $f = {
+        switch ((GetKeyPress).Character) {
+            f { Get-Dots -FileOnly }
+            c { Get-Dots -CommandOnly }
+            default { Get-Dots }
+        }
+
+    }
+
+   
+    switch ((GetKeyPress).Character) {
+
+        l {
+            ChooseFileOrCommand
+
+            $dots = &$f
+
+            ChooseAllOrSelect 
+
+            switch ((GetKeyPress).Character) {
+                a { CenterString 'Pull All' }
+                s { $dots | Invoke-Menu 'Pull from Menu' }
+            } 
+        }
+
+        s {
+            ChooseFileOrCommand
+
+            $dots = &$f
+
+            ChooseAllOrSelect
+            
+            switch ((GetKeyPress).Character) {
+                a { CenterString 'Push All' }
+                s { $dots | Invoke-Menu 'Push from Menu' }
+            }
+        }
+
+        y {
+            ChooseAllOrSelect
+
+            switch ((GetKeyPress).Character) {
+                a { CenterString 'Sync All' }
+                s { Get-Dots -FileOnly | Invoke-Menu 'Sync from Menu' }
+            }
+        }
+    }
+
+    Await
+
+    ExitDotter
+}
+
 #endregion
 
+$import = @{
+    Path = $DotsFile
+}
+
+$get = @{}
+
+switch ($DotType) {
+    File { 
+        $import.FileOnly = $true
+        $get.FileOnly = $true
+    }
+
+    Entry {
+        $import.CommandOnly = $true
+        $get.CommandOnly = $true
+    }
+
+    default { }
+}
+
+function SelectOrPass {
+    begin { 
+        $ls = [List[Dot]] @()
+    }
+    process {
+        [void] $ls.Add($_) 
+    }
+
+    end {
+        if ($Select) {
+            return $ls.ToArray() | Invoke-Menu
+        }
+
+        $ls.ToArray()
+    }
+}
+
 switch ($Mode) {
-    Update { Expand-DotFiles -Force:$Force }
-    Backup { Compress-DotFiles }
+
+    Pull { 
+        Import-DotFile @import |
+            SelectOrPass |
+            Expand-DotEntry
+    }
+
+    Push { 
+        Get-Dots @get |
+            SelectOrPass |
+            Compress-DotEntry |
+            Export-DotFile $DotsFile 
+    } 
+
+    Sync {
+        'Work in Progrees'
+        # $pulledDots = Import-DotFile $DotsFile -FileOnly
+        # $currentDots = Get-Dots -FileOnly
+    } 
+
+    Dotter { Invoke-Dotter } 
+
     Debug { Write-Output $Message.Sourced }
+
     default { Write-Error $Message.TerminatingError.What }
 }
