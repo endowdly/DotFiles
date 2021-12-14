@@ -7,10 +7,11 @@ Pipeline the commands:
         -- Call Compress() method on Entry objects and return the compressed object
     ✔ Expand-DotEntry @done(21-11-29 16:28)
         -- Call Expand() method on Entry objects and return the expanded object
-    ☐ Out-DotEntry
-        -- Set the Value of an Item at the Target of an Entry object to the objects Content property
+    ✘ Out-DotEntry @cancelled(21-12-14 17:56)
+        ✘ -- Set the Value of an Item at the Target of an Entry object to the objects Content property @cancelled(21-12-14 17:56)
         -- or 
         -- Invoke the ExpandCommand on the objects Content property
+        -- Maybe just use Out-File?
 
 Class:
     ✔ Remove the DotCommand Class @started(21-11-29 12:34) @done(21-11-29 12:40) @lasted(6m55s)
@@ -31,7 +32,7 @@ Deserializer Class:
     ✔ Add a Converter Class @done(21-11-19 15:07)
 
 General:
-    ☐ Reset Code (Refactor)
+    ✔ Reset Code (Refactor) @done(21-12-14 18:29)
         -- Do this last
     ✔ Add Mode that will allow source and single calls @started(21-11-19 14:32) @done(21-11-19 14:35) @lasted(3m16s)
     ✔ Get-Scriptblock @done(21-11-19 15:14)

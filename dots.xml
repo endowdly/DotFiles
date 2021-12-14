@@ -1,18 +1,18 @@
 ﻿<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
   <Obj RefId="0">
     <TN RefId="0">
-      <T>Entry[]</T>
+      <T>System.Object[]</T>
       <T>System.Array</T>
       <T>System.Object</T>
     </TN>
     <LST>
       <Obj RefId="1">
         <TN RefId="1">
-          <T>DotEntry</T>
-          <T>Entry</T>
+          <T>DotFile</T>
+          <T>Dot</T>
           <T>System.Object</T>
         </TN>
-        <ToString>DotEntry</ToString>
+        <ToString>settings.json</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\Code\User\settings.json"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\Code\User\settings.json</S>
@@ -34,43 +34,9 @@
               <S>    "terminal.integrated.fontFamily": "TerminessTTF NF",</S>
               <S>    "terminal.integrated.fontSize": 14,</S>
               <S>    "terminal.integrated.cursorBlinking": true,</S>
-              <S>    "terminal.integrated.shellArgs.windows": [</S>
-              <S>        "-nologo",</S>
-              <S>        "-noprofile"</S>
-              <S>    ],</S>
-              <S></S>
               <S>    "powershell.developer.editorServicesLogLevel": "Verbose",</S>
               <S>    "powershell.integratedConsole.showOnStartup": false,</S>
               <S>    "powershell.enableProfileLoading": true,</S>
-              <S>    "vim.debug.silent": true,</S>
-              <S>    "vim.insertModeKeyBindings": [</S>
-              <S>        {</S>
-              <S>            "before": ["j", "k"],</S>
-              <S>            "after": ["&lt;Esc&gt;"]</S>
-              <S>        }</S>
-              <S>    ], </S>
-              <S>    "vim.normalModeKeyBindingsNonRecursive": [</S>
-              <S>        {</S>
-              <S>            "before": ["&lt;leader&gt;", "o"],</S>
-              <S>            "after": ["o", "&lt;Esc&gt;", "k"]</S>
-              <S>        }, </S>
-              <S>        {</S>
-              <S>            "before": ["&lt;leader&gt;", "d"],</S>
-              <S>            "after": ["d", "d"]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "before": ["&lt;leader&gt;", "O"],</S>
-              <S>            "after": ["O", "&lt;Esc&gt;", "j"]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "before": ["&lt;leader&gt;", "h"],</S>
-              <S>            "after": ["^"]</S>
-              <S>        }, </S>
-              <S>        {</S>
-              <S>            "before": ["&lt;leader&gt;", "l"],</S>
-              <S>            "after": ["$"]</S>
-              <S>        }</S>
-              <S>    ],</S>
               <S>    "todo.embedded.exclude": [ </S>
               <S>        "**/.*",</S>
               <S>        "**/.*/**",</S>
@@ -178,17 +144,10 @@
               <S></S>
               <S>    "FSharp.interfaceStubGenerationObjectIdentifier": "__",</S>
               <S>    "FSharp.enableTouchBar": false,</S>
-              <S>    "vim.easymotion": true,</S>
-              <S>    "vim.camelCaseMotion.enable": true,</S>
-              <S>    "vim.highlightedyank.enable": true,</S>
-              <S>    "vim.highlightedyank.duration": 300,</S>
               <S>    "editor.renderControlCharacters": true,</S>
-              <S>    "terminal.integrated.shell.windows": "C:\\WINDOWS\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe",</S>
               <S>    "extensions.closeExtensionDetailsOnViewChange": true,</S>
               <S>    "extensions.ignoreRecommendations": true,</S>
               <S>    "zenMode.hideLineNumbers": false,</S>
-              <S>    "vim.neovimPath": "C:\\Users\\endowdly\\scoop\\apps\\neovim\\current\\bin\\nvim.exe",</S>
-              <S>    "vim.enableNeovim": true,</S>
               <S>    "FSharp.useSdkScripts": true,</S>
               <S>    "diffEditor.renderSideBySide": true,</S>
               <S>    "workbench.iconTheme": "vscode-endowdly-icons",</S>
@@ -240,448 +199,119 @@
               <S>    "terminal.integrated.inheritEnv": false,</S>
               <S>    "markdown.preview.fontFamily": "'BigBlue_TerminalPlus NF',  'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif",</S>
               <S>    "todo.embedded.regex": "(?:&lt;!-- *)?(?:#|// @|//|/\\*+|&lt;!--|--|\\* @|\\{!|\\{\\{!--|\\{\\{!) *(TODO|DONE|FIXME|FIX|BUG|UGLY|HACK|NOTE|IDEA|REVIEW|DEBUG|OPTIMIZE)(?:\\s*\\([^)]+\\))?:?(?!\\w)(?: *--&gt;| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|&lt;!--|@|--|\\{!|\\{\\{!--|\\{\\{!))|((?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|&lt;!--|@|--(?!&gt;)|\\{!|\\{\\{!--|\\{\\{!))|(?: +[^@\\n]+)?))",</S>
-              <S>    "multiCommand.commands": [</S>
-              <S>        {</S>
-              <S>            "command": "endo.miniZen",</S>
-              <S>            "sequence": [</S>
-              <S>                "workbench.action.toggleTabsVisibility",</S>
-              <S>                "workbench.action.toggleActivityBarVisibility",</S>
-              <S>                "workbench.action.toggleSidebarVisibility",</S>
-              <S>                "editor.action.toggleMinimap"</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.c",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.select.copy",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.select.copy.backwards",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.h",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.left.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.right.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.l",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.right.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.j",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.down.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.up.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.k",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.up.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.down.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.J",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.down.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.up.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.expandLines",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.K",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.up.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.down.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.expandLines",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.b",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.select.word.previous.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.select.word.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.w",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.select.word.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.select.word.previous.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.e",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.select.word.end.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.select.word.previous.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.p",</S>
-              <S>            "sequence": [</S>
-              <S>                {"command": "dance.objects.performSelection", "args": {"object": "paragraph", "action": "selectToEnd", "extend": true, "inner": false}},</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                {"command": "dance.objects.performSelection", "args": {"object": "paragraph", "action": "selectToStart", "extend": true, "inner": false}},</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.s",</S>
-              <S>            "sequence": [</S>
-              <S>                {"command": "dance.objects.performSelection", "args": {"object": "sentence", "action": "selectToEnd", "extend": true, "inner": false}},</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                {"command": "dance.objects.performSelection", "args": {"object": "sentence", "action": "selectToStart", "extend": true, "inner": false}},</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.m",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.select.enclosing.extend",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.select.enclosing.extend.backwards",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.lparen",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": ")"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "("}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.lcurly",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": "}"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "{"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.lbracket",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": "]"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "["}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.lt",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": "&gt;"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "&lt;"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.rparen",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": " )"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "( "}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.rcurly",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": " }"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "{ "}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.rbracket",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": " ]"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "[ "}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.gt",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": " &gt;"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "&lt; "}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.doublequote",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": "\""}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "\""}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.singlequote",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": "'"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "'"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.backtick",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.insert.after",</S>
-              <S>                {"command": "type", "args": {"text": "`"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.saveSelections",   // shouldn't need this</S>
-              <S>                "dance.insert.before",</S>
-              <S>                {"command": "type", "args": {"text": "`"}},</S>
-              <S>                "dance.set.normal",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.flip",</S>
-              <S>                "dance.left.extend",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "command": "multiCommand.mirror.d",</S>
-              <S>            "sequence": [</S>
-              <S>                "dance.marks.saveSelections",</S>
-              <S>                "dance.select.firstLast",</S>
-              <S>                "dance.delete.noYank",</S>
-              <S>                "dance.marks.restoreSelections",</S>
-              <S>                "dance.selections.forward",</S>
-              <S>            ]</S>
-              <S>        },</S>
-              <S>    ],</S>
-              <S>    "dance.menus": {</S>
-              <S>        "mirror": {</S>
-              <S>            "items": {</S>
-              <S>                "c": {</S>
-              <S>                    "text": "column",</S>
-              <S>                    "command": "multiCommand.mirror.c",</S>
+              <S>    "dance.modes": {</S>
+              <S>        "": {</S>
+              <S>            "hiddenSelectionsIndicatorsDecoration": {</S>
+              <S>                "after": {</S>
+              <S>                    "color": "$list.warningForeground"</S>
               <S>                },</S>
-              <S>                "l": {</S>
-              <S>                    "text": "character left",</S>
-              <S>                    "command": "multiCommand.mirror.l",</S>
-              <S>                },</S>
-              <S>                "h": {</S>
-              <S>                    "text": "character right",</S>
-              <S>                    "command": "multiCommand.mirror.h",</S>
-              <S>                },</S>
-              <S>                "j": {</S>
-              <S>                    "text": "line down",</S>
-              <S>                    "command": "multiCommand.mirror.j",</S>
-              <S>                },</S>
-              <S>                "k": {</S>
-              <S>                    "text": "line up",</S>
-              <S>                    "command": "multiCommand.mirror.k",</S>
-              <S>                },</S>
-              <S>                "J": {</S>
-              <S>                    "text": "full line down",</S>
-              <S>                    "command": "multiCommand.mirror.J",</S>
-              <S>                },</S>
-              <S>                "K": {</S>
-              <S>                    "text": "full line up",</S>
-              <S>                    "command": "multiCommand.mirror.K",</S>
-              <S>                },</S>
-              <S>                "b": {</S>
-              <S>                    "text": "word begin",</S>
-              <S>                    "command": "multiCommand.mirror.b",</S>
-              <S>                },</S>
-              <S>                "w": {</S>
-              <S>                    "text": "word begin",</S>
-              <S>                    "command": "multiCommand.mirror.w",</S>
-              <S>                },</S>
-              <S>                "e": {</S>
-              <S>                    "text": "word end",</S>
-              <S>                    "command": "multiCommand.mirror.e",</S>
-              <S>                },</S>
-              <S>                "p": {</S>
-              <S>                    "text": "paragraph",</S>
-              <S>                    "command": "multiCommand.mirror.p",</S>
-              <S>                },</S>
-              <S>                "s": {</S>
-              <S>                    "text": "sentence",</S>
-              <S>                    "command": "multiCommand.mirror.s",</S>
-              <S>                },</S>
-              <S>                "m": {</S>
-              <S>                    "text": "matching",</S>
-              <S>                    "command": "multiCommand.mirror.m",</S>
-              <S>                },</S>
-              <S>                "(": {</S>
-              <S>                    "text": "(surround)",</S>
-              <S>                    "command": "multiCommand.mirror.lparen",</S>
-              <S>                },</S>
-              <S>                "{": {</S>
-              <S>                    "text": "{surround}",</S>
-              <S>                    "command": "multiCommand.mirror.lcurly",</S>
-              <S>                },</S>
-              <S>                "[": {</S>
-              <S>                    "text": "[surround]",</S>
-              <S>                    "command": "multiCommand.mirror.lbracket",</S>
-              <S>                },</S>
-              <S>                "&lt;": {</S>
-              <S>                    "text": "&lt;surround&gt;",</S>
-              <S>                    "command": "multiCommand.mirror.lt",</S>
-              <S>                },</S>
-              <S>                ")": {</S>
-              <S>                    "text": "( surround )",</S>
-              <S>                    "command": "multiCommand.mirror.rparen",</S>
-              <S>                },</S>
-              <S>                "}": {</S>
-              <S>                    "text": "{ surround }",</S>
-              <S>                    "command": "multiCommand.mirror.rcurly",</S>
-              <S>                },</S>
-              <S>                "]": {</S>
-              <S>                    "text": "[ surround ]",</S>
-              <S>                    "command": "multiCommand.mirror.rbracket",</S>
-              <S>                },</S>
-              <S>                "&gt;": {</S>
-              <S>                    "text": "&lt; surround &gt;",</S>
-              <S>                    "command": "multiCommand.mirror.gt",</S>
-              <S>                },</S>
-              <S>                "\"": {</S>
-              <S>                    "text": "\"surround\"",</S>
-              <S>                    "command": "multiCommand.mirror.doublequote",</S>
-              <S>                },</S>
-              <S>                "'": {</S>
-              <S>                    "text": "'surround'",</S>
-              <S>                    "command": "multiCommand.mirror.singlequote",</S>
-              <S>                },</S>
-              <S>                "`": {</S>
-              <S>                    "text": "`surround`",</S>
-              <S>                    "command": "multiCommand.mirror.backtick",</S>
-              <S>                },</S>
-              <S>                "d": {</S>
-              <S>                    "text": "delete surround",</S>
-              <S>                    "command": "multiCommand.mirror.d",</S>
-              <S>                },</S>
+              <S>                "backgroundColor": "$inputValidation.warningBackground",</S>
+              <S>                "borderColor": "$inputValidation.warningBorder",</S>
+              <S>                "borderStyle": "solid",</S>
+              <S>                "borderWidth": "1px",</S>
+              <S>                "isWholeLine": true</S>
               <S>            }</S>
+              <S>        },</S>
+              <S>        "input": {</S>
+              <S>            "cursorStyle": "underline-thin"</S>
+              <S>        },</S>
+              <S>        "insert": {</S>
+              <S>            "decorations": {</S>
+              <S>                "borderColor": "#008b8b"</S>
+              <S>            },</S>
+              <S>            "onLeaveMode": [</S>
+              <S>                [</S>
+              <S>                    ".selections.save",</S>
+              <S>                    {</S>
+              <S>                        "register": " insert"</S>
+              <S>                    }</S>
+              <S>                ]</S>
+              <S>            ],</S>
+              <S>            "selectionBehavior": "caret"</S>
+              <S>        },</S>
+              <S>        "normal": {</S>
+              <S>            "cursorStyle": "block",</S>
+              <S>            "selectionBehavior": "character",</S>
+              <S>            "lineNumbers": "relative",</S>
+              <S>            "decorations": {</S>
+              <S>                "applyTo": "main",</S>
+              <S>                "backgroundColor": "#8B118b22",</S>
+              <S>                "isWholeLine": true, </S>
+              <S>            },</S>
+              <S>            "onEnterMode": [</S>
+              <S>                [</S>
+              <S>                    ".selections.restore",</S>
+              <S>                    {</S>
+              <S>                        "register": " ^",</S>
+              <S>                        "try": true</S>
+              <S>                    }</S>
+              <S>                ]</S>
+              <S>            ],</S>
+              <S>            "onLeaveMode": [</S>
+              <S>                [</S>
+              <S>                    ".selections.save",</S>
+              <S>                    {</S>
+              <S>                        "register": " ^",</S>
+              <S>                        "style": {</S>
+              <S>                            "borderColor": "$editor.selectionBackground",</S>
+              <S>                            "borderStyle": "solid",</S>
+              <S>                            "borderWidth": "2px",</S>
+              <S>                            "borderRadius": "1px"</S>
+              <S>                        },</S>
+              <S>                        "until": [</S>
+              <S>                            [</S>
+              <S>                                "mode-did-change",</S>
+              <S>                                {</S>
+              <S>                                    "include": "normal"</S>
+              <S>                                }</S>
+              <S>                            ],</S>
+              <S>                            [</S>
+              <S>                                "selections-did-change"</S>
+              <S>                            ]</S>
+              <S>                        ]</S>
+              <S>                    }</S>
+              <S>                ]</S>
+              <S>            ]</S>
               <S>        }</S>
               <S>    },</S>
-              <S>    "dance.normalMode.cursorStyle": "line",</S>
-              <S>    "dance.insertMode.lineNumbers": "on",</S>
-              <S>    "dance.insertMode.selectionStyle": {</S>
-              <S>        "borderColor": "darkcyan"</S>
-              <S>    },</S>
-              <S>    "dance.normalMode.lineHighlight": "#8B118b22",</S>
               <S>    "workbench.colorCustomizations": {</S>
               <S>        "editor.selectionBackground": "#00ccff62",</S>
               <S>    },</S>
               <S>    "editor.detectIndentation": false,</S>
-              <S>    "dance.selectionBehavior": "character",</S>
-              <S>    "vim.searchHighlightColor": "Cyan",</S>
-              <S>    "vim.searchHighlightTextColor": "Black",</S>
-              <S>    "vim.useCtrlKeys": true,</S>
               <S>    "search.smartCase": true,</S>
-              <S>    "vim.smartRelativeLine": true,</S>
-              <S>    "vim.visualstar": true,</S>
               <S>    "workbench.colorTheme": "Horizon Dark",</S>
+              <S>    "redhat.telemetry.enabled": false,</S>
+              <S>    "window.zoomLevel": 0,</S>
+              <S>    "security.workspace.trust.enabled": false,</S>
+              <S>    "terminal.integrated.profiles.windows": {</S>
+              <S>        "Clean PowerShell": {</S>
+              <S>            "source": "PowerShell",</S>
+              <S>            "icon": "terminal-powershell",</S>
+              <S>            "args": [ "-NoProfile", "-NoLogo"]</S>
+              <S>        },</S>
+              <S>        "PowerShell": {</S>
+              <S>            "source": "PowerShell",</S>
+              <S>            "icon": "terminal-powershell"</S>
+              <S>        },</S>
+              <S>        "Command Prompt": {</S>
+              <S>            "path": [</S>
+              <S>                "${env:windir}\\Sysnative\\cmd.exe",</S>
+              <S>                "${env:windir}\\System32\\cmd.exe"</S>
+              <S>            ],</S>
+              <S>            "args": [],</S>
+              <S>            "icon": "terminal-cmd"</S>
+              <S>        } </S>
+              <S>    }</S>
               <S>}</S>
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="3">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>endow.code-snippets</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\Code\User\snippets\endow.code-snippets</S>
@@ -726,11 +356,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="5">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>alacritty.yml</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\alacritty\alacritty.yml"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\alacritty\alacritty.yml</S>
@@ -1595,11 +1226,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="7">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>profile.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.ps1"</S>
           <S N="ExpandedTarget">C:\Users\endow\Documents\WindowsPowerShell\profile.ps1</S>
@@ -1858,11 +1490,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="9">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>profile.psm1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.psm1"</S>
           <S N="ExpandedTarget">C:\Users\endow\Documents\WindowsPowerShell\profile.psm1</S>
@@ -2272,11 +1905,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="11">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>profile.config.psd1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.config.psd1"</S>
           <S N="ExpandedTarget">C:\Users\endow\Documents\WindowsPowerShell\profile.config.psd1</S>
@@ -2382,11 +2016,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="13">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>psreadline.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\psreadline.ps1"</S>
           <S N="ExpandedTarget">C:\Users\endow\Documents\WindowsPowerShell\psreadline.ps1</S>
@@ -2623,11 +2258,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="15">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>prompt.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\prompt.ps1"</S>
           <S N="ExpandedTarget">C:\Users\endow\Documents\WindowsPowerShell\prompt.ps1</S>
@@ -2644,11 +2280,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="17">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>argumentcompleter.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\argumentcompleter.ps1"</S>
           <S N="ExpandedTarget">C:\Users\endow\Documents\WindowsPowerShell\argumentcompleter.ps1</S>
@@ -2727,11 +2364,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="19">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>settings.json</ToString>
         <Props>
           <S N="Target">"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
@@ -2746,10 +2384,11 @@
               <S>    "defaultProfile": "{c0d191a7-334d-4042-b9c8-c4d235b75b34}", </S>
               <S>    "profiles": {</S>
               <S>        "defaults": {</S>
-              <S>            "fontFace": "Fira Code",</S>
+              <S>            "fontFace": "FiraCode NF",</S>
               <S>            "fontSize": 10,</S>
               <S>            "snapOnInput": true,</S>
-              <S>            "startingDirectory": "C:\\Users\\endowdly"</S>
+              <S>            "startingDirectory": "C:\\Users\\endowdly",</S>
+              <S>            "scrollbarState": "hidden"</S>
               <S>        },</S>
               <S>        "list": [</S>
               <S>            {</S>
@@ -2758,7 +2397,7 @@
               <S>                "guid": "{c0d191a7-334d-4042-b9c8-c4d235b75b34}",</S>
               <S>                "commandline": "powershell.exe -nologo",</S>
               <S>                "hidden": false,</S>
-              <S>                "fontFace": "consolas",</S>
+              <S>                "fontFace": "GohuFont Nerd Font",</S>
               <S>                "fontSize": 11,</S>
               <S>                "cursorColor": "#700000",</S>
               <S>                "cursorShape": "filledBox",</S>
@@ -2773,8 +2412,7 @@
               <S>                "hidden": false,</S>
               <S>                "cursorColor": "#000070",</S>
               <S>                "cursorShape": "filledBox",</S>
-              <S>                "colorScheme": "ayu",</S>
-              <S>                "fontFace": "Roboto Mono for Powerline"</S>
+              <S>                "colorScheme": "ayu"</S>
               <S>            },</S>
               <S>            {</S>
               <S>                // Make changes here to the powershell.exe profile</S>
@@ -2784,8 +2422,7 @@
               <S>                "hidden": false,</S>
               <S>                "cursorColor": "#000070",</S>
               <S>                "cursorShape": "filledBox",</S>
-              <S>                "colorScheme": "Red Planet",</S>
-              <S>                "fontFace": "Roboto Mono for Powerline"</S>
+              <S>                "colorScheme": "Red Planet"</S>
               <S>            },</S>
               <S>            {</S>
               <S>                // Make changes here to the cmd.exe profile</S>
@@ -2908,11 +2545,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="21">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>.vimrc</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vimrc"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vimrc</S>
@@ -2922,11 +2560,12 @@
             <LST />
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="23">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>general.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\general.vim"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vim\general.vim</S>
@@ -3021,11 +2660,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="25">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>keys.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\keys.vim"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vim\keys.vim</S>
@@ -3088,46 +2728,27 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="27">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>autocommands.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\autocommands.vim"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vim\autocommands.vim</S>
           <S N="TargetObject">C:\Users\endow\.vim\autocommands.vim</S>
           <Obj N="Content" RefId="28">
             <TNRef RefId="2" />
-            <LST>
-              <S>" Vim Autocommands</S>
-              <S>"   Needs to be sourced</S>
-              <S>" endo / endowdly@gmail.com / github.com/endowdly</S>
-              <S></S>
-              <S>autocmd BufNewFile,BufRead *.fs,*.fsi,*.fsx set filetype=fsharp</S>
-              <S></S>
-              <S>augroup numberToggle</S>
-              <S>    autocmd!</S>
-              <S>    autocmd BufEnter,FocusGained,InsertLeave,CmdlineLeave * set relativenumber</S>
-              <S>    autocmd BufLeave,FocusLost,InsertEnter,CmdlineEnter * set norelativenumber</S>
-              <S>augroup end</S>
-              <S></S>
-              <S>augroup colorLineToggle</S>
-              <S>    autocmd!</S>
-              <S>    autocmd BufEnter,FocusGained * set cursorline</S>
-              <S>    autocmd BufLeave,FocusLost * set nocursorline</S>
-              <S>augroup end</S>
-              <S></S>
-              <S>" vim:fdm=marker:foldlevel=0</S>
-              <S></S>
-            </LST>
+            <LST />
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="29">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>gfx2-win32.cfg</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\GrafX2\gfx2-win32.cfg"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\GrafX2\gfx2-win32.cfg</S>
@@ -3152,11 +2773,12 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="31">
         <TNRef RefId="1" />
-        <ToString>DotEntry</ToString>
+        <ToString>gfx2.ini</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\GrafX2\gfx2.ini"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\GrafX2\gfx2.ini</S>
@@ -3207,7 +2829,7 @@
               <S>  ; 1: Solid                          | 1: Solide</S>
               <S>  ; 2: Transparent                    | 2: Transparent</S>
               <S>  ; 3: Thin (solid)                   | 3: Fin (solide)</S>
-              <S>  Cursor_aspect = 1_x0009_; (default 1)</S>
+              <S>  Cursor_aspect = 3_x0009_; (default 1)</S>
               <S></S>
               <S>[MENU]                                # [MENU]</S>
               <S></S>
@@ -3457,14 +3079,14 @@
               <S></S>
               <S>  ; Bookmarked directories. Leave the directory blank for unused ones.</S>
               <S>  ;</S>
-              <S>  Bookmark_label = </S>
-              <S>  Bookmark_directory = </S>
+              <S>  Bookmark_label = Art</S>
+              <S>  Bookmark_directory = C:\Users\endowdly\OneDrive\DOCUME~1\Art</S>
               <S></S>
-              <S>  Bookmark_label = </S>
-              <S>  Bookmark_directory = </S>
+              <S>  Bookmark_label = pal</S>
+              <S>  Bookmark_directory = C:\Users\endowdly\OneDrive\DOCUME~1\Art\pal</S>
               <S></S>
-              <S>  Bookmark_label = </S>
-              <S>  Bookmark_directory = </S>
+              <S>  Bookmark_label = Pictures</S>
+              <S>  Bookmark_directory = C:\Users\endowdly\Pictures</S>
               <S></S>
               <S>  Bookmark_label = </S>
               <S>  Bookmark_directory = </S>
@@ -3473,11 +3095,11 @@
               <S>  ; right. If you prefer the colors ordered top to bottom, set this option</S>
               <S>  ; to YES.</S>
               <S>  ;</S>
-              <S>  Palette_vertical = yes; (Default YES)</S>
+              <S>  Palette_vertical = no; (Default YES)</S>
               <S></S>
               <S>  ; The program remembers the last window position, if the</S>
               <S>  ; OS isn't able to do it by itself. (ie: Windows)</S>
-              <S>  Window_position = 312,312; (Default 9999,9999 which means: NA)</S>
+              <S>  Window_position = 227,107; (Default 9999,9999 which means: NA)</S>
               <S></S>
               <S>  ; This is the time (in milliseconds) between two clicks for Grafx2 to</S>
               <S>  ; recognize a double-click. Double-click is used mostly in the palette</S>
@@ -3493,12 +3115,12 @@
               <S>  ; Name of the skinfile you want to  | Nom du fichier skin que vous voulez</S>
               <S>  ; use.                              | utiliser.</S>
               <S>  ; Default : (empty to let the program choose)</S>
-              <S>  Skin_file = </S>
+              <S>  Skin_file = skin_DPaint.png</S>
               <S></S>
               <S>  ; Name of the font file (8x8) you   | Nom du fichier police de caractÃ¨re</S>
               <S>  ; want to use.                      | 8x8 utilisÃ©e dans les menus.</S>
               <S>  ; Default : (empty to let the program choose)</S>
-              <S>  Font_file = </S>
+              <S>  Font_file = font_DPaint.png</S>
               <S></S>
               <S>  ; This determines the color value for the grid. Each pixel of</S>
               <S>  ; the grid will be displayed by XOR-ing the original color with</S>
@@ -3592,17 +3214,18 @@
             </LST>
           </Obj>
           <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="33">
         <TN RefId="3">
-          <T>DotCommand</T>
-          <T>Entry</T>
+          <T>DotEntry</T>
+          <T>Dot</T>
           <T>System.Object</T>
         </TN>
-        <ToString>DotCommand</ToString>
+        <ToString>Install Visual Studio Code Extensions</ToString>
         <Props>
-          <SBK N="ExpandCommand"></SBK>
+          <S N="Description">Install Visual Studio Code Extensions</S>
           <Obj N="Content" RefId="34">
             <TNRef RefId="2" />
             <LST>
@@ -3611,65 +3234,70 @@
               <S>asciidoctor.asciidoctor-vscode@2.8.10</S>
               <S>Bauke.horizon-vscode@3.0.3</S>
               <S>cake-build.cake-vscode@1.0.0</S>
-              <S>darkriszty.markdown-table-prettify@3.0.0</S>
-              <S>DavidAnson.vscode-markdownlint@0.40.3</S>
+              <S>darkriszty.markdown-table-prettify@3.6.0</S>
+              <S>DavidAnson.vscode-markdownlint@0.45.0</S>
               <S>DotJoshJohnson.xml@2.5.1</S>
-              <S>enkia.tokyo-night@0.8.2</S>
+              <S>enkia.tokyo-night@0.8.3</S>
               <S>fabiospampinato.vscode-todo-plus@4.18.4</S>
+              <S>gregoire.dance@0.5.8</S>
               <S>hawkeyegold.bonsai@1.4.0</S>
-              <S>Ionide.Ionide-fsharp@5.9.1</S>
+              <S>Ionide.Ionide-fsharp@5.10.2</S>
               <S>jamesmaj.easy-icons@0.3.1</S>
               <S>jerry.theme-dark-starry-night@1.0.2</S>
-              <S>k--kato.docomment@0.1.20</S>
+              <S>k--kato.docomment@0.1.30</S>
               <S>lunarlimbo.banner-comments-plus@0.3.1</S>
               <S>mdickin.markdown-shortcuts@0.12.0</S>
               <S>mhutchie.git-graph@1.30.0</S>
-              <S>ms-dotnettools.csharp@1.23.11</S>
-              <S>ms-python.python@2020.9.114305</S>
-              <S>ms-vscode.powershell@2020.6.0</S>
-              <S>RandomFractalsInc.vscode-vega-viewer@9.3.0</S>
-              <S>rolandostar.tabletopsimulator-lua@1.0.3</S>
+              <S>ms-dotnettools.csharp@1.23.17</S>
+              <S>ms-python.python@2021.12.1559732655</S>
+              <S>ms-toolsai.jupyter@2021.11.1001550889</S>
+              <S>ms-vscode.powershell@2021.10.2</S>
+              <S>RandomFractalsInc.vscode-vega-viewer@9.5.0</S>
+              <S>rolandostar.tabletopsimulator-lua@1.1.3</S>
               <S>rust-lang.rust@0.7.8</S>
-              <S>streetsidesoftware.code-spell-checker@1.9.0</S>
+              <S>streetsidesoftware.code-spell-checker@2.0.13</S>
               <S>sygene.auto-correct@0.2.2</S>
               <S>teabyii.ayu@1.0.5</S>
-              <S>vscodevim.vim@1.21.5</S>
+              <S>vscodevim.vim@1.21.10</S>
               <S>wwm.better-align@1.1.6</S>
               <S>XadillaX.viml@1.0.1</S>
               <S>yannpapouin.theme-monolivia@1.0.5</S>
             </LST>
           </Obj>
           <SBK N="CompressCommand">code --list-extensions --show-versions</SBK>
+          <Nil N="ExpandCommand" />
         </Props>
       </Obj>
       <Obj RefId="35">
         <TNRef RefId="3" />
-        <ToString>DotCommand</ToString>
+        <ToString>Add endo-scoop bucket to scoop</ToString>
         <Props>
-          <SBK N="ExpandCommand">scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git</SBK>
+          <S N="Description">Add endo-scoop bucket to scoop</S>
           <Obj N="Content" RefId="36">
             <TNRef RefId="2" />
             <LST />
           </Obj>
           <SBK N="CompressCommand"></SBK>
+          <SBK N="ExpandCommand">scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git</SBK>
         </Props>
       </Obj>
       <Obj RefId="37">
         <TNRef RefId="3" />
-        <ToString>DotCommand</ToString>
+        <ToString>Install scoop apps</ToString>
         <Props>
-          <SBK N="ExpandCommand">scoop install $_</SBK>
+          <S N="Description">Install scoop apps</S>
           <Obj N="Content" RefId="38">
             <TNRef RefId="2" />
             <LST>
               <S>7zip (v:19.00) [main]</S>
-              <S>agave-nf (v:2.1.0)</S>
+              <S>agave-nf (v:2.1.0) [nerd-fonts]</S>
               <S>alacritty (v:0.5.0) [extras]</S>
               <S>bat (v:0.15.4) [main]</S>
               <S>bigblueterminal-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>BigBlueTerminal-NF-Mono (v:2.1.0)</S>
+              <S>BigBlueTerminal-NF-Mono (v:2.1.0) [nerd-fonts]</S>
               <S>cacert (v:2021-04-13) [main]</S>
               <S>colortool (v:1904.29002) [main]</S>
+              <S>concfg (v:0.2021.05.09) [main]</S>
               <S>dark (v:3.11.2) [main]</S>
               <S>delta (v:0.7.1) [main]</S>
               <S>dotnet-sdk (v:5.0.402) [main]</S>
@@ -3683,12 +3311,15 @@
               <S>gohu-nf (v:2.1.0) [nerd-fonts]</S>
               <S>gops (v:2.2.0) [endo-scoop]</S>
               <S>grafx2 (v:2.8) [endo-scoop]</S>
+              <S>hasklig-nf (v:2.1.0) [nerd-fonts]</S>
               <S>hexed (v:1.0.32) [main]</S>
               <S>innounp (v:0.50) [main]</S>
               <S>insect (v:5.4.0) [main]</S>
               <S>kicad (v:5.1.10_1) [extras]</S>
+              <S>komorebi (v:0.1.6) [komorebi]</S>
               <S>less (v:562.0) [main]</S>
               <S>lessmsi (v:1.7.0) [main]</S>
+              <S>licecap (v:1.28) [extras]</S>
               <S>links (v:2.25) [main]</S>
               <S>neovim (v:0.4.4) [main]</S>
               <S>nodejs (v:14.9.0) [main]</S>
@@ -3706,12 +3337,13 @@
               <S>terminus-nf (v:2.1.0) [nerd-fonts]</S>
               <S>vcredist2019 (v:14.27.29016.0) [extras]</S>
               <S>vlc (v:3.0.16) [extras]</S>
-              <S>vscode (v:1.48.2) [extras]</S>
+              <S>vscode (v:1.63.0) [extras]</S>
               <S>windows-terminal (v:1.2.2381.0) [extras]</S>
               <S>winfetch (v:2.2.0) [extras]</S>
             </LST>
           </Obj>
           <SBK N="CompressCommand">scoop export</SBK>
+          <SBK N="ExpandCommand">scoop install $_</SBK>
         </Props>
       </Obj>
     </LST>

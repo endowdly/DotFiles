@@ -6,12 +6,12 @@ using namespace System.Management.Automation
 param(
     [Parameter(
         Mandatory,
-        HelpMessage = 'Enter a mode, Update or Backup')]
-    [ValidateSet('Pull', 'Push', 'Debug')]
+        HelpMessage = 'Enter a mode, Push to the archive, Pull from the archive, or Sync latest changes?')]
+    [ValidateSet('Pull', 'Push', 'Debug', 'Sync')]
     [string] $Mode
     ,
     [ValidateSet('File', 'Entry', 'Both')]
-    [string] $DotType = 'Both'
+    [string] $DotType = 'File'
     ,
     [switch] $Select
     ,
@@ -25,6 +25,7 @@ data Message {
         TerminatingError = @{
             ConfigNotFound = 'Fatal: config file ''{0}'' not found or invalid!'
             What           = 'Fatal: you somehow reached the unreachable!'
+            Wip            = 'Work in progress: Not implemented yet!'
         } 
         ShouldContinue   = @{
             ExpandDotFiles  = 'Continue? This will likely overwrite your dot files; backup recommended.'
@@ -33,15 +34,15 @@ data Message {
         ShouldProcess    = @{
             ExportDotFile = 'Export dot entries'
         }
-        Warning = @{
+        Warning          = @{
             TypeDateAlreadyDeclared = 'TypeData seems to be already declared for my internal types.'
         }
         Sourced          = 'The dots script has been sourced.'
 
         Menu             = @{
-            Empty = 'Nothing was passed to ''Invoke-Menu''' 
+            Empty   = 'Nothing was passed to ''Invoke-Menu''' 
             TooMany = 'The incoming array has more items than the console window can display! Damn.'
-            Exit = 'Press any key to exit...'
+            Exit    = 'Press any key to exit...'
         }
     }
 }
@@ -82,10 +83,10 @@ data IsAre {
 
 data Character {
     @{
-        Space = ' '
+        Space      = ' '
         CommaSpace = ', '
-        CheckMark = '✔'
-        Current = '►'
+        CheckMark  = '✔'
+        Current    = '►'
     }
 }
 
@@ -97,7 +98,9 @@ Join-Path $PSScriptRoot $Setting.ArchivePath | Set-Variable DotsFile -Option Rea
 
 #endregion
 
-#region Helpers 
+#region Helpers ---------------------------------------------------------------
+
+
 function New-Scriptblock {
     param(
         [Parameter(ValueFromPipeline)]
@@ -126,13 +129,13 @@ function Assert-Config ($x, $y) {
         $isAre = $IsAre[$xs.Count -gt 1]
 
         throw ($Message.InvalidConfig -f ($xs -join $Character.CommaSpace),
-               $isAre,
-               ($ys -join $Character.CommaSpace)) 
+            $isAre,
+            ($ys -join $Character.CommaSpace)) 
     } 
 }
 
 
-# Console helper functions
+# Console Helper Functions ----------------------------------------------------
 function CenterString ($s) {
     $x = $Host.UI.RawUI.BufferSize.Width
     $s.PadLeft(((($x - 1) - $s.Length) / 2) + $s.Length).PadRight($x - 1)
@@ -166,6 +169,7 @@ function ClearConsoleRow ($n) { SetCursorPosition 0 $n; ConsoleWrite ($Character
 function CursorTop { [Console]::CursorTop }
 function EvenSpace ($n) { [int] [Console]::WindowWidth / $n }
 
+
 #region Classes ----------------------------------------------------------------
 
 
@@ -174,21 +178,12 @@ class Dot {
     [scriptblock] $CompressCommand 
     [scriptblock] $ExpandCommand
 
-    [void] SetContent($Content) {
+    [void] SetContent([string[]] $Content) {
         $this.Content = $Content
     }
 
     [void] Compress() {
         $this.Content = $this.CompressCommand.Invoke()
-    } 
-
-    [void] Expand() {
-        if (!$this.Content) {
-            $this.ExpandCommand.Invoke()
-        }
-        else { 
-            $this.Content.ForEach($this.ExpandCommand)
-        }
     } 
 }
 
@@ -203,13 +198,22 @@ class DotEntry : Dot {
         $this.Description = $x.Description
     }
 
+    [string] ToString() {
+        return $this.Description
+    }
+
     [void] Expand([bool] $b) {
         $this.Expand()
     }
 
-    [string] ToString() {
-        return $this.Description
-    }
+    [void] Expand() {
+        if (!$this.Content) {
+            $this.ExpandCommand.Invoke()
+        }
+        else { 
+            $this.Content.ForEach($this.ExpandCommand)
+        }
+    } 
 }
 
 
@@ -239,27 +243,27 @@ class DotFile : Dot {
         }
     }
 
-    [void] Expand() { }  # Do nothing
+    [hashtable] Expand() { return $this.Expand($false) }
 
     [hashtable] Expand([bool] $force) {
         $this.ExpandTarget()
 
         $isValidPath = 
-            try {
-                [Path]::GetPathRoot($this.TargetObject.FullName)
-                [Path]::GetDirectoryName($this.TargetObject.FullName)
-                [Path]::GetFileName($this.TargetObject.FullName)
+        try {
+            [Path]::GetPathRoot($this.TargetObject.FullName)
+            [Path]::GetDirectoryName($this.TargetObject.FullName)
+            [Path]::GetFileName($this.TargetObject.FullName)
 
-                $true
-            }
-            catch {
-                $false 
-            }
+            $true
+        }
+        catch {
+            $false 
+        }
 
         if ($this.TargetObject.Exists -or ($force -and $isValidPath)) {
             return @{
-                Content = $this.Content
-                Path    = $this.TargetObject.FullName
+                InputObject = $this.Content
+                LiteralPath = $this.TargetObject.FullName
             }
 
             # $this.Content | Out-File (New-Item $this.TargetObject.FullName -Force) -Encoding UTF8 -Verbose
@@ -270,6 +274,17 @@ class DotFile : Dot {
 
     [string] ToString() {
         return $this.TargetObject.Name
+    }
+
+    static [DotFile] Reserialize([psobject] $deserializedObject) {
+        if ($deserializedObject.PSTypeNames.Contains('Deserialized.DotFile')) {
+            return [DotFile] @{
+                Target  = $deserializedObject.Target
+                Content = $deserializedObject.Content
+            }
+        }
+
+        return [DotFile] @{}
     }
 
     hidden [void] ExpandTarget() {
@@ -333,7 +348,7 @@ class DotEntryConverter : PSObjectConverter {
         return $psSourceValue.PSTypeNames.Contains('Deserialized.DotEntry')
     }
 
-    [DotEntry] ConvertFrom(
+    [object] ConvertFrom(
         [psobject] $psSourceValue, 
         [type] $destinationType, 
         [IFormatProvider] $formatProvider, 
@@ -341,12 +356,12 @@ class DotEntryConverter : PSObjectConverter {
 
         $obj = [DotEntry] @{
             Content         = $psSourceValue.Content
-            CompressCommand = $psSourceValue.CompressCommand
             Description     = $psSourceValue.Description
-            ExpandCommand   = $psSourceValue.ExpandCommand
+            CompressCommand = New-Scriptblock $psSourceValue.CompressCommand
+            ExpandCommand   = New-Scriptblock $psSourceValue.ExpandCommand
         }
 
-        return [DotEntry] $obj
+        return $obj
     }
 }
 
@@ -357,7 +372,7 @@ class DotFileConverter : PSObjectConverter {
         return $psSourceValue.PSTypeNames.Contains('Deserialized.DotFile')
     }
 
-    [DotFile] ConvertFrom(
+    [object] ConvertFrom(
         [psobject] $psSourceValue, 
         [type] $destinationType, 
         [IFormatProvider] $formatProvider, 
@@ -368,14 +383,14 @@ class DotFileConverter : PSObjectConverter {
             Content = $psSourceValue.Content
         }
 
-        return [DotFile] $obj 
+        return $obj 
     }
 }
 
-Update-TypeData -TypeName 'Deserialized.DotEntry' -TargetTypeForDeserialization 'DotEntry' -Force
-Update-TypeData -TypeName 'Deserialized.DotFile' -TargetTypeForDeserialization 'DotFile' -Force
-Update-TypeData -TypeName 'DotEntry' -TypeConverter 'DotEntryConverter' -Force
-Update-TypeData -TypeName 'DotFile' -TypeConverter 'DotFileConverter' -Force
+Update-TypeData -TypeName Deserialized.DotEntry -TargetTypeForDeserialization DotEntry -Force
+Update-TypeData -TypeName Deserialized.DotFile -TargetTypeForDeserialization DotFile -Force
+Update-TypeData -TypeName DotEntry -TypeConverter DotEntryConverter -Force
+Update-TypeData -TypeName DotFile -TypeConverter DotFileConverter -Force
 
 #endregion
 
@@ -388,8 +403,10 @@ $ConfigFile = @{
 
 try {
     Import-LocalizedData @ConfigFile
-    Assert-Config ($Config.Keys -as [string[]]) $Validation
-    Assert-Config ($Config.Command.Keys -as [string[]]) $CommandValidation
+    # Assert-Config ($Config.Keys -as [string[]]) $Validation
+    # Assert-Config ($Config.Command.Keys -as [string[]]) $CommandValidation
+    Assert-Config @($Config.Keys) $Validation
+    Assert-Config @($Config.Command.Keys) $CommandValidation
 } 
 catch { 
     Write-Error $_ -ErrorAction Continue 
@@ -432,7 +449,7 @@ function Get-Dots {
 
     switch ($PSCmdlet.ParameterSetName) {
         File { [Dot[]] @($File) }
-        Entry { [Dot[]] @($Command ) }
+        Entry { [Dot[]] @($Command) }
         default { [Dot[]] @($File + $Command) }
     } 
 }
@@ -445,19 +462,20 @@ function Import-DotFile {
     param(
         # Specifies a path to one existing location.
         [Parameter(
+            Position = 0,
             Mandatory,
             ValueFromPipeline,
             ValueFromPipelineByPropertyName,
             HelpMessage = 'Path to one valid location.')]
         [Alias('Path', 'PSPath')]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript({
-            if (Test-Path $_) {
-                return $true
-            }
+        [ValidateScript( {
+                if (Test-Path $_) {
+                    return $true
+                }
 
-            throw 'Invalid file.'
-        })]
+                throw 'Invalid file.'
+            })]
         [string] $InputObject
         ,
         [Parameter(ParameterSetName = 'File')]
@@ -470,13 +488,15 @@ function Import-DotFile {
     )
     
     begin {
-        $isFile = { $null -ne $_.ExpandedTarget }
-        $isEntry = { !$_.ExpandedTarget }
+        $isFile = { $_ -is [DotFile] }
+        $isEntry = { $_ -is [DotEntry] }
     }
     
      
     process {
         $raw = Get-Content -Raw -Encoding UTF8 -Path $InputObject
+
+        # [PSSerializer]::Deserialize($raw)
 
         switch ($PSCmdlet.ParameterSetName) {
             File { [PSSerializer]::Deserialize($raw).Where($isFile) }
@@ -497,13 +517,13 @@ function Export-DotFile {
             HelpMessage = 'Path to one valid location.')]
         [Alias('PSPath')]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript({
-            if (Test-Path -IsValid $_) {
-                return $true
-            }
+        [ValidateScript( {
+                if (Test-Path -IsValid $_) {
+                    return $true
+                }
 
-            throw 'Invalid location.'
-        })]
+                throw 'Invalid location.'
+            })]
         [string] $Path
         ,
         [Parameter(
@@ -537,7 +557,7 @@ function Compress-DotEntry {
         [Parameter(
             ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [Dot[]] $InputObject
+        $InputObject
     )
     
     begin {
@@ -560,7 +580,7 @@ function Expand-DotEntry {
         [Parameter(
             ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [Dot[]] $InputObject
+        $InputObject
         ,
         [switch] $Force
     )
@@ -574,7 +594,7 @@ function Expand-DotEntry {
                 $_.Expand($false)
             }
 
-            $_
+            # $_
         }
     }
     
@@ -587,11 +607,7 @@ function Expand-DotEntry {
 function Invoke-Menu {
     <#
     .Synopsis
-      Invokes a command-line selection menu
-    .Description
-      
-    .Example
-      
+      Invokes a command-line selection menu 
     #>
 
     [CmdletBinding()]
@@ -655,7 +671,7 @@ function Invoke-Menu {
             }
 
             [void] ToggleCurrent() { 
-                $this.Current= !$this.Current
+                $this.Current = !$this.Current
                 
                 if ($this.Current) {
                     $this.Color = [ConsoleColor]::Cyan
@@ -727,7 +743,7 @@ function Invoke-Menu {
 
         function ResetPositionOnOverflow ($ls, $pos) {
             if ($pos -lt 0) { $pos = $ls.Count - 1 }
-            if ($pos -gt $ls.Count - 1) { $pos = 0} 
+            if ($pos -gt $ls.Count - 1) { $pos = 0 } 
 
             $pos
         }
@@ -823,149 +839,6 @@ function Invoke-Menu {
     }
 }
 
-function Invoke-Dotter {
-    # Grab the console screen contents to restore later
-    $x = $Host.UI.RawUI.BufferSize.Width
-    $y = $Host.UI.RawUI.CursorPosition.Y
-    $z = [System.Management.Automation.Host.Rectangle]::new(0, 0, $x - 1, $y)
-    $o = [System.Management.Automation.Host.Coordinates]::new(0, 0)
-    $conBuffer = $Host.UI.RawUI.GetBufferContents($z)   
-
-
-    function ExitDotter {
-        Clear-Host 
-
-        $Host.UI.RawUI.SetBufferContents($o, $conBuffer)
-        
-        SetCursorPosition 0 $y
-        CursorOn
-    }
-    
-    Clear-Host
-
-    SetCursorPosition 0 1 
-    WriteColorString (CenterString 'Endo Dotter') Cyan 
-    WriteLine
-    WriteLine
-    $doRow = CursorTop
-    WriteColorString (CenterString 'What Do?') Magenta 
-    WriteLine
-    WriteLine
-
-    $s = 'Pull' + 'Push'.PadLeft((EvenSpace 3)) + 'Sync'.PadLeft((EvenSpace 3))
-    $s1 = CenterString $s
-    $i = $s1.IndexOf('l')
-    $j = $s1.IndexOf('s')
-    $k = $s1.IndexOf('y')
-
-    $qRow = CursorTop
-    ConsoleWrite $s1
-    SetCursorPosition $i (CursorTop)
-    WriteColorStringSegment l Green
-    SetCursorPosition $j (CursorTop)
-    WriteColorStringSegment s Green
-    SetCursorPosition $k (CursorTop)
-    WriteColorStringSegment y Red
-    WriteLine
-    WriteLine
-    CursorOff
-
-    function ChooseFileOrCommand {
-        ClearConsoleRow $doRow
-        SetCursorPosition 0 $doRow 
-        WriteColorString (CenterString 'Work with Files or Commands?') Cyan
-        ClearConsoleRow $qRow
-        SetCursorPosition 0 $qRow
-
-        $s = 'Files' + 'Commands'.PadLeft((EvenSpace 4)) + 'Both'.PadLeft((EvenSpace 4))
-        $s1 = CenterString $s
-        $i = $s1.IndexOf('F')
-        $j = $s1.IndexOf('C')
-        $k = $s1.IndexOf('B')
-
-        ConsoleWrite $s1
-        SetCursorPosition $i (CursorTop)
-        WriteColorStringSegment F Green
-        SetCursorPosition $j (CursorTop)
-        WriteColorStringSegment C Green
-        SetCursorPosition $k (CursorTop)
-        WriteColorStringSegment B Green
-        WriteLine
-    }
-
-    function ChooseAllOrSelect {
-        ClearConsoleRow $doRow
-        SetCursorPosition 0 $doRow
-        WriteColorString (CenterString 'choose') Cyan 
-        ClearConsoleRow $qRow
-        SetCursorPosition 0 $qRow 
-
-        $s = 'All' + 'Select'.PadLeft((EvenSpace 4))
-        $s1 = CenterString $s 
-        $i = $s1.IndexOf('A')
-        $j = $s1.IndexOf('S')
-
-        ConsoleWrite $s1
-        SetCursorPosition $i (CursorTop)
-        WriteColorStringSegment A Green
-        SetCursorPosition $j (CursorTop)
-        WriteColorStringSegment S Green 
-        WriteLine 
-    }
-
-    $f = {
-        switch ((GetKeyPress).Character) {
-            f { Get-Dots -FileOnly }
-            c { Get-Dots -CommandOnly }
-            default { Get-Dots }
-        }
-
-    }
-
-   
-    switch ((GetKeyPress).Character) {
-
-        l {
-            ChooseFileOrCommand
-
-            $dots = &$f
-
-            ChooseAllOrSelect 
-
-            switch ((GetKeyPress).Character) {
-                a { CenterString 'Pull All' }
-                s { $dots | Invoke-Menu 'Pull from Menu' }
-            } 
-        }
-
-        s {
-            ChooseFileOrCommand
-
-            $dots = &$f
-
-            ChooseAllOrSelect
-            
-            switch ((GetKeyPress).Character) {
-                a { CenterString 'Push All' }
-                s { $dots | Invoke-Menu 'Push from Menu' }
-            }
-        }
-
-        y {
-            ChooseAllOrSelect
-
-            switch ((GetKeyPress).Character) {
-                a { CenterString 'Sync All' }
-                s { Get-Dots -FileOnly | Invoke-Menu 'Sync from Menu' }
-            }
-        }
-    }
-
-    Await
-
-    ExitDotter
-}
-
 #endregion
 
 $import = @{
@@ -990,7 +863,7 @@ switch ($DotType) {
 
 function SelectOrPass {
     begin { 
-        $ls = [List[Dot]] @()
+        $ls = [ArrayList] @()
     }
     process {
         [void] $ls.Add($_) 
@@ -998,7 +871,9 @@ function SelectOrPass {
 
     end {
         if ($Select) {
-            return $ls.ToArray() | Invoke-Menu
+            $ls.ToArray() | Invoke-Menu ('Select Dots to {0}' -f $Mode)
+
+            return
         }
 
         $ls.ToArray()
@@ -1009,24 +884,22 @@ switch ($Mode) {
 
     Pull { 
         Import-DotFile @import |
-            SelectOrPass |
-            Expand-DotEntry
+        SelectOrPass |
+        Expand-DotEntry
     }
 
     Push { 
         Get-Dots @get |
-            SelectOrPass |
-            Compress-DotEntry |
-            Export-DotFile $DotsFile 
+        SelectOrPass |
+        Compress-DotEntry |
+        Export-DotFile $DotsFile 
     } 
 
     Sync {
-        'Work in Progrees'
-        # $pulledDots = Import-DotFile $DotsFile -FileOnly
-        # $currentDots = Get-Dots -FileOnly
+        Write-Error -Exception [System.NotImplementedException] -Message $Message.TerminatingError.Wip
     } 
 
-    Dotter { Invoke-Dotter } 
+    # Dotter { Invoke-Dotter } 
 
     Debug { Write-Output $Message.Sourced }
 
