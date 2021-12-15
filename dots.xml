@@ -1,7 +1,7 @@
 ﻿<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
   <Obj RefId="0">
     <TN RefId="0">
-      <T>System.Object[]</T>
+      <T>Dot[]</T>
       <T>System.Array</T>
       <T>System.Object</T>
     </TN>
@@ -153,31 +153,18 @@
               <S>    "workbench.iconTheme": "vscode-endowdly-icons",</S>
               <S>    "powershell.powerShellDefaultVersion": "Windows PowerShell (x64)",</S>
               <S>    "FSharp.addFsiWatcher": true,</S>
-              <S>    "julia.execution.resultType": "both",</S>
               <S>    "editor.wordWrapColumn": 115,</S>
               <S>    "explorer.compactFolders": false,</S>
-              <S>    "mdmath.delimiters": "julia",</S>
               <S>    "auto-correct.dictionary": [ </S>
               <S>        {</S>
               <S>            "languages": [</S>
               <S>                "*"</S>
               <S>            ],</S>
               <S>            "words": {</S>
+              <S></S>
               <S>            },</S>
               <S>            "useLargeList": false</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "languages": [</S>
-              <S>                "javascript",</S>
-              <S>                "javascriptreact",</S>
-              <S>                "typescript",</S>
-              <S>                "typescriptreact"</S>
-              <S>            ],</S>
-              <S>            "words": {</S>
-              <S>                "cosnt": "const",</S>
-              <S>                "functoin": "function"</S>
-              <S>            }</S>
-              <S>        }</S>
+              <S>        }, </S>
               <S>    ],</S>
               <S>    "xml.fileAssociations": [</S>
               <S>        {</S>
@@ -280,8 +267,8 @@
               <S>    "editor.detectIndentation": false,</S>
               <S>    "search.smartCase": true,</S>
               <S>    "workbench.colorTheme": "Horizon Dark",</S>
-              <S>    "redhat.telemetry.enabled": false,</S>
               <S>    "window.zoomLevel": 0,</S>
+              <S>    "telemetry.telemetryLevel": "off",</S>
               <S>    "security.workspace.trust.enabled": false,</S>
               <S>    "terminal.integrated.profiles.windows": {</S>
               <S>        "Clean PowerShell": {</S>
@@ -2369,12 +2356,34 @@
       </Obj>
       <Obj RefId="19">
         <TNRef RefId="1" />
+        <ToString>.gops</ToString>
+        <Props>
+          <S N="Target">"$home\.gops"</S>
+          <S N="ExpandedTarget">C:\Users\endow\.gops</S>
+          <S N="TargetObject">C:\Users\endow\.gops</S>
+          <Obj N="Content" RefId="20">
+            <TNRef RefId="2" />
+            <LST>
+              <S>"Token","Path","IsValid"</S>
+              <S>"Home","C:\Users\endow","True"</S>
+              <S>"github","C:\Users\endow\Documents\GitHub\","True"</S>
+              <S>"drive","C:\Users\endow\Google Drive\","True"</S>
+              <S>"posh","C:\Users\endow\Documents\WindowsPowerShell\","True"</S>
+              <S>"one","C:\Users\endow\OneDrive\","True"</S>
+            </LST>
+          </Obj>
+          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
+        </Props>
+      </Obj>
+      <Obj RefId="21">
+        <TNRef RefId="1" />
         <ToString>settings.json</ToString>
         <Props>
           <S N="Target">"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
           <S N="TargetObject">C:\Users\endow\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
-          <Obj N="Content" RefId="20">
+          <Obj N="Content" RefId="22">
             <TNRef RefId="2" />
             <LST>
               <S>// To view the default settings, hold "alt" while clicking on the "Settings" button.</S>
@@ -2548,14 +2557,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="21">
+      <Obj RefId="23">
         <TNRef RefId="1" />
         <ToString>.vimrc</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vimrc"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vimrc</S>
           <S N="TargetObject">C:\Users\endow\.vimrc</S>
-          <Obj N="Content" RefId="22">
+          <Obj N="Content" RefId="24">
             <TNRef RefId="2" />
             <LST />
           </Obj>
@@ -2563,14 +2572,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="23">
+      <Obj RefId="25">
         <TNRef RefId="1" />
         <ToString>general.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\general.vim"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vim\general.vim</S>
           <S N="TargetObject">C:\Users\endow\.vim\general.vim</S>
-          <Obj N="Content" RefId="24">
+          <Obj N="Content" RefId="26">
             <TNRef RefId="2" />
             <LST>
               <S>" General Vim Settings</S>
@@ -2663,14 +2672,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="25">
+      <Obj RefId="27">
         <TNRef RefId="1" />
         <ToString>keys.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\keys.vim"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vim\keys.vim</S>
           <S N="TargetObject">C:\Users\endow\.vim\keys.vim</S>
-          <Obj N="Content" RefId="26">
+          <Obj N="Content" RefId="28">
             <TNRef RefId="2" />
             <LST>
               <S>" Vim keybindings</S>
@@ -2731,14 +2740,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="27">
+      <Obj RefId="29">
         <TNRef RefId="1" />
         <ToString>autocommands.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\autocommands.vim"</S>
           <S N="ExpandedTarget">C:\Users\endow\.vim\autocommands.vim</S>
           <S N="TargetObject">C:\Users\endow\.vim\autocommands.vim</S>
-          <Obj N="Content" RefId="28">
+          <Obj N="Content" RefId="30">
             <TNRef RefId="2" />
             <LST />
           </Obj>
@@ -2746,14 +2755,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="29">
+      <Obj RefId="31">
         <TNRef RefId="1" />
         <ToString>gfx2-win32.cfg</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\GrafX2\gfx2-win32.cfg"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\GrafX2\gfx2-win32.cfg</S>
           <S N="TargetObject">C:\Users\endow\AppData\Roaming\GrafX2\gfx2-win32.cfg</S>
-          <Obj N="Content" RefId="30">
+          <Obj N="Content" RefId="32">
             <TNRef RefId="2" />
             <LST>
               <S>CFG_x0002__x0000_b_x0000__x0000_ø_x0004__x0000__x0000_&amp;_x0000__x0000__x0000__x0001__x0000_(_x0000__x0000__x0000__x0002__x0000_%_x0000__x0000__x0000__x0003__x0000_'_x0000__x0000__x0000__x0004__x0000_&amp;_x0010__x0000__x0000__x0005__x0000_(_x0010__x0000__x0000__x0006__x0000_%_x0010__x0000__x0000__x0007__x0000_'_x0010__x0000__x0000__x0008__x0000_&amp;@_x0000__x0000__x0009__x0000_(@_x0000__x0000_</S>
@@ -2776,14 +2785,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="31">
+      <Obj RefId="33">
         <TNRef RefId="1" />
         <ToString>gfx2.ini</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\GrafX2\gfx2.ini"</S>
           <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\GrafX2\gfx2.ini</S>
           <S N="TargetObject">C:\Users\endow\AppData\Roaming\GrafX2\gfx2.ini</S>
-          <Obj N="Content" RefId="32">
+          <Obj N="Content" RefId="34">
             <TNRef RefId="2" />
             <LST>
               <S>###### GrafX2 initialization file ###### Fichier d'initialisation de GrafX2 ##</S>
@@ -3217,7 +3226,7 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="33">
+      <Obj RefId="35">
         <TN RefId="3">
           <T>DotEntry</T>
           <T>Dot</T>
@@ -3226,14 +3235,14 @@
         <ToString>Install Visual Studio Code Extensions</ToString>
         <Props>
           <S N="Description">Install Visual Studio Code Extensions</S>
-          <Obj N="Content" RefId="34">
+          <Obj N="Content" RefId="36">
             <TNRef RefId="2" />
             <LST>
               <S>aaron-bond.better-comments@2.1.0</S>
               <S>AlanWalk.markdown-toc@1.5.6</S>
               <S>asciidoctor.asciidoctor-vscode@2.8.10</S>
               <S>Bauke.horizon-vscode@3.0.3</S>
-              <S>cake-build.cake-vscode@1.0.0</S>
+              <S>cake-build.cake-vscode@2.0.0</S>
               <S>darkriszty.markdown-table-prettify@3.6.0</S>
               <S>DavidAnson.vscode-markdownlint@0.45.0</S>
               <S>DotJoshJohnson.xml@2.5.1</S>
@@ -3268,12 +3277,12 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="35">
+      <Obj RefId="37">
         <TNRef RefId="3" />
         <ToString>Add endo-scoop bucket to scoop</ToString>
         <Props>
           <S N="Description">Add endo-scoop bucket to scoop</S>
-          <Obj N="Content" RefId="36">
+          <Obj N="Content" RefId="38">
             <TNRef RefId="2" />
             <LST />
           </Obj>
@@ -3281,12 +3290,12 @@
           <SBK N="ExpandCommand">scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git</SBK>
         </Props>
       </Obj>
-      <Obj RefId="37">
+      <Obj RefId="39">
         <TNRef RefId="3" />
         <ToString>Install scoop apps</ToString>
         <Props>
           <S N="Description">Install scoop apps</S>
-          <Obj N="Content" RefId="38">
+          <Obj N="Content" RefId="40">
             <TNRef RefId="2" />
             <LST>
               <S>7zip (v:19.00) [main]</S>

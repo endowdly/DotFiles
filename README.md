@@ -150,6 +150,6 @@ I want to run...                                    | In PowerShell, run...
 ----------------------------------------------------|---------------------------------
 `pullFromArchive.cmd`                               | `.\dots.ps1 pull -select -force`
 `pullFromArchive.cmd` without forcing item creation | `.\dots.ps1 pull -select`
-`pushToArchive.cmd`                                 | `.\dots.ps1 push both -select`
+`pushToArchive.cmd`                                 | `.\dots.ps1 push both`
 `runDotEntries.cmd`                                 | `.\dots.ps1 pull entry -select`
 Anything above with a selection menu                | `.\dots.ps1 mode [dotType]`
