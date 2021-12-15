@@ -5,12 +5,12 @@
 endowdly's dotfiles
 
 Use at your own risk.
-Install to your local disk with `restore.cmd`.
-Update the dots with `backup.cmd`.
-Update the files on disk (if they already exist) with `update.cmd`.
+Install to your local disk with `pullFromArchive.cmd`.
+Update the dots with `pushToArchive.cmd`.
 
-`restore.cmd` will force file creation if a file exists in `dots.xml` but not on the target machine.
-`update.cmd` will not force file creation, but will overwrite an existing file.
+`pushToArchive.cmd` will force file creation if a file exists in `dots.xml` but not on the target machine.
+
+To avoid forcing file creation, [see below](# Using the dots.ps1 script).
 
 ## Included
 
@@ -20,20 +20,22 @@ settings.json                | Visual Studio Code | User settings file          
 keybindings.json             | Visual Studio Code | User keybindings file          | Active
 endowdly.code-snippets.json* | Visual Studio Code | User Snippets file             | Active
 extensions.txt               | Visual Studio Code | User extensions list           | Active
-alacritty.yaml               | Alacritty          | Alacritty configuration        | Active
+alacritty.yaml               | Alacritty          | Alacritty configuration        | Semi-Active
 Profile.ps1                  | PowerShell         | Profile loader                 | Active
 Profile.Config.ps1           | PowerShell         | Profile configuration          | Active
 Profile.psm1                 | PowerShell         | Profile custom functions       | Active
 PSReadLine.ps1               | PowerShell         | PSReadLine key handlers        | Active
 prompt.ps1                   | PowerShell         | PowerShell prompt file         | Active
 ArgumentCompleter.ps1        | PowerShell         | ArgumentCompleter file         | Active
-settings.json                | Windows Terminal   | Windows Terminal settings file | Semi-Active
+settings.json                | Windows Terminal   | Windows Terminal settings file | Active
 scoop.txt                    | scoop              | scoop packages list            | Active
 .vimrc                       | neovim/vim         | Vim configuration file         | Semi-Active
 keys.vim                     | neovim/vim         | Vim keybindings file           | Semi-Active
 general.vim                  | neovim/vim         | Vim General/UI configuration   | Semi-Active
 autocommands.vim             | neovim/vim         | Vim Autocommands configuration | Semi-Active
 .gops                        | PowerShell/GoPS    | GoPS module jump file          | Active
+gfx2.ini                     | Grafx2             | Grafx2 Initialization file     | Active
+gfx2-win32.cfg               | Grafx2             | Grafx2 Settings file           | Active
 
 _* Will replace `endowdly` with the current `USERNAME`_
 
@@ -82,9 +84,9 @@ This is a string array that allows you to specify what paths you'd like to impor
 These should evaluate to a full path that is a valid path location (but does not have to exist).
 Environmental and automatic variables, and variables defined in the `PathVariable` section, are handy here.
 
-When compressing dotfiles using `backup.cmd` or running `.\dots.ps1 backup`, files in this list that do not exist are _skipped_ and not loaded or saved.
-Afterwards, when expanding dotfiles using `update.cmd`, `restore.cmd` or running `.\dots.ps1 update [-force]`, files in this list are ignored.
-Only files saved in the `dots.xml` will be pushed.
+When compressing dotfiles using `pushToArchive.cmd` or running `.\dots.ps1 push`, files in this list that do not exist are _skipped_ and not loaded or saved.
+Afterwards, when expanding dotfiles using `pullFromArchive.cmd` or running `.\dots.ps1 pull [-force]`, files in this list are ignored.
+Only files saved in the `dots.xml` will be pulled.
 
 #### Example
 
@@ -106,25 +108,29 @@ This is why you see the quoting in the example.
 
 ### Command
 
-This is a hashtable array that allows you specify two commands:
+This is a hashtable array that allows you specify three properties:
 
 1. Compress
 2. Expand
+3. Description
 
 Each hashtable entered is validated and can only contain the above keys.
 
 The hashtables can contain only `Compress` _or_ `Expand` commands.
+The `Description` key will be used for easy identification and selection.
 It should be noted that _Compress_ only commands have little to no utility while `Expand` only commands may have some.
 
-When compressing dotfiles using `backup.cmd` or running `.\dots.ps1 backup`, each item will set its content to the evaluation of its `Compress` command.
-When expanding dotfiles using `update.cmd`, `restore.cmd`, or running `.\dots.ps1 update [-force]`, **if the item has content**, it will execute its `Expand` command on **each item in its content**.
+When compressing dotfiles using `pushToArchive` or running `.\dots.ps1 push`, each item will set its content to the evaluation of its `Compress` command.
+When expanding dots using `runDotEntries`, or running `.\dots.ps1 pull entry [-force]`, **if the item has content**, it will execute its `Expand` command on **each item in its content**.
 If it has no content, it will simply execute the command and return its evaluation, if any.
+Note that `pullFromArchive.cmd` does **not** pull and execute commands.
 
 #### Example
 
 ```powershell
 Commands = @(
     @{
+        Description = 'Install Scoop Apps'
         Compress = 'scoop export'
         Expand   = 'scoop install $_'
     }
@@ -137,10 +143,13 @@ On expansion, every line of content will be run through `scoop install`.
 ## Using the dots.ps1 script
 
 You should not need to alter or mess with `dots.ps1`.
+More advanced options are available using the script.
 If you want to call `dots.ps1` in PowerShell instead of using the included command files, here is a table:
 
-I want to run... | In PowerShell, run...
------------------|---------------------------
-`backup.cmd`     | `.\dots.ps1 backup`
-`update.cmd`     | `.\dots.ps1 update`
-`restore.cmd`    | `.\dots.ps1 update -force`
+I want to run...                                    | In PowerShell, run...
+----------------------------------------------------|---------------------------------
+`pullFromArchive.cmd`                               | `.\dots.ps1 pull -select -force`
+`pullFromArchive.cmd` without forcing item creation | `.\dots.ps1 pull -select`
+`pushToArchive.cmd`                                 | `.\dots.ps1 push both -select`
+`runDotEntries.cmd`                                 | `.\dots.ps1 pull entry -select`
+Anything above with a selection menu                | `.\dots.ps1 mode [dotType]`

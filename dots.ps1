@@ -4,17 +4,21 @@ using namespace System.Collections.Generic
 using namespace System.Management.Automation
 
 param(
+    # The mode to run. Pull changes files on disk while push will update the dots.xml file.
     [Parameter(
         Mandatory,
         HelpMessage = 'Enter a mode, Push to the archive, Pull from the archive, or Sync latest changes?')]
     [ValidateSet('Pull', 'Push', 'Debug', 'Sync')]
     [string] $Mode
     ,
+    # The type of Dot to fetch from the dots.xml or FileSystem.
     [ValidateSet('File', 'Entry', 'Both')]
     [string] $DotType = 'File'
     ,
+    # A switch to enable menu selections or to use all entries collected.
     [switch] $Select
     ,
+    # A switch that will force creation on the system in pull mode. Does nothing in push mode.
     [switch] $Force
 ) 
 

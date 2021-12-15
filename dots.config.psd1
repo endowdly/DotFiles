@@ -18,6 +18,9 @@
         '"$PowerShellCurrentUser\psreadline.ps1"'
         '"$PowerShellCurrentUser\prompt.ps1"'
         '"$PowerShellCurrentUser\argumentcompleter.ps1"'
+
+        # GoPS
+        '"$home\.gops"'
         
         # Windows Terminal
         '"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"'
