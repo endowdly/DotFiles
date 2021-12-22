@@ -6,10 +6,10 @@ using namespace System.Management.Automation
 param(
     # The mode to run. Pull changes files on disk while push will update the dots.xml file.
     [Parameter(
-        Mandatory,
+        # Mandatory,
         HelpMessage = 'Enter a mode, Push to the archive, Pull from the archive, or Sync latest changes?')]
-    [ValidateSet('Pull', 'Push', 'Debug', 'Sync')]
-    [string] $Mode
+    [ValidateSet('Default', 'Pull', 'Push', 'Debug', 'Sync')]
+    [string] $Mode = 'Default'
     ,
     # The type of Dot to fetch from the dots.xml or FileSystem.
     [ValidateSet('File', 'Entry', 'Both')]
@@ -18,9 +18,16 @@ param(
     # A switch to enable menu selections or to use all entries collected.
     [switch] $Select
     ,
-    # A switch that will force creation on the system in pull mode. Does nothing in push mode.
+    # A switch that will force creation on the system in pull mode and force push overwrite.
     [switch] $Force
 ) 
+
+# Ban Sourcing unless Debug Mode
+if ($Mode -ne 'Debug' -and ($MyInvocation.InvocationName -eq '.' -or $MyInvocation.Line -eq '')) {
+    Write-Warning 'Dots was sourced! This is verboten to prevent session pollution!' 
+
+    exit
+} 
 
 #region Data and Literals ------------------------------------------------------
 data Message {
@@ -31,12 +38,8 @@ data Message {
             What           = 'Fatal: you somehow reached the unreachable!'
             Wip            = 'Work in progress: Not implemented yet!'
         } 
-        ShouldContinue   = @{
-            ExpandDotFiles  = 'Continue? This will likely overwrite your dot files; backup recommended.'
-            CompressDotFile = 'Continue? You will overwrite the dotfile archive.'
-        }
         ShouldProcess    = @{
-            ExportDotFile = 'Export dot entries'
+            ExportDotFile = 'Overwrite dot file archive'
         }
         Warning          = @{
             TypeDateAlreadyDeclared = 'TypeData seems to be already declared for my internal types.'
@@ -280,17 +283,6 @@ class DotFile : Dot {
         return $this.TargetObject.Name
     }
 
-    static [DotFile] Reserialize([psobject] $deserializedObject) {
-        if ($deserializedObject.PSTypeNames.Contains('Deserialized.DotFile')) {
-            return [DotFile] @{
-                Target  = $deserializedObject.Target
-                Content = $deserializedObject.Content
-            }
-        }
-
-        return [DotFile] @{}
-    }
-
     hidden [void] ExpandTarget() {
         $sb = New-Scriptblock $this.Target
         $this.ExpandedTarget = $sb.Invoke()
@@ -407,8 +399,6 @@ $ConfigFile = @{
 
 try {
     Import-LocalizedData @ConfigFile
-    # Assert-Config ($Config.Keys -as [string[]]) $Validation
-    # Assert-Config ($Config.Command.Keys -as [string[]]) $CommandValidation
     Assert-Config @($Config.Keys) $Validation
     Assert-Config @($Config.Command.Keys) $CommandValidation
 } 
@@ -422,7 +412,7 @@ catch {
 #region Setup ------------------------------------------------------------------ 
 
 
-function Get-Dots {
+function Get-Dot {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param(
         [Parameter(ParameterSetName = 'File')]
@@ -492,8 +482,8 @@ function Import-DotFile {
     )
     
     begin {
-        $isFile = { $_ -is [DotFile] }
-        $isEntry = { $_ -is [DotEntry] }
+        $isFile = { $_.PSTypeNames.Contains('DotFile') }
+        $isEntry = { $_.PSTypeNames.Contains('DotEntry') }
     }
     
      
@@ -534,12 +524,18 @@ function Export-DotFile {
             ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [Dot[]] $InputObject
+        ,
+        [switch] $Force
     )
     
     begin {
         $a = [List[Dot]] @()
         $f = { 
             [void] $a.Add($_)
+        }
+
+        if ($Force) {
+            $ConfirmPreference = 'None'
         }
     }
 
@@ -548,14 +544,14 @@ function Export-DotFile {
     }
 
     end {
-        if ($PSCmdlet.ShouldProcess($Path, $Message.ShouldProcess.ExportDotFile)) {
+        if ($PSCmdlet.ShouldProcess($DotsFile, $Message.ShouldProcess.ExportDotFile)) {
             [PSSerializer]::Serialize($a.ToArray()) | Out-File $Path -Encoding utf8 -Verbose
         }
     }
 }
 
 
-function Compress-DotEntry {
+function Compress-Dot {
     [CmdletBinding()]
     param (
         [Parameter(
@@ -578,7 +574,7 @@ function Compress-DotEntry {
 }
 
 
-function Expand-DotEntry {
+function Expand-Dot {
     [CmdletBinding()]
     param (
         [Parameter(
@@ -745,6 +741,7 @@ function Invoke-Menu {
             $selection.Add($n) 
         }
 
+        # Consider moving this to an old school, side-effect (hiss) function with a reference
         function ResetPositionOnOverflow ($ls, $pos) {
             if ($pos -lt 0) { $pos = $ls.Count - 1 }
             if ($pos -gt $ls.Count - 1) { $pos = 0 } 
@@ -889,21 +886,34 @@ switch ($Mode) {
     Pull { 
         Import-DotFile @import |
         SelectOrPass |
-        Expand-DotEntry
+        Expand-Dot
     }
 
     Push { 
-        Get-Dots @get |
-        SelectOrPass |
-        Compress-DotEntry |
-        Export-DotFile $DotsFile 
+        $current = Import-DotFile -InputObject $DotsFile
+        $incoming = Get-Dot @get |
+            SelectOrPass |
+            Compress-Dot
+            
+        $filter = {
+
+            $currentDot = $_ 
+
+            switch ($currentDot.GetType().ToString()) {
+                DotFile { $incoming.Target -notcontains $currentDot.Target }
+                DotEntry { $incoming.Description -notcontains $currentDot.Description }
+                default { return }
+            }
+        }
+
+        $delta = $current.Where($filter)
+
+        $incoming + $delta | Export-DotFile $DotsFile -Force:$Force
     } 
 
     Sync {
         Write-Error -Exception [System.NotImplementedException] -Message $Message.TerminatingError.Wip
     } 
-
-    # Dotter { Invoke-Dotter } 
 
     Debug { Write-Output $Message.Sourced }
 

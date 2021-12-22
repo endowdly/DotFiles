@@ -42,3 +42,7 @@
 ✔ Update README @started(21-12-14 18:47) @done(21-12-14 19:11) @lasted(24m5s)
 
 ✔ Add comment-based help to script @started(21-12-14 19:11) @done(21-12-14 19:15) @lasted(4m53s)
+
+✔ Resolve how to keep dots.xml intact when selectively pushed @done(21-12-22 17:05)
+☐ Resolve how to sync
+    -- Idea: Use DateModified/Created?
