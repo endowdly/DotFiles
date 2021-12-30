@@ -8,21 +8,432 @@
     <LST>
       <Obj RefId="1">
         <TN RefId="1">
-          <T>DotFile</T>
+          <T>DotEntry</T>
           <T>Dot</T>
           <T>System.Object</T>
         </TN>
-        <ToString>endowdly.code-snippets</ToString>
+        <ToString>Install Visual Studio Code Extensions</ToString>
         <Props>
-          <S N="Target">"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\Code\User\snippets\endowdly.code-snippets</S>
-          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\Code\User\snippets\endowdly.code-snippets</S>
+          <S N="Description">Install Visual Studio Code Extensions</S>
           <Obj N="Content" RefId="2">
             <TN RefId="2">
               <T>System.String[]</T>
               <T>System.Array</T>
               <T>System.Object</T>
             </TN>
+            <LST>
+              <S>aaron-bond.better-comments@2.1.0</S>
+              <S>AlanWalk.markdown-toc@1.5.6</S>
+              <S>asciidoctor.asciidoctor-vscode@2.8.10</S>
+              <S>Bauke.horizon-vscode@3.0.3</S>
+              <S>cake-build.cake-vscode@2.0.0</S>
+              <S>darkriszty.markdown-table-prettify@3.6.0</S>
+              <S>DavidAnson.vscode-markdownlint@0.45.0</S>
+              <S>DotJoshJohnson.xml@2.5.1</S>
+              <S>enkia.tokyo-night@0.8.4</S>
+              <S>fabiospampinato.vscode-todo-plus@4.18.4</S>
+              <S>gregoire.dance@0.5.8</S>
+              <S>hawkeyegold.bonsai@1.4.0</S>
+              <S>Ionide.Ionide-fsharp@5.10.2</S>
+              <S>jamesmaj.easy-icons@0.3.1</S>
+              <S>jerry.theme-dark-starry-night@1.0.2</S>
+              <S>k--kato.docomment@0.1.30</S>
+              <S>lunarlimbo.banner-comments-plus@0.3.1</S>
+              <S>mdickin.markdown-shortcuts@0.12.0</S>
+              <S>mhutchie.git-graph@1.30.0</S>
+              <S>ms-dotnettools.csharp@1.23.17</S>
+              <S>ms-python.python@2021.12.1559732655</S>
+              <S>ms-toolsai.jupyter@2021.11.1001550889</S>
+              <S>ms-vscode.powershell@2021.12.0</S>
+              <S>RandomFractalsInc.vscode-vega-viewer@9.5.0</S>
+              <S>rolandostar.tabletopsimulator-lua@1.1.3</S>
+              <S>rust-lang.rust@0.7.8</S>
+              <S>streetsidesoftware.code-spell-checker@2.0.14</S>
+              <S>sygene.auto-correct@0.2.2</S>
+              <S>teabyii.ayu@1.0.5</S>
+              <S>vscodevim.vim@1.21.10</S>
+              <S>wwm.better-align@1.1.6</S>
+              <S>XadillaX.viml@1.0.1</S>
+              <S>yannpapouin.theme-monolivia@1.0.5</S>
+            </LST>
+          </Obj>
+          <SBK N="CompressCommand">code --list-extensions --show-versions</SBK>
+          <SBK N="ExpandCommand">write-verbose "code extension install, this is silent"; code --install-extension $_</SBK>
+        </Props>
+      </Obj>
+      <Obj RefId="3">
+        <TNRef RefId="1" />
+        <ToString>Add endo-scoop bucket to scoop</ToString>
+        <Props>
+          <S N="Description">Add endo-scoop bucket to scoop</S>
+          <Obj N="Content" RefId="4">
+            <TNRef RefId="2" />
+            <LST />
+          </Obj>
+          <SBK N="CompressCommand"></SBK>
+          <SBK N="ExpandCommand">scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git</SBK>
+        </Props>
+      </Obj>
+      <Obj RefId="5">
+        <TNRef RefId="1" />
+        <ToString>Install scoop apps</ToString>
+        <Props>
+          <S N="Description">Install scoop apps</S>
+          <Obj N="Content" RefId="6">
+            <TNRef RefId="2" />
+            <LST>
+              <S>7zip (v:19.00) [main]</S>
+              <S>agave-nf (v:2.1.0) [nerd-fonts]</S>
+              <S>alacritty (v:0.5.0) [extras]</S>
+              <S>bat (v:0.15.4) [main]</S>
+              <S>bigblueterminal-nf (v:2.1.0) [nerd-fonts]</S>
+              <S>BigBlueTerminal-NF-Mono (v:2.1.0) [nerd-fonts]</S>
+              <S>cacert (v:2021-04-13) [main]</S>
+              <S>colortool (v:1904.29002) [main]</S>
+              <S>concfg (v:0.2021.05.09) [main]</S>
+              <S>dark (v:3.11.2) [main]</S>
+              <S>delta (v:0.7.1) [main]</S>
+              <S>dotnet-sdk (v:5.0.402) [main]</S>
+              <S>exercism (v:3.0.13) [main]</S>
+              <S>fd (v:8.1.1) [main]</S>
+              <S>firacode-nf (v:2.1.0) [nerd-fonts]</S>
+              <S>gh (v:2.1.0) [main]</S>
+              <S>git (v:2.33.1.windows.1) [main]</S>
+              <S>github (v:2.9.4) [extras]</S>
+              <S>gnuplot (v:5.4.1) [main]</S>
+              <S>gohu-nf (v:2.1.0) [nerd-fonts]</S>
+              <S>gops (v:2.2.0) [endo-scoop]</S>
+              <S>grafx2 (v:2.8) [endo-scoop]</S>
+              <S>hasklig-nf (v:2.1.0) [nerd-fonts]</S>
+              <S>hexed (v:1.0.32) [main]</S>
+              <S>innounp (v:0.50) [main]</S>
+              <S>insect (v:5.4.0) [main]</S>
+              <S>kicad (v:5.1.10_1) [extras]</S>
+              <S>less (v:562.0) [main]</S>
+              <S>lessmsi (v:1.7.0) [main]</S>
+              <S>licecap (v:1.28) [extras]</S>
+              <S>links (v:2.25) [main]</S>
+              <S>neovim (v:0.4.4) [main]</S>
+              <S>nodejs (v:14.9.0) [main]</S>
+              <S>ntop (v:0.3.4) [main]</S>
+              <S>openscad (v:2021.01) [extras]</S>
+              <S>openssh (v:8.2p1-1) [main]</S>
+              <S>openssl (v:1.1.1k) [main]</S>
+              <S>paint.net (v:4.2.13) [extras]</S>
+              <S>pandoc (v:2.11.4) [main]</S>
+              <S>pixie (v:4.1) [extras]</S>
+              <S>psparklines (v:1.0.0) [endo-scoop]</S>
+              <S>pwsh (v:7.1.3) [main]</S>
+              <S>rustup (v:1.24.1) [main]</S>
+              <S>sudo (v:0.2020.01.26) [main]</S>
+              <S>terminus-nf (v:2.1.0) [nerd-fonts]</S>
+              <S>vcredist2019 (v:14.27.29016.0) [extras]</S>
+              <S>vlc (v:3.0.16) [extras]</S>
+              <S>vscode (v:1.63.0) [extras]</S>
+              <S>windows-terminal (v:1.2.2381.0) [extras]</S>
+              <S>winfetch (v:2.2.0) [extras]</S>
+              <S>workspacer (v:0.9.10) [extras]</S>
+            </LST>
+          </Obj>
+          <SBK N="CompressCommand">scoop export</SBK>
+          <SBK N="ExpandCommand">scoop install $_</SBK>
+        </Props>
+      </Obj>
+      <Obj RefId="7">
+        <TN RefId="3">
+          <T>DotFile</T>
+          <T>Dot</T>
+          <T>System.Object</T>
+        </TN>
+        <ToString>settings.json</ToString>
+        <Props>
+          <S N="Target">"$env:APPDATA\Code\User\settings.json"</S>
+          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\Code\User\settings.json</S>
+          <S N="TargetObject">C:\Users\endow\AppData\Roaming\Code\User\settings.json</S>
+          <Obj N="Content" RefId="8">
+            <TNRef RefId="2" />
+            <LST>
+              <S>{</S>
+              <S>    "window.menuBarVisibility": "toggle",</S>
+              <S>    "editor.lineNumbers": "relative",</S>
+              <S>    "editor.fontFamily": "\"FiraCode NF\", Consolas, Courier",</S>
+              <S>    "editor.fontLigatures": true,</S>
+              <S>    "editor.fontSize": 12,</S>
+              <S>    "editor.wordWrap": "wordWrapColumn",</S>
+              <S>    "terminal.integrated.fontFamily": "TerminessTTF NF",</S>
+              <S>    "terminal.integrated.fontSize": 14,</S>
+              <S>    "terminal.integrated.cursorBlinking": true,</S>
+              <S>    "powershell.developer.editorServicesLogLevel": "Verbose",</S>
+              <S>    "powershell.integratedConsole.showOnStartup": false,</S>
+              <S>    "powershell.enableProfileLoading": true,</S>
+              <S>    "todo.embedded.exclude": [ </S>
+              <S>        "**/.*",</S>
+              <S>        "**/.*/**",</S>
+              <S>        "**/_output/**",</S>
+              <S>        "**/bower_components/**",</S>
+              <S>        "**/build/**",</S>
+              <S>        "**/dist/**",</S>
+              <S>        "**/node_modules/**",</S>
+              <S>        "**/out/**",</S>
+              <S>        "**/output/**",</S>
+              <S>        "**/static/**",</S>
+              <S>        "**/target/**",</S>
+              <S>        "**/third_party/**",</S>
+              <S>        "**/vendor/**",</S>
+              <S>        "**/*.min.*",</S>
+              <S>        "**/*.map",</S>
+              <S>        "**/*.{3ds,3g2,3gp,7z,a,aac,adp,ai,aif,aiff,alz,ape,apk,ar,arj,asf,au,avi,bak,baml,bh,bin,bk,bmp,btif,bz2,bzip2,cab,caf,cgm,class,cmx,cpio,cr2,csv,cur,dat,dcm,deb,dex,djvu,dll,dmg,dng,doc,docm,docx,dot,dotm,dra,DS_Store,dsk,dts,dtshd,dvb,dwg,dxf,ecelp4800,ecelp7470,ecelp9600,egg,eol,eot,epub,exe,f4v,fbs,fh,fla,flac,fli,flv,fpx,fst,fvt,g3,gif,graffle,gz,gzip,h261,h263,h264,icns,ico,ief,img,ipa,iso,jar,jpeg,jpg,jpgv,jpm,jxr,key,ktx,lha,lib,lvp,lz,lzh,lzma,lzo,m3u,m4a,m4v,mar,mdi,mht,mid,midi,mj2,mka,mkv,mmr,mng,mobi,mov,movie,mp3,mp4,mp4a,mpeg,mpg,mpga,mxu,nef,npx,numbers,o,oga,ogg,ogv,otf,pages,pbm,pcx,pdb,pdf,pea,pgm,pic,png,pnm,pot,potm,potx,ppa,ppam,ppm,pps,ppsm,ppsx,ppt,pptm,pptx,psd,pya,pyc,pyo,pyv,qt,rar,ras,raw,resources,rgb,rip,rlc,rmf,rmvb,rtf,rz,s3m,s7z,scpt,sgi,shar,sil,sketch,slk,smv,so,sub,swf,tar,tbz,tbz2,tga,tgz,thmx,tif,tiff,tlz,ttc,ttf,txz,udf,uvh,uvi,uvm,uvp,uvs,uvu,viv,vob,war,wav,wax,wbmp,wdp,weba,webm,webp,whl,wim,wm,wma,wmv,wmx,woff,woff2,wvx,xbm,xif,xla,xlam,xls,xlsb,xlsm,xlsx,xlt,xltm,xltx,xm,xmind,xpi,xpm,xwd,xz,z,zip,zipx}",</S>
+              <S>        "**/TODO*"</S>
+              <S>    ], </S>
+              <S>    "better-comments.highlightPlainText": true,</S>
+              <S>    "better-comments.tags": [ </S>
+              <S>        {</S>
+              <S>            "tag": "!",</S>
+              <S>            "color": "#FF2D00",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "transparent"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "?",</S>
+              <S>            "color": "#3498DB",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "transparent"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "todo",</S>
+              <S>            "color": "black",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "#FF8C00"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "*",</S>
+              <S>            "color": "#98C379",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "transparent"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "done",</S>
+              <S>            "color": "#FF8C00",</S>
+              <S>            "strikethrough": true,</S>
+              <S>            "backgroundColor": "transparent"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "review",</S>
+              <S>            "color": "white",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "#000088",</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "note",</S>
+              <S>            "color": "black",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "#98C379",</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "idea",</S>
+              <S>            "color": "#8000ff",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "transparent",</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "hack",</S>
+              <S>            "color": "black",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "orangered",</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "tag": "fixme",</S>
+              <S>            "color": "black",</S>
+              <S>            "strikethrough": false,</S>
+              <S>            "backgroundColor": "pink",</S>
+              <S>        },</S>
+              <S>    ],</S>
+              <S>    "better-comments.multilineComments": true,</S>
+              <S></S>
+              <S>    "git.path": "C:\\Users\\endowdly\\scoop\\apps\\git\\current\\bin\\git.exe", </S>
+              <S>    </S>
+              <S>    "cSpell.userWords": [</S>
+              <S>        "Allman",</S>
+              <S>        "ENDO'S",</S>
+              <S>        "Endowdly's",</S>
+              <S>        "Groot",</S>
+              <S>        "Linq",</S>
+              <S>        "dowd",</S>
+              <S>        "endowdly",</S>
+              <S>        "endregion",</S>
+              <S>        "hashtables",</S>
+              <S>        "markdownlint",</S>
+              <S>        "metaclasses",</S>
+              <S>        "pandoc",</S>
+              <S>        "performant"</S>
+              <S>    ],</S>
+              <S>    "files.associations": {</S>
+              <S>        "CHANGELOG": "markdown"</S>
+              <S>    },</S>
+              <S></S>
+              <S>    "FSharp.interfaceStubGenerationObjectIdentifier": "__",</S>
+              <S>    "FSharp.enableTouchBar": false,</S>
+              <S>    "editor.renderControlCharacters": true,</S>
+              <S>    "extensions.closeExtensionDetailsOnViewChange": true,</S>
+              <S>    "extensions.ignoreRecommendations": true,</S>
+              <S>    "zenMode.hideLineNumbers": false,</S>
+              <S>    "FSharp.useSdkScripts": true,</S>
+              <S>    "diffEditor.renderSideBySide": true,</S>
+              <S>    "workbench.iconTheme": "vscode-endowdly-icons",</S>
+              <S>    "powershell.powerShellDefaultVersion": "Windows PowerShell (x64)",</S>
+              <S>    "FSharp.addFsiWatcher": true,</S>
+              <S>    "editor.wordWrapColumn": 115,</S>
+              <S>    "explorer.compactFolders": false,</S>
+              <S>    "auto-correct.dictionary": [ </S>
+              <S>        {</S>
+              <S>            "languages": [</S>
+              <S>                "*"</S>
+              <S>            ],</S>
+              <S>            "words": {</S>
+              <S></S>
+              <S>            },</S>
+              <S>            "useLargeList": false</S>
+              <S>        }, </S>
+              <S>    ],</S>
+              <S>    "xml.fileAssociations": [</S>
+              <S>        {</S>
+              <S>          "systemId": "https://raw.githubusercontent.com/PowerShell/PowerShell/master/src/Schemas/Format.xsd",</S>
+              <S>          "pattern": "**/*.Format.ps1xml"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>          "systemId": "https://raw.githubusercontent.com/PowerShell/PowerShell/master/src/Schemas/Types.xsd",</S>
+              <S>          "pattern": "**/*.Types.ps1xml"</S>
+              <S>        }</S>
+              <S>    ],</S>
+              <S>    "banner-comments-plus.font": "Big",</S>
+              <S>    "terminal.integrated.commandsToSkipShell": [</S>
+              <S>        "language-julia.interrupt"</S>
+              <S>    ],</S>
+              <S>    "[fsharp]": {</S>
+              <S>        "editor.defaultFormatter": "Ionide.Ionide-fsharp"</S>
+              <S>    },</S>
+              <S>    "terminal.integrated.inheritEnv": false,</S>
+              <S>    "markdown.preview.fontFamily": "'BigBlue_TerminalPlus NF',  'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif",</S>
+              <S>    "todo.embedded.regex": "(?:&lt;!-- *)?(?:#|// @|//|/\\*+|&lt;!--|--|\\* @|\\{!|\\{\\{!--|\\{\\{!) *(TODO|DONE|FIXME|FIX|BUG|UGLY|HACK|NOTE|IDEA|REVIEW|DEBUG|OPTIMIZE)(?:\\s*\\([^)]+\\))?:?(?!\\w)(?: *--&gt;| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|&lt;!--|@|--|\\{!|\\{\\{!--|\\{\\{!))|((?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|&lt;!--|@|--(?!&gt;)|\\{!|\\{\\{!--|\\{\\{!))|(?: +[^@\\n]+)?))",</S>
+              <S>    "dance.modes": {</S>
+              <S>        "": {</S>
+              <S>            "hiddenSelectionsIndicatorsDecoration": {</S>
+              <S>                "after": {</S>
+              <S>                    "color": "$list.warningForeground"</S>
+              <S>                },</S>
+              <S>                "backgroundColor": "$inputValidation.warningBackground",</S>
+              <S>                "borderColor": "$inputValidation.warningBorder",</S>
+              <S>                "borderStyle": "solid",</S>
+              <S>                "borderWidth": "1px",</S>
+              <S>                "isWholeLine": true</S>
+              <S>            }</S>
+              <S>        },</S>
+              <S>        "input": {</S>
+              <S>            "cursorStyle": "underline-thin"</S>
+              <S>        },</S>
+              <S>        "insert": {</S>
+              <S>            "decorations": {</S>
+              <S>                "borderColor": "#008b8b"</S>
+              <S>            },</S>
+              <S>            "onLeaveMode": [</S>
+              <S>                [</S>
+              <S>                    ".selections.save",</S>
+              <S>                    {</S>
+              <S>                        "register": " insert"</S>
+              <S>                    }</S>
+              <S>                ]</S>
+              <S>            ],</S>
+              <S>            "selectionBehavior": "caret"</S>
+              <S>        },</S>
+              <S>        "normal": {</S>
+              <S>            "cursorStyle": "block",</S>
+              <S>            "selectionBehavior": "character",</S>
+              <S>            "lineNumbers": "relative",</S>
+              <S>            "decorations": {</S>
+              <S>                "applyTo": "main",</S>
+              <S>                "backgroundColor": "#8B118b22",</S>
+              <S>                "isWholeLine": true, </S>
+              <S>            },</S>
+              <S>            "onEnterMode": [</S>
+              <S>                [</S>
+              <S>                    ".selections.restore",</S>
+              <S>                    {</S>
+              <S>                        "register": " ^",</S>
+              <S>                        "try": true</S>
+              <S>                    }</S>
+              <S>                ]</S>
+              <S>            ],</S>
+              <S>            "onLeaveMode": [</S>
+              <S>                [</S>
+              <S>                    ".selections.save",</S>
+              <S>                    {</S>
+              <S>                        "register": " ^",</S>
+              <S>                        "style": {</S>
+              <S>                            "borderColor": "$editor.selectionBackground",</S>
+              <S>                            "borderStyle": "solid",</S>
+              <S>                            "borderWidth": "2px",</S>
+              <S>                            "borderRadius": "1px"</S>
+              <S>                        },</S>
+              <S>                        "until": [</S>
+              <S>                            [</S>
+              <S>                                "mode-did-change",</S>
+              <S>                                {</S>
+              <S>                                    "include": "normal"</S>
+              <S>                                }</S>
+              <S>                            ],</S>
+              <S>                            [</S>
+              <S>                                "selections-did-change"</S>
+              <S>                            ]</S>
+              <S>                        ]</S>
+              <S>                    }</S>
+              <S>                ]</S>
+              <S>            ]</S>
+              <S>        }</S>
+              <S>    },</S>
+              <S>    "workbench.colorCustomizations": {</S>
+              <S>        "editor.selectionBackground": "#00ccff62",</S>
+              <S>    },</S>
+              <S>    "editor.detectIndentation": false,</S>
+              <S>    "search.smartCase": true,</S>
+              <S>    "workbench.colorTheme": "Horizon Dark",</S>
+              <S>    "window.zoomLevel": 0,</S>
+              <S>    "telemetry.telemetryLevel": "off",</S>
+              <S>    "security.workspace.trust.enabled": false,</S>
+              <S>    "terminal.integrated.profiles.windows": {</S>
+              <S>        "Clean PowerShell": {</S>
+              <S>            "source": "PowerShell",</S>
+              <S>            "icon": "terminal-powershell",</S>
+              <S>            "args": [ "-NoProfile", "-NoLogo"]</S>
+              <S>        },</S>
+              <S>        "PowerShell": {</S>
+              <S>            "source": "PowerShell",</S>
+              <S>            "icon": "terminal-powershell"</S>
+              <S>        },</S>
+              <S>        "Command Prompt": {</S>
+              <S>            "path": [</S>
+              <S>                "${env:windir}\\Sysnative\\cmd.exe",</S>
+              <S>                "${env:windir}\\System32\\cmd.exe"</S>
+              <S>            ],</S>
+              <S>            "args": [],</S>
+              <S>            "icon": "terminal-cmd"</S>
+              <S>        } </S>
+              <S>    }</S>
+              <S>}</S>
+            </LST>
+          </Obj>
+          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
+        </Props>
+      </Obj>
+      <Obj RefId="9">
+        <TNRef RefId="3" />
+        <ToString>endow.code-snippets</ToString>
+        <Props>
+          <S N="Target">"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"</S>
+          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\Code\User\snippets\endow.code-snippets</S>
+          <S N="TargetObject">C:\Users\endow\AppData\Roaming\Code\User\snippets\endow.code-snippets</S>
+          <Obj N="Content" RefId="10">
+            <TNRef RefId="2" />
             <LST>
               <S>{</S>
               <S>_x0009_// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and </S>
@@ -64,14 +475,195 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="3">
-        <TNRef RefId="1" />
+      <Obj RefId="11">
+        <TNRef RefId="3" />
+        <ToString>settings.json</ToString>
+        <Props>
+          <S N="Target">"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"</S>
+          <S N="ExpandedTarget">C:\Users\endow\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
+          <S N="TargetObject">C:\Users\endow\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
+          <Obj N="Content" RefId="12">
+            <TNRef RefId="2" />
+            <LST>
+              <S>// To view the default settings, hold "alt" while clicking on the "Settings" button.</S>
+              <S>// For documentation on these settings, see: https://aka.ms/terminal-documentation</S>
+              <S>{</S>
+              <S>    "$schema": "https://aka.ms/terminal-profiles-schema",</S>
+              <S>    "defaultProfile": "{c0d191a7-334d-4042-b9c8-c4d235b75b34}", </S>
+              <S>    "profiles": {</S>
+              <S>        "defaults": {</S>
+              <S>            "fontFace": "FiraCode NF",</S>
+              <S>            "fontSize": 10,</S>
+              <S>            "snapOnInput": true,</S>
+              <S>            "startingDirectory": "C:\\Users\\endowdly",</S>
+              <S>            "scrollbarState": "hidden"</S>
+              <S>        },</S>
+              <S>        "list": [</S>
+              <S>            {</S>
+              <S>                // Make changes here to the powershell.exe profile</S>
+              <S>                "name": "Red PowerShell",</S>
+              <S>                "guid": "{c0d191a7-334d-4042-b9c8-c4d235b75b34}",</S>
+              <S>                "commandline": "powershell.exe -nologo",</S>
+              <S>                "hidden": false,</S>
+              <S>                "fontFace": "GohuFont Nerd Font",</S>
+              <S>                "fontSize": 11,</S>
+              <S>                "cursorColor": "#700000",</S>
+              <S>                "cursorShape": "filledBox",</S>
+              <S>                "colorScheme": "Tomorrow Night Burns",</S>
+              <S>                "experimental.retroTerminalEffect": true</S>
+              <S>            },</S>
+              <S>            {</S>
+              <S>                // Make changes here to the powershell.exe profile</S>
+              <S>                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",</S>
+              <S>                "name": "PowerShell",</S>
+              <S>                "commandline": "powershell.exe -nologo",</S>
+              <S>                "hidden": false,</S>
+              <S>                "cursorColor": "#000070",</S>
+              <S>                "cursorShape": "filledBox",</S>
+              <S>                "colorScheme": "ayu"</S>
+              <S>            },</S>
+              <S>            {</S>
+              <S>                // Make changes here to the powershell.exe profile</S>
+              <S>                "guid": "{726e1cd9-7f7d-420c-8d9f-2bce1f1dad39}",</S>
+              <S>                "name": "Pwsh",</S>
+              <S>                "commandline": "pwsh -nologo",</S>
+              <S>                "hidden": false,</S>
+              <S>                "cursorColor": "#000070",</S>
+              <S>                "cursorShape": "filledBox",</S>
+              <S>                "colorScheme": "Red Planet"</S>
+              <S>            },</S>
+              <S>            {</S>
+              <S>                // Make changes here to the cmd.exe profile</S>
+              <S>                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",</S>
+              <S>                "name": "Cmd",</S>
+              <S>                "commandline": "cmd.exe",</S>
+              <S>                "cursorColor": "#007000",</S>
+              <S>                "cursorShape": "vintage",</S>
+              <S>                "experimental.retroTerminalEffect": true,</S>
+              <S>                "hidden": false</S>
+              <S>            },</S>
+              <S>            {</S>
+              <S>                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",</S>
+              <S>                "hidden": true,</S>
+              <S>                "name": "Azure Cloud Shell",</S>
+              <S>                "source": "Windows.Terminal.Azure"</S>
+              <S>            },</S>
+              <S>            {</S>
+              <S>                "hidden": false,</S>
+              <S>                "name": "Dev Prompt",</S>
+              <S>                "commandline": "cmd.exe /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat\" -arch=x64",</S>
+              <S>                "startingDirectory": "\\"</S>
+              <S>            },</S>
+              <S>            {</S>
+              <S>                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",</S>
+              <S>                "hidden": false,</S>
+              <S>                "name": "PowerShell Core",</S>
+              <S>                "source": "Windows.Terminal.PowershellCore",</S>
+              <S>                "cursorColor": "#000070",</S>
+              <S>                "cursorShape": "filledBox",</S>
+              <S>                "colorScheme": "ayu"</S>
+              <S>            },</S>
+              <S>            {</S>
+              <S>                // Make changes here to the powershell.exe profile</S>
+              <S>                "guid": "{05f6c213-72aa-4049-b2f7-a02741dc0de6}",</S>
+              <S>                "name": "NTop",</S>
+              <S>                // "commandline": "powershell.exe -nologo -command ntop",</S>
+              <S>                "commandline": "ntop",</S>
+              <S>                "hidden": false,</S>
+              <S>                "cursorColor": "#000070",</S>
+              <S>                "cursorShape": "filledBox",</S>
+              <S>                "colorScheme": "ayu",</S>
+              <S>                "fontFace": "Roboto Mono for Powerline"</S>
+              <S>            } </S>
+              <S>        ]</S>
+              <S>    },</S>
+              <S>    // Add custom color schemes to this array</S>
+              <S>    "schemes": [</S>
+              <S>        {</S>
+              <S>            "name": "ayu",</S>
+              <S>            "black": "#000000",</S>
+              <S>            "red": "#ff3333",</S>
+              <S>            "green": "#b8cc52",</S>
+              <S>            "yellow": "#e7c547",</S>
+              <S>            "blue": "#36a3d9",</S>
+              <S>            "purple": "#f07178",</S>
+              <S>            "cyan": "#95e6cb",</S>
+              <S>            "white": "#ffffff",</S>
+              <S>            "brightBlack": "#323232",</S>
+              <S>            "brightRed": "#ff6565",</S>
+              <S>            "brightGreen": "#eafe84",</S>
+              <S>            "brightYellow": "#fff779",</S>
+              <S>            "brightBlue": "#68d5ff",</S>
+              <S>            "brightPurple": "#ffa3aa",</S>
+              <S>            "brightCyan": "#c7fffd",</S>
+              <S>            "brightWhite": "#ffffff",</S>
+              <S>            "background": "#0f1419",</S>
+              <S>            "foreground": "#e6e1cf"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "name": "Red Planet",</S>
+              <S>            "black": "#202020",</S>
+              <S>            "red": "#8c3432",</S>
+              <S>            "green": "#728271",</S>
+              <S>            "yellow": "#e8bf6a",</S>
+              <S>            "blue": "#69819e",</S>
+              <S>            "purple": "#896492",</S>
+              <S>            "cyan": "#5b8390",</S>
+              <S>            "white": "#b9aa99",</S>
+              <S>            "brightBlack": "#676767",</S>
+              <S>            "brightRed": "#b55242",</S>
+              <S>            "brightGreen": "#869985",</S>
+              <S>            "brightYellow": "#ebeb91",</S>
+              <S>            "brightBlue": "#60827e",</S>
+              <S>            "brightPurple": "#de4974",</S>
+              <S>            "brightCyan": "#38add8",</S>
+              <S>            "brightWhite": "#d6bfb8",</S>
+              <S>            "background": "#222222",</S>
+              <S>            "foreground": "#c2b790"</S>
+              <S>        },</S>
+              <S>        {</S>
+              <S>            "name": "Tomorrow Night Burns",</S>
+              <S>            "black": "#252525",</S>
+              <S>            "red": "#832e31",</S>
+              <S>            "green": "#a63c40",</S>
+              <S>            "yellow": "#d3494e",</S>
+              <S>            "blue": "#fc595f",</S>
+              <S>            "purple": "#df9395",</S>
+              <S>            "cyan": "#ba8586",</S>
+              <S>            "white": "#f5f5f5",</S>
+              <S>            "brightBlack": "#5d6f71",</S>
+              <S>            "brightRed": "#832e31",</S>
+              <S>            "brightGreen": "#a63c40",</S>
+              <S>            "brightYellow": "#d2494e",</S>
+              <S>            "brightBlue": "#fc595f",</S>
+              <S>            "brightPurple": "#df9395",</S>
+              <S>            "brightCyan": "#ba8586",</S>
+              <S>            "brightWhite": "#f5f5f5",</S>
+              <S>            "background": "#151515",</S>
+              <S>            "foreground": "#a1b0b8"</S>
+              <S>        }</S>
+              <S>    ],</S>
+              <S>    // Add any keybinding overrides to this array.</S>
+              <S>    // To unbind a default keybinding, set the command to "unbound"</S>
+              <S>    "keybindings": [</S>
+              <S>        {"command":"toggleFocusMode", "keys": "alt+f"},</S>
+              <S>        {"command":"commandPalette", "keys": "alt+p"}</S>
+              <S>    ]</S>
+              <S>}</S>
+            </LST>
+          </Obj>
+          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="ExpandCommand" />
+        </Props>
+      </Obj>
+      <Obj RefId="13">
+        <TNRef RefId="3" />
         <ToString>alacritty.yml</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\alacritty\alacritty.yml"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\alacritty\alacritty.yml</S>
-          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\alacritty\alacritty.yml</S>
-          <Obj N="Content" RefId="4">
+          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\alacritty\alacritty.yml</S>
+          <S N="TargetObject">C:\Users\endow\AppData\Roaming\alacritty\alacritty.yml</S>
+          <Obj N="Content" RefId="14">
             <TNRef RefId="2" />
             <LST>
               <S># Configuration for Alacritty, the GPU enhanced terminal emulator.</S>
@@ -934,14 +1526,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="5">
-        <TNRef RefId="1" />
+      <Obj RefId="15">
+        <TNRef RefId="3" />
         <ToString>profile.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\profile.ps1</S>
-          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\profile.ps1</S>
-          <Obj N="Content" RefId="6">
+          <S N="ExpandedTarget">\profile.ps1</S>
+          <S N="TargetObject">\profile.ps1</S>
+          <Obj N="Content" RefId="16">
             <TNRef RefId="2" />
             <LST>
               <S>#Requires -Version 5.0</S>
@@ -1194,18 +1786,18 @@
               <S>#endregion</S>
             </LST>
           </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="CompressCommand" />
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="7">
-        <TNRef RefId="1" />
+      <Obj RefId="17">
+        <TNRef RefId="3" />
         <ToString>profile.config.psd1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.config.psd1"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\profile.config.psd1</S>
-          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\profile.config.psd1</S>
-          <Obj N="Content" RefId="8">
+          <S N="ExpandedTarget">\profile.config.psd1</S>
+          <S N="TargetObject">\profile.config.psd1</S>
+          <Obj N="Content" RefId="18">
             <TNRef RefId="2" />
             <LST>
               <S>@{</S>
@@ -1306,18 +1898,18 @@
               <S>}</S>
             </LST>
           </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="CompressCommand" />
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="9">
-        <TNRef RefId="1" />
+      <Obj RefId="19">
+        <TNRef RefId="3" />
         <ToString>psreadline.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\psreadline.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\psreadline.ps1</S>
-          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\psreadline.ps1</S>
-          <Obj N="Content" RefId="10">
+          <S N="ExpandedTarget">\psreadline.ps1</S>
+          <S N="TargetObject">\psreadline.ps1</S>
+          <Obj N="Content" RefId="20">
             <TNRef RefId="2" />
             <LST>
               <S>using namespace System.Management.Automation</S>
@@ -1548,18 +2140,18 @@
               <S>}</S>
             </LST>
           </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="CompressCommand" />
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="11">
-        <TNRef RefId="1" />
+      <Obj RefId="21">
+        <TNRef RefId="3" />
         <ToString>prompt.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\prompt.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\prompt.ps1</S>
-          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\prompt.ps1</S>
-          <Obj N="Content" RefId="12">
+          <S N="ExpandedTarget">\prompt.ps1</S>
+          <S N="TargetObject">\prompt.ps1</S>
+          <Obj N="Content" RefId="22">
             <TNRef RefId="2" />
             <LST>
               <S>function global:Prompt {</S>
@@ -1570,18 +2162,18 @@
               <S>}</S>
             </LST>
           </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="CompressCommand" />
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="13">
-        <TNRef RefId="1" />
+      <Obj RefId="23">
+        <TNRef RefId="3" />
         <ToString>argumentcompleter.ps1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\argumentcompleter.ps1"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\argumentcompleter.ps1</S>
-          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\argumentcompleter.ps1</S>
-          <Obj N="Content" RefId="14">
+          <S N="ExpandedTarget">\argumentcompleter.ps1</S>
+          <S N="TargetObject">\argumentcompleter.ps1</S>
+          <Obj N="Content" RefId="24">
             <TNRef RefId="2" />
             <LST>
               <S></S>
@@ -1654,18 +2246,18 @@
               <S>}</S>
             </LST>
           </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="CompressCommand" />
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="15">
-        <TNRef RefId="1" />
+      <Obj RefId="25">
+        <TNRef RefId="3" />
         <ToString>.gops</ToString>
         <Props>
           <S N="Target">"$home\.gops"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\.gops</S>
-          <S N="TargetObject">C:\Users\endowdly\.gops</S>
-          <Obj N="Content" RefId="16">
+          <S N="ExpandedTarget">C:\Users\endow\.gops</S>
+          <S N="TargetObject">C:\Users\endow\.gops</S>
+          <Obj N="Content" RefId="26">
             <TNRef RefId="2" />
             <LST>
               <S>"Token","Path","IsValid"</S>
@@ -1687,14 +2279,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="17">
-        <TNRef RefId="1" />
+      <Obj RefId="27">
+        <TNRef RefId="3" />
         <ToString>profile.psm1</ToString>
         <Props>
           <S N="Target">"$PowerShellCurrentUser\profile.psm1"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\Documents\WindowsPowerShell\profile.psm1</S>
-          <S N="TargetObject">C:\Users\endowdly\Documents\WindowsPowerShell\profile.psm1</S>
-          <Obj N="Content" RefId="18">
+          <S N="ExpandedTarget">\profile.psm1</S>
+          <S N="TargetObject">\profile.psm1</S>
+          <Obj N="Content" RefId="28">
             <TNRef RefId="2" />
             <LST>
               <S>function Get-Path { $env:Path -split ';' } # () -&gt; string[]</S>
@@ -2140,18 +2732,18 @@
               <S>}</S>
             </LST>
           </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
+          <Nil N="CompressCommand" />
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="19">
-        <TNRef RefId="1" />
+      <Obj RefId="29">
+        <TNRef RefId="3" />
         <ToString>gfx2-win32.cfg</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\GrafX2\gfx2-win32.cfg"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\GrafX2\gfx2-win32.cfg</S>
-          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\GrafX2\gfx2-win32.cfg</S>
-          <Obj N="Content" RefId="20">
+          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\GrafX2\gfx2-win32.cfg</S>
+          <S N="TargetObject">C:\Users\endow\AppData\Roaming\GrafX2\gfx2-win32.cfg</S>
+          <Obj N="Content" RefId="30">
             <TNRef RefId="2" />
             <LST>
               <S>CFG_x0002__x0000_b_x0000__x0000_ø_x0004__x0000__x0000_&amp;_x0000__x0000__x0000__x0001__x0000_(_x0000__x0000__x0000__x0002__x0000_%_x0000__x0000__x0000__x0003__x0000_'_x0000__x0000__x0000__x0004__x0000_&amp;_x0010__x0000__x0000__x0005__x0000_(_x0010__x0000__x0000__x0006__x0000_%_x0010__x0000__x0000__x0007__x0000_'_x0010__x0000__x0000__x0008__x0000_&amp;@_x0000__x0000__x0009__x0000_(@_x0000__x0000_</S>
@@ -2174,14 +2766,14 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="21">
-        <TNRef RefId="1" />
+      <Obj RefId="31">
+        <TNRef RefId="3" />
         <ToString>gfx2.ini</ToString>
         <Props>
           <S N="Target">"$env:APPDATA\GrafX2\gfx2.ini"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\GrafX2\gfx2.ini</S>
-          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\GrafX2\gfx2.ini</S>
-          <Obj N="Content" RefId="22">
+          <S N="ExpandedTarget">C:\Users\endow\AppData\Roaming\GrafX2\gfx2.ini</S>
+          <S N="TargetObject">C:\Users\endow\AppData\Roaming\GrafX2\gfx2.ini</S>
+          <Obj N="Content" RefId="32">
             <TNRef RefId="2" />
             <LST>
               <S>###### GrafX2 initialization file ###### Fichier d'initialisation de GrafX2 ##</S>
@@ -2615,611 +3207,13 @@
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
-      <Obj RefId="23">
-        <TNRef RefId="1" />
-        <ToString>settings.json</ToString>
-        <Props>
-          <S N="Target">"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
-          <S N="TargetObject">C:\Users\endowdly\AppData\Local\Microsoft\Windows Terminal\settings.json</S>
-          <Obj N="Content" RefId="24">
-            <TNRef RefId="2" />
-            <LST>
-              <S>// To view the default settings, hold "alt" while clicking on the "Settings" button.</S>
-              <S>// For documentation on these settings, see: https://aka.ms/terminal-documentation</S>
-              <S>{</S>
-              <S>    "$schema": "https://aka.ms/terminal-profiles-schema",</S>
-              <S>    "defaultProfile": "{c0d191a7-334d-4042-b9c8-c4d235b75b34}", </S>
-              <S>    "profiles": {</S>
-              <S>        "defaults": {</S>
-              <S>            "fontFace": "FiraCode NF",</S>
-              <S>            "fontSize": 10,</S>
-              <S>            "snapOnInput": true,</S>
-              <S>            "startingDirectory": "C:\\Users\\endowdly",</S>
-              <S>            "scrollbarState": "hidden"</S>
-              <S>        },</S>
-              <S>        "list": [</S>
-              <S>            {</S>
-              <S>                // Make changes here to the powershell.exe profile</S>
-              <S>                "name": "Red PowerShell",</S>
-              <S>                "guid": "{c0d191a7-334d-4042-b9c8-c4d235b75b34}",</S>
-              <S>                "commandline": "powershell.exe -nologo",</S>
-              <S>                "hidden": false,</S>
-              <S>                "fontFace": "GohuFont Nerd Font",</S>
-              <S>                "fontSize": 11,</S>
-              <S>                "cursorColor": "#700000",</S>
-              <S>                "cursorShape": "filledBox",</S>
-              <S>                "colorScheme": "Tomorrow Night Burns",</S>
-              <S>                "experimental.retroTerminalEffect": true</S>
-              <S>            },</S>
-              <S>            {</S>
-              <S>                // Make changes here to the powershell.exe profile</S>
-              <S>                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",</S>
-              <S>                "name": "PowerShell",</S>
-              <S>                "commandline": "powershell.exe -nologo",</S>
-              <S>                "hidden": false,</S>
-              <S>                "cursorColor": "#000070",</S>
-              <S>                "cursorShape": "filledBox",</S>
-              <S>                "colorScheme": "ayu"</S>
-              <S>            },</S>
-              <S>            {</S>
-              <S>                // Make changes here to the powershell.exe profile</S>
-              <S>                "guid": "{726e1cd9-7f7d-420c-8d9f-2bce1f1dad39}",</S>
-              <S>                "name": "Pwsh",</S>
-              <S>                "commandline": "pwsh -nologo",</S>
-              <S>                "hidden": false,</S>
-              <S>                "cursorColor": "#000070",</S>
-              <S>                "cursorShape": "filledBox",</S>
-              <S>                "colorScheme": "Red Planet"</S>
-              <S>            },</S>
-              <S>            {</S>
-              <S>                // Make changes here to the cmd.exe profile</S>
-              <S>                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",</S>
-              <S>                "name": "Cmd",</S>
-              <S>                "commandline": "cmd.exe",</S>
-              <S>                "cursorColor": "#007000",</S>
-              <S>                "cursorShape": "vintage",</S>
-              <S>                "experimental.retroTerminalEffect": true,</S>
-              <S>                "hidden": false</S>
-              <S>            },</S>
-              <S>            {</S>
-              <S>                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",</S>
-              <S>                "hidden": true,</S>
-              <S>                "name": "Azure Cloud Shell",</S>
-              <S>                "source": "Windows.Terminal.Azure"</S>
-              <S>            },</S>
-              <S>            {</S>
-              <S>                "hidden": false,</S>
-              <S>                "name": "Dev Prompt",</S>
-              <S>                "commandline": "cmd.exe /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat\" -arch=x64",</S>
-              <S>                "startingDirectory": "\\"</S>
-              <S>            },</S>
-              <S>            {</S>
-              <S>                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",</S>
-              <S>                "hidden": false,</S>
-              <S>                "name": "PowerShell Core",</S>
-              <S>                "source": "Windows.Terminal.PowershellCore",</S>
-              <S>                "cursorColor": "#000070",</S>
-              <S>                "cursorShape": "filledBox",</S>
-              <S>                "colorScheme": "ayu"</S>
-              <S>            },</S>
-              <S>            {</S>
-              <S>                // Make changes here to the powershell.exe profile</S>
-              <S>                "guid": "{05f6c213-72aa-4049-b2f7-a02741dc0de6}",</S>
-              <S>                "name": "NTop",</S>
-              <S>                // "commandline": "powershell.exe -nologo -command ntop",</S>
-              <S>                "commandline": "ntop",</S>
-              <S>                "hidden": false,</S>
-              <S>                "cursorColor": "#000070",</S>
-              <S>                "cursorShape": "filledBox",</S>
-              <S>                "colorScheme": "ayu",</S>
-              <S>                "fontFace": "Roboto Mono for Powerline"</S>
-              <S>            } </S>
-              <S>        ]</S>
-              <S>    },</S>
-              <S>    // Add custom color schemes to this array</S>
-              <S>    "schemes": [</S>
-              <S>        {</S>
-              <S>            "name": "ayu",</S>
-              <S>            "black": "#000000",</S>
-              <S>            "red": "#ff3333",</S>
-              <S>            "green": "#b8cc52",</S>
-              <S>            "yellow": "#e7c547",</S>
-              <S>            "blue": "#36a3d9",</S>
-              <S>            "purple": "#f07178",</S>
-              <S>            "cyan": "#95e6cb",</S>
-              <S>            "white": "#ffffff",</S>
-              <S>            "brightBlack": "#323232",</S>
-              <S>            "brightRed": "#ff6565",</S>
-              <S>            "brightGreen": "#eafe84",</S>
-              <S>            "brightYellow": "#fff779",</S>
-              <S>            "brightBlue": "#68d5ff",</S>
-              <S>            "brightPurple": "#ffa3aa",</S>
-              <S>            "brightCyan": "#c7fffd",</S>
-              <S>            "brightWhite": "#ffffff",</S>
-              <S>            "background": "#0f1419",</S>
-              <S>            "foreground": "#e6e1cf"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "name": "Red Planet",</S>
-              <S>            "black": "#202020",</S>
-              <S>            "red": "#8c3432",</S>
-              <S>            "green": "#728271",</S>
-              <S>            "yellow": "#e8bf6a",</S>
-              <S>            "blue": "#69819e",</S>
-              <S>            "purple": "#896492",</S>
-              <S>            "cyan": "#5b8390",</S>
-              <S>            "white": "#b9aa99",</S>
-              <S>            "brightBlack": "#676767",</S>
-              <S>            "brightRed": "#b55242",</S>
-              <S>            "brightGreen": "#869985",</S>
-              <S>            "brightYellow": "#ebeb91",</S>
-              <S>            "brightBlue": "#60827e",</S>
-              <S>            "brightPurple": "#de4974",</S>
-              <S>            "brightCyan": "#38add8",</S>
-              <S>            "brightWhite": "#d6bfb8",</S>
-              <S>            "background": "#222222",</S>
-              <S>            "foreground": "#c2b790"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "name": "Tomorrow Night Burns",</S>
-              <S>            "black": "#252525",</S>
-              <S>            "red": "#832e31",</S>
-              <S>            "green": "#a63c40",</S>
-              <S>            "yellow": "#d3494e",</S>
-              <S>            "blue": "#fc595f",</S>
-              <S>            "purple": "#df9395",</S>
-              <S>            "cyan": "#ba8586",</S>
-              <S>            "white": "#f5f5f5",</S>
-              <S>            "brightBlack": "#5d6f71",</S>
-              <S>            "brightRed": "#832e31",</S>
-              <S>            "brightGreen": "#a63c40",</S>
-              <S>            "brightYellow": "#d2494e",</S>
-              <S>            "brightBlue": "#fc595f",</S>
-              <S>            "brightPurple": "#df9395",</S>
-              <S>            "brightCyan": "#ba8586",</S>
-              <S>            "brightWhite": "#f5f5f5",</S>
-              <S>            "background": "#151515",</S>
-              <S>            "foreground": "#a1b0b8"</S>
-              <S>        }</S>
-              <S>    ],</S>
-              <S>    // Add any keybinding overrides to this array.</S>
-              <S>    // To unbind a default keybinding, set the command to "unbound"</S>
-              <S>    "keybindings": [</S>
-              <S>        {"command":"toggleFocusMode", "keys": "alt+f"},</S>
-              <S>        {"command":"commandPalette", "keys": "alt+p"}</S>
-              <S>    ]</S>
-              <S>}</S>
-            </LST>
-          </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
-          <Nil N="ExpandCommand" />
-        </Props>
-      </Obj>
-      <Obj RefId="25">
-        <TN RefId="3">
-          <T>DotEntry</T>
-          <T>Dot</T>
-          <T>System.Object</T>
-        </TN>
-        <ToString>Install Visual Studio Code Extensions</ToString>
-        <Props>
-          <S N="Description">Install Visual Studio Code Extensions</S>
-          <Obj N="Content" RefId="26">
-            <TNRef RefId="2" />
-            <LST>
-              <S>aaron-bond.better-comments@2.1.0</S>
-              <S>aeschli.vscode-css-formatter@1.0.2</S>
-              <S>AlanWalk.markdown-toc@1.5.6</S>
-              <S>ark120202.vscode-typescript-to-lua@0.2.0</S>
-              <S>asciidoctor.asciidoctor-vscode@2.8.10</S>
-              <S>Bauke.horizon-vscode@3.0.3</S>
-              <S>bierner.markdown-checkbox@0.3.0</S>
-              <S>cake-build.cake-vscode@2.0.0</S>
-              <S>darkriszty.markdown-table-prettify@3.4.0</S>
-              <S>DavidAnson.vscode-markdownlint@0.42.1</S>
-              <S>DotJoshJohnson.xml@2.5.1</S>
-              <S>endowdly.vscode-endowdly-icons@0.0.2</S>
-              <S>enkia.tokyo-night@0.8.3</S>
-              <S>fabiospampinato.vscode-todo-plus@4.18.4</S>
-              <S>fizzybreezy.gnuplot@0.1.2</S>
-              <S>gregoire.dance@0.4.1</S>
-              <S>hawkeyegold.bonsai@1.4.0</S>
-              <S>Ionide.Ionide-fsharp@4.17.0</S>
-              <S>Ionide.Ionide-Paket@2.0.0</S>
-              <S>jerry.theme-dark-starry-night@1.0.2</S>
-              <S>julialang.language-julia@1.2.8</S>
-              <S>k--kato.docomment@0.1.20</S>
-              <S>lunarlimbo.banner-comments-plus@0.3.1</S>
-              <S>mdickin.markdown-shortcuts@0.12.0</S>
-              <S>mhutchie.git-graph@1.30.0</S>
-              <S>ms-dotnettools.csharp@1.23.12</S>
-              <S>ms-vscode.powershell@2021.8.2</S>
-              <S>PabloBelin.fsharp-notebook@1.0.2</S>
-              <S>Perkovec.emoji@1.0.1</S>
-              <S>RandomFractalsInc.vscode-vega-viewer@9.4.0</S>
-              <S>redhat.vscode-yaml@1.2.2</S>
-              <S>rust-lang.rust@0.7.8</S>
-              <S>ryuta46.multi-command@1.5.1</S>
-              <S>streetsidesoftware.code-spell-checker@1.10.2</S>
-              <S>sygene.auto-correct@0.2.2</S>
-              <S>teabyii.ayu@1.0.5</S>
-              <S>vscodevim.vim@1.21.5</S>
-              <S>XadillaX.viml@1.0.1</S>
-              <S>yannpapouin.theme-monolivia@1.0.5</S>
-            </LST>
-          </Obj>
-          <SBK N="CompressCommand">code --list-extensions --show-versions</SBK>
-          <Nil N="ExpandCommand" />
-        </Props>
-      </Obj>
-      <Obj RefId="27">
-        <TNRef RefId="3" />
-        <ToString>Add endo-scoop bucket to scoop</ToString>
-        <Props>
-          <S N="Description">Add endo-scoop bucket to scoop</S>
-          <Obj N="Content" RefId="28">
-            <TNRef RefId="2" />
-            <LST />
-          </Obj>
-          <SBK N="CompressCommand"></SBK>
-          <SBK N="ExpandCommand">scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git</SBK>
-        </Props>
-      </Obj>
-      <Obj RefId="29">
-        <TNRef RefId="3" />
-        <ToString>Install scoop apps</ToString>
-        <Props>
-          <S N="Description">Install scoop apps</S>
-          <Obj N="Content" RefId="30">
-            <TNRef RefId="2" />
-            <LST>
-              <S>7zip (v:19.00) [main]</S>
-              <S>agave-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>alacritty (v:0.7.1) [extras]</S>
-              <S>bat (v:0.16.0) [main]</S>
-              <S>bigblueterminal-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>BigBlueTerminal-NF-Mono (v:2.1.0) [nerd-fonts]</S>
-              <S>cacert (v:2020-07-22) [main]</S>
-              <S>colortool (v:1904.29002) [main]</S>
-              <S>concfg (v:0.2020.03.15) [main]</S>
-              <S>dark (v:3.11.2) [main]</S>
-              <S>delta (v:0.4.4) [main]</S>
-              <S>dotnet-sdk (v:6.0.100) [main]</S>
-              <S>exercism (v:3.0.13) [main]</S>
-              <S>fd (v:8.1.1) [main] {32bit}</S>
-              <S>firacode-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>forge (v:2.2.0) [main]</S>
-              <S>gh (v:1.1.0) [main]</S>
-              <S>git (v:2.28.0.windows.1) [main]</S>
-              <S>github (v:2.9.4) [extras]</S>
-              <S>gnuplot (v:5.2.8) [C:\Users\endowdly\scoop\workspace\gnuplot.json]</S>
-              <S>gohu-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>gops (v:2.2.0) [endowdly]</S>
-              <S>grafx2 (v:2.8) [endo-scoop]</S>
-              <S>hasklig-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>hexed (v:1.0.32) [main]</S>
-              <S>innounp (v:0.50) [main]</S>
-              <S>insect (v:5.4.0) [main] {32bit}</S>
-              <S>kicad (v:5.1.10_1) [extras]</S>
-              <S>less (v:550) {32bit}</S>
-              <S>lessmsi (v:1.10.0) [main]</S>
-              <S>licecap (v:1.28) [extras]</S>
-              <S>links (v:2.21) [main]</S>
-              <S>neovim (v:0.4.4) [main]</S>
-              <S>nodejs (v:14.13.1) [main]</S>
-              <S>ntop (v:0.3.4) [main]</S>
-              <S>openscad (v:2021.01) [extras]</S>
-              <S>openssh (v:8.6.0.0p1) [main]</S>
-              <S>openssl (v:3.0.0) [main]</S>
-              <S>paint.net (v:4.2.15) [extras]</S>
-              <S>pandoc (v:2.10.1) [main]</S>
-              <S>pixie (v:4.1) [extras]</S>
-              <S>psparklines (v:1.0.0) [endowdly]</S>
-              <S>pwsh (v:7.0.3) [main]</S>
-              <S>rustup (v:1.21.1) [main]</S>
-              <S>sudo (v:0.2020.01.26) [main] {32bit}</S>
-              <S>terminus-nf (v:2.1.0) [nerd-fonts]</S>
-              <S>vcredist2019 (v:14.27.29016.0) [extras]</S>
-              <S>vlc (v:3.0.12) [extras]</S>
-              <S>vscode (v:1.55.2) [extras]</S>
-              <S>windows-terminal (v:1.6.10571.0) [extras]</S>
-              <S>winfetch (v:2.2.0) [extras]</S>
-            </LST>
-          </Obj>
-          <SBK N="CompressCommand">scoop export</SBK>
-          <SBK N="ExpandCommand">scoop install $_</SBK>
-        </Props>
-      </Obj>
-      <Obj RefId="31">
-        <TNRef RefId="1" />
-        <ToString>settings.json</ToString>
-        <Props>
-          <S N="Target">"$env:APPDATA\Code\User\settings.json"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\AppData\Roaming\Code\User\settings.json</S>
-          <S N="TargetObject">C:\Users\endowdly\AppData\Roaming\Code\User\settings.json</S>
-          <Obj N="Content" RefId="32">
-            <TNRef RefId="2" />
-            <LST>
-              <S>{</S>
-              <S>    "window.menuBarVisibility": "toggle",</S>
-              <S>    "editor.lineNumbers": "relative",</S>
-              <S>    "editor.fontFamily": "\"FiraCode NF\", Consolas, Courier",</S>
-              <S>    "editor.fontLigatures": true,</S>
-              <S>    "editor.fontSize": 12,</S>
-              <S>    "editor.wordWrap": "wordWrapColumn",</S>
-              <S>    "terminal.integrated.fontFamily": "TerminessTTF NF",</S>
-              <S>    "terminal.integrated.fontSize": 14,</S>
-              <S>    "terminal.integrated.cursorBlinking": true,</S>
-              <S>    "powershell.developer.editorServicesLogLevel": "Verbose",</S>
-              <S>    "powershell.integratedConsole.showOnStartup": false,</S>
-              <S>    "powershell.enableProfileLoading": true,</S>
-              <S>    "todo.embedded.exclude": [ </S>
-              <S>        "**/.*",</S>
-              <S>        "**/.*/**",</S>
-              <S>        "**/_output/**",</S>
-              <S>        "**/bower_components/**",</S>
-              <S>        "**/build/**",</S>
-              <S>        "**/dist/**",</S>
-              <S>        "**/node_modules/**",</S>
-              <S>        "**/out/**",</S>
-              <S>        "**/output/**",</S>
-              <S>        "**/static/**",</S>
-              <S>        "**/target/**",</S>
-              <S>        "**/third_party/**",</S>
-              <S>        "**/vendor/**",</S>
-              <S>        "**/*.min.*",</S>
-              <S>        "**/*.map",</S>
-              <S>        "**/*.{3ds,3g2,3gp,7z,a,aac,adp,ai,aif,aiff,alz,ape,apk,ar,arj,asf,au,avi,bak,baml,bh,bin,bk,bmp,btif,bz2,bzip2,cab,caf,cgm,class,cmx,cpio,cr2,csv,cur,dat,dcm,deb,dex,djvu,dll,dmg,dng,doc,docm,docx,dot,dotm,dra,DS_Store,dsk,dts,dtshd,dvb,dwg,dxf,ecelp4800,ecelp7470,ecelp9600,egg,eol,eot,epub,exe,f4v,fbs,fh,fla,flac,fli,flv,fpx,fst,fvt,g3,gif,graffle,gz,gzip,h261,h263,h264,icns,ico,ief,img,ipa,iso,jar,jpeg,jpg,jpgv,jpm,jxr,key,ktx,lha,lib,lvp,lz,lzh,lzma,lzo,m3u,m4a,m4v,mar,mdi,mht,mid,midi,mj2,mka,mkv,mmr,mng,mobi,mov,movie,mp3,mp4,mp4a,mpeg,mpg,mpga,mxu,nef,npx,numbers,o,oga,ogg,ogv,otf,pages,pbm,pcx,pdb,pdf,pea,pgm,pic,png,pnm,pot,potm,potx,ppa,ppam,ppm,pps,ppsm,ppsx,ppt,pptm,pptx,psd,pya,pyc,pyo,pyv,qt,rar,ras,raw,resources,rgb,rip,rlc,rmf,rmvb,rtf,rz,s3m,s7z,scpt,sgi,shar,sil,sketch,slk,smv,so,sub,swf,tar,tbz,tbz2,tga,tgz,thmx,tif,tiff,tlz,ttc,ttf,txz,udf,uvh,uvi,uvm,uvp,uvs,uvu,viv,vob,war,wav,wax,wbmp,wdp,weba,webm,webp,whl,wim,wm,wma,wmv,wmx,woff,woff2,wvx,xbm,xif,xla,xlam,xls,xlsb,xlsm,xlsx,xlt,xltm,xltx,xm,xmind,xpi,xpm,xwd,xz,z,zip,zipx}",</S>
-              <S>        "**/TODO*"</S>
-              <S>    ], </S>
-              <S>    "better-comments.highlightPlainText": true,</S>
-              <S>    "better-comments.tags": [ </S>
-              <S>        {</S>
-              <S>            "tag": "!",</S>
-              <S>            "color": "#FF2D00",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "transparent"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "?",</S>
-              <S>            "color": "#3498DB",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "transparent"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "todo",</S>
-              <S>            "color": "black",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "#FF8C00"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "*",</S>
-              <S>            "color": "#98C379",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "transparent"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "done",</S>
-              <S>            "color": "#FF8C00",</S>
-              <S>            "strikethrough": true,</S>
-              <S>            "backgroundColor": "transparent"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "review",</S>
-              <S>            "color": "white",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "#000088",</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "note",</S>
-              <S>            "color": "black",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "#98C379",</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "idea",</S>
-              <S>            "color": "#8000ff",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "transparent",</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "hack",</S>
-              <S>            "color": "black",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "orangered",</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>            "tag": "fixme",</S>
-              <S>            "color": "black",</S>
-              <S>            "strikethrough": false,</S>
-              <S>            "backgroundColor": "pink",</S>
-              <S>        },</S>
-              <S>    ],</S>
-              <S>    "better-comments.multilineComments": true,</S>
-              <S></S>
-              <S>    "git.path": "C:\\Users\\endowdly\\scoop\\apps\\git\\current\\bin\\git.exe", </S>
-              <S>    </S>
-              <S>    "cSpell.userWords": [</S>
-              <S>        "Allman",</S>
-              <S>        "ENDO'S",</S>
-              <S>        "Endowdly's",</S>
-              <S>        "Groot",</S>
-              <S>        "Linq",</S>
-              <S>        "dowd",</S>
-              <S>        "endowdly",</S>
-              <S>        "endregion",</S>
-              <S>        "hashtables",</S>
-              <S>        "markdownlint",</S>
-              <S>        "metaclasses",</S>
-              <S>        "pandoc",</S>
-              <S>        "performant"</S>
-              <S>    ],</S>
-              <S>    "files.associations": {</S>
-              <S>        "CHANGELOG": "markdown"</S>
-              <S>    },</S>
-              <S></S>
-              <S>    "FSharp.interfaceStubGenerationObjectIdentifier": "__",</S>
-              <S>    "FSharp.enableTouchBar": false,</S>
-              <S>    "editor.renderControlCharacters": true,</S>
-              <S>    "extensions.closeExtensionDetailsOnViewChange": true,</S>
-              <S>    "extensions.ignoreRecommendations": true,</S>
-              <S>    "zenMode.hideLineNumbers": false,</S>
-              <S>    "FSharp.useSdkScripts": true,</S>
-              <S>    "diffEditor.renderSideBySide": true,</S>
-              <S>    "workbench.iconTheme": "vscode-endowdly-icons",</S>
-              <S>    "powershell.powerShellDefaultVersion": "Windows PowerShell (x64)",</S>
-              <S>    "FSharp.addFsiWatcher": true,</S>
-              <S>    "editor.wordWrapColumn": 115,</S>
-              <S>    "explorer.compactFolders": false,</S>
-              <S>    "auto-correct.dictionary": [ </S>
-              <S>        {</S>
-              <S>            "languages": [</S>
-              <S>                "*"</S>
-              <S>            ],</S>
-              <S>            "words": {</S>
-              <S></S>
-              <S>            },</S>
-              <S>            "useLargeList": false</S>
-              <S>        }, </S>
-              <S>    ],</S>
-              <S>    "xml.fileAssociations": [</S>
-              <S>        {</S>
-              <S>          "systemId": "https://raw.githubusercontent.com/PowerShell/PowerShell/master/src/Schemas/Format.xsd",</S>
-              <S>          "pattern": "**/*.Format.ps1xml"</S>
-              <S>        },</S>
-              <S>        {</S>
-              <S>          "systemId": "https://raw.githubusercontent.com/PowerShell/PowerShell/master/src/Schemas/Types.xsd",</S>
-              <S>          "pattern": "**/*.Types.ps1xml"</S>
-              <S>        }</S>
-              <S>    ],</S>
-              <S>    "banner-comments-plus.font": "Big",</S>
-              <S>    "terminal.integrated.commandsToSkipShell": [</S>
-              <S>        "language-julia.interrupt"</S>
-              <S>    ],</S>
-              <S>    "[fsharp]": {</S>
-              <S>        "editor.defaultFormatter": "Ionide.Ionide-fsharp"</S>
-              <S>    },</S>
-              <S>    "terminal.integrated.inheritEnv": false,</S>
-              <S>    "markdown.preview.fontFamily": "'BigBlue_TerminalPlus NF',  'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif",</S>
-              <S>    "todo.embedded.regex": "(?:&lt;!-- *)?(?:#|// @|//|/\\*+|&lt;!--|--|\\* @|\\{!|\\{\\{!--|\\{\\{!) *(TODO|DONE|FIXME|FIX|BUG|UGLY|HACK|NOTE|IDEA|REVIEW|DEBUG|OPTIMIZE)(?:\\s*\\([^)]+\\))?:?(?!\\w)(?: *--&gt;| *\\*/| *!}| *--}}| *}}|(?= *(?:[^:]//|/\\*+|&lt;!--|@|--|\\{!|\\{\\{!--|\\{\\{!))|((?: +[^\\n@]*?)(?= *(?:[^:]//|/\\*+|&lt;!--|@|--(?!&gt;)|\\{!|\\{\\{!--|\\{\\{!))|(?: +[^@\\n]+)?))",</S>
-              <S>    "dance.modes": {</S>
-              <S>        "": {</S>
-              <S>            "hiddenSelectionsIndicatorsDecoration": {</S>
-              <S>                "after": {</S>
-              <S>                    "color": "$list.warningForeground"</S>
-              <S>                },</S>
-              <S>                "backgroundColor": "$inputValidation.warningBackground",</S>
-              <S>                "borderColor": "$inputValidation.warningBorder",</S>
-              <S>                "borderStyle": "solid",</S>
-              <S>                "borderWidth": "1px",</S>
-              <S>                "isWholeLine": true</S>
-              <S>            }</S>
-              <S>        },</S>
-              <S>        "input": {</S>
-              <S>            "cursorStyle": "underline-thin"</S>
-              <S>        },</S>
-              <S>        "insert": {</S>
-              <S>            "decorations": {</S>
-              <S>                "borderColor": "#008b8b"</S>
-              <S>            },</S>
-              <S>            "onLeaveMode": [</S>
-              <S>                [</S>
-              <S>                    ".selections.save",</S>
-              <S>                    {</S>
-              <S>                        "register": " insert"</S>
-              <S>                    }</S>
-              <S>                ]</S>
-              <S>            ],</S>
-              <S>            "selectionBehavior": "caret"</S>
-              <S>        },</S>
-              <S>        "normal": {</S>
-              <S>            "cursorStyle": "block",</S>
-              <S>            "selectionBehavior": "character",</S>
-              <S>            "lineNumbers": "relative",</S>
-              <S>            "decorations": {</S>
-              <S>                "applyTo": "main",</S>
-              <S>                "backgroundColor": "#8B118b22",</S>
-              <S>                "isWholeLine": true, </S>
-              <S>            },</S>
-              <S>            "onEnterMode": [</S>
-              <S>                [</S>
-              <S>                    ".selections.restore",</S>
-              <S>                    {</S>
-              <S>                        "register": " ^",</S>
-              <S>                        "try": true</S>
-              <S>                    }</S>
-              <S>                ]</S>
-              <S>            ],</S>
-              <S>            "onLeaveMode": [</S>
-              <S>                [</S>
-              <S>                    ".selections.save",</S>
-              <S>                    {</S>
-              <S>                        "register": " ^",</S>
-              <S>                        "style": {</S>
-              <S>                            "borderColor": "$editor.selectionBackground",</S>
-              <S>                            "borderStyle": "solid",</S>
-              <S>                            "borderWidth": "2px",</S>
-              <S>                            "borderRadius": "1px"</S>
-              <S>                        },</S>
-              <S>                        "until": [</S>
-              <S>                            [</S>
-              <S>                                "mode-did-change",</S>
-              <S>                                {</S>
-              <S>                                    "include": "normal"</S>
-              <S>                                }</S>
-              <S>                            ],</S>
-              <S>                            [</S>
-              <S>                                "selections-did-change"</S>
-              <S>                            ]</S>
-              <S>                        ]</S>
-              <S>                    }</S>
-              <S>                ]</S>
-              <S>            ]</S>
-              <S>        }</S>
-              <S>    },</S>
-              <S>    "workbench.colorCustomizations": {</S>
-              <S>        "editor.selectionBackground": "#00ccff62",</S>
-              <S>    },</S>
-              <S>    "editor.detectIndentation": false,</S>
-              <S>    "search.smartCase": true,</S>
-              <S>    "workbench.colorTheme": "Horizon Dark",</S>
-              <S>    "window.zoomLevel": 0,</S>
-              <S>    "telemetry.telemetryLevel": "off",</S>
-              <S>    "security.workspace.trust.enabled": false,</S>
-              <S>    "terminal.integrated.profiles.windows": {</S>
-              <S>        "Clean PowerShell": {</S>
-              <S>            "source": "PowerShell",</S>
-              <S>            "icon": "terminal-powershell",</S>
-              <S>            "args": [ "-NoProfile", "-NoLogo"]</S>
-              <S>        },</S>
-              <S>        "PowerShell": {</S>
-              <S>            "source": "PowerShell",</S>
-              <S>            "icon": "terminal-powershell"</S>
-              <S>        },</S>
-              <S>        "Command Prompt": {</S>
-              <S>            "path": [</S>
-              <S>                "${env:windir}\\Sysnative\\cmd.exe",</S>
-              <S>                "${env:windir}\\System32\\cmd.exe"</S>
-              <S>            ],</S>
-              <S>            "args": [],</S>
-              <S>            "icon": "terminal-cmd"</S>
-              <S>        } </S>
-              <S>    }</S>
-              <S>}</S>
-            </LST>
-          </Obj>
-          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
-          <Nil N="ExpandCommand" />
-        </Props>
-      </Obj>
       <Obj RefId="33">
-        <TNRef RefId="1" />
+        <TNRef RefId="3" />
         <ToString>.vimrc</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vimrc"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\.vimrc</S>
-          <S N="TargetObject">C:\Users\endowdly\.vimrc</S>
+          <S N="ExpandedTarget">C:\Users\endow\.vimrc</S>
+          <S N="TargetObject">C:\Users\endow\.vimrc</S>
           <Obj N="Content" RefId="34">
             <TNRef RefId="2" />
             <LST />
@@ -3229,12 +3223,12 @@
         </Props>
       </Obj>
       <Obj RefId="35">
-        <TNRef RefId="1" />
+        <TNRef RefId="3" />
         <ToString>general.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\general.vim"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\.vim\general.vim</S>
-          <S N="TargetObject">C:\Users\endowdly\.vim\general.vim</S>
+          <S N="ExpandedTarget">C:\Users\endow\.vim\general.vim</S>
+          <S N="TargetObject">C:\Users\endow\.vim\general.vim</S>
           <Obj N="Content" RefId="36">
             <TNRef RefId="2" />
             <LST>
@@ -3329,12 +3323,12 @@
         </Props>
       </Obj>
       <Obj RefId="37">
-        <TNRef RefId="1" />
+        <TNRef RefId="3" />
         <ToString>keys.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\keys.vim"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\.vim\keys.vim</S>
-          <S N="TargetObject">C:\Users\endowdly\.vim\keys.vim</S>
+          <S N="ExpandedTarget">C:\Users\endow\.vim\keys.vim</S>
+          <S N="TargetObject">C:\Users\endow\.vim\keys.vim</S>
           <Obj N="Content" RefId="38">
             <TNRef RefId="2" />
             <LST>
@@ -3397,17 +3391,17 @@
         </Props>
       </Obj>
       <Obj RefId="39">
-        <TNRef RefId="1" />
+        <TNRef RefId="3" />
         <ToString>autocommands.vim</ToString>
         <Props>
           <S N="Target">"$env:USERPROFILE\.vim\autocommands.vim"</S>
-          <S N="ExpandedTarget">C:\Users\endowdly\.vim\autocommands.vim</S>
-          <S N="TargetObject">C:\Users\endowdly\.vim\autocommands.vim</S>
+          <S N="ExpandedTarget">C:\Users\endow\.vim\autocommands.vim</S>
+          <S N="TargetObject">C:\Users\endow\.vim\autocommands.vim</S>
           <Obj N="Content" RefId="40">
             <TNRef RefId="2" />
             <LST />
           </Obj>
-          <Nil N="CompressCommand" />
+          <SBK N="CompressCommand"> Get-Content -Path $this.TargetObject.FullName -Verbose </SBK>
           <Nil N="ExpandCommand" />
         </Props>
       </Obj>
