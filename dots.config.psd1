@@ -41,7 +41,7 @@
         @{
             Description = 'Install Visual Studio Code Extensions'
             Compress = 'code --list-extensions --show-versions'
-            Expand   = 'write-verbose "code extension install, this is silent"; code --install-extension $_'
+            Expand   = 'Write-Verbose "Installing Code Extension: $_"; code --install-extension $_'
         } 
 
         # Scoop
