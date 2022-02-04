@@ -71,6 +71,11 @@ class Entry {
     }
 }
 
+class PassableDot {
+    [string] $LiteralPath
+    [string[]] $InputObject
+}
+
 
 class DotEntry : Entry {
     [string] $Target
@@ -99,7 +104,9 @@ class DotEntry : Entry {
         }
     }
 
-    [void] Expand([bool] $b) {
+    [PassableDot] Expand() { return $this.Expand($false) }
+
+    [PassableDot] Expand([bool] $force) {
         $this.ExpandTarget()
 
         $isValidPath = 
@@ -108,15 +115,21 @@ class DotEntry : Entry {
                 [Path]::GetDirectoryName($this.TargetObject.FullName)
                 [Path]::GetFileName($this.TargetObject.FullName)
 
-                $true
-            }
-            catch {
-                $false 
+        if ($this.TargetObject.Exists -or ($force -and $isValidPath)) {
+            return [PassableDot]@{
+                InputObject = $this.Content
+                LiteralPath = $this.TargetObject.FullName
             }
 
         if ($this.TargetObject.Exists -or ($b -and $isValidPath)) {
             $this.Content | Out-File (New-Item $this.TargetObject.FullName -Force) -Encoding UTF8 -Verbose
         }
+
+        return [PassableDot]@{} 
+    }
+
+    [string] ToString() {
+        return $this.TargetObject.FullName
     }
 
     hidden [void] ExpandTarget() {
