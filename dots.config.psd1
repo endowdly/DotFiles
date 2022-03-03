@@ -1,15 +1,23 @@
 @{
     PathVariable = @{
         PowerShellCurrentUser = 'Split-Path $Profile.CurrentUserAllHosts'
+        ScoopedCode           = 'Convert-Path $env:USERPROFILE\scoop\apps\vscode\current\data\user-data\User'
     }
 
-    Path          = @( 
+    Path         = @( 
         # VSCode
         '"$env:APPDATA\Code\User\settings.json"'
-        '"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"'
-
+        '"$env:APPDATA\Code\User\keybindings.json"'
+        '"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"'   
+        '"$ScoopedCode\settings.json"'
+        '"$ScoopedCode\keybindings.json"'
+        '"$ScoopedCode\snippets\${env:USERNAME}.code-snippets.json"'
+        
         # Alacritty
         '"$env:APPDATA\alacritty\alacritty.yml"'
+
+        # Windows Terminal
+        '"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"'
 
         # PowerShell
         '"$PowerShellCurrentUser\profile.ps1"'
@@ -22,38 +30,30 @@
         # GoPS
         '"$home\.gops"'
         
-        # Windows Terminal
-        '"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"'
-        
-        # Vim
-        '"$env:USERPROFILE\.vimrc"'
-        '"$env:USERPROFILE\.vim\general.vim"'
-        '"$env:USERPROFILE\.vim\keys.vim"'
-        '"$env:USERPROFILE\.vim\autocommands.vim"'
-
         # Grafx2
         '"$env:APPDATA\GrafX2\gfx2-win32.cfg"'
         '"$env:APPDATA\GrafX2\gfx2.ini"'
-    ) 
+    )
 
-    Command       = @(
+    Command      = @(
+        
         # Visual Studio Code
         @{
             Description = 'Install Visual Studio Code Extensions'
-            Compress = 'code --list-extensions --show-versions'
-            Expand   = 'Write-Verbose "Installing Code Extension: $_"; code --install-extension $_'
+            Compress    = 'code --list-extensions --show-versions'
+            Expand      = 'write-verbose "code extension install, this is silent"; code --install-extension $_'
         } 
 
         # Scoop
         @{
             Description = 'Add endo-scoop bucket to scoop'
-            Compress = ''
-            Expand   = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
+            Compress    = ''
+            Expand      = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
         }
         @{
             Description = 'Install scoop apps'
-            Compress = 'scoop export'
-            Expand   = 'scoop install $_'
+            Compress    = 'scoop export'
+            Expand      = 'scoop install $_'
         }
     )
 }

@@ -223,6 +223,11 @@ class DotEntry : Dot {
     } 
 }
 
+class PassableDot {
+    [string] $LiteralPath
+    [string[]] $InputObject
+}
+
 
 class DotFile : Dot {
     [string] $Target
@@ -250,9 +255,9 @@ class DotFile : Dot {
         }
     }
 
-    [hashtable] Expand() { return $this.Expand($false) }
+    [PassableDot] Expand() { return $this.Expand($false) }
 
-    [hashtable] Expand([bool] $force) {
+    [PassableDot] Expand([bool] $force) {
         $this.ExpandTarget()
 
         $isValidPath = 
@@ -261,14 +266,8 @@ class DotFile : Dot {
             [Path]::GetDirectoryName($this.TargetObject.FullName)
             [Path]::GetFileName($this.TargetObject.FullName)
 
-            $true
-        }
-        catch {
-            $false 
-        }
-
         if ($this.TargetObject.Exists -or ($force -and $isValidPath)) {
-            return @{
+            return [PassableDot]@{
                 InputObject = $this.Content
                 LiteralPath = $this.TargetObject.FullName
             }
@@ -276,11 +275,11 @@ class DotFile : Dot {
             # $this.Content | Out-File (New-Item $this.TargetObject.FullName -Force) -Encoding UTF8 -Verbose
         }
 
-        return @{} 
+        return [PassableDot]@{} 
     }
 
     [string] ToString() {
-        return $this.TargetObject.Name
+        return $this.TargetObject.FullName
     }
 
     hidden [void] ExpandTarget() {
