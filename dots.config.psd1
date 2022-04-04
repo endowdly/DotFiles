@@ -1,17 +1,17 @@
 @{
     PathVariable = @{
         PowerShellCurrentUser = 'Split-Path $Profile.CurrentUserAllHosts'
-        ScoopedCode           = 'Convert-Path $env:USERPROFILE\scoop\apps\vscode\current\data\user-data\User'
+        # ScoopedCode           = 'Convert-Path $env:USERPROFILE\scoop\apps\vscode\current\data\user-data\User'
     }
 
-    Path         = @( 
+    Path = @( 
         # VSCode
         '"$env:APPDATA\Code\User\settings.json"'
         '"$env:APPDATA\Code\User\keybindings.json"'
         '"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"'   
-        '"$ScoopedCode\settings.json"'
-        '"$ScoopedCode\keybindings.json"'
-        '"$ScoopedCode\snippets\${env:USERNAME}.code-snippets.json"'
+        # '"$ScoopedCode\settings.json"'
+        # '"$ScoopedCode\keybindings.json"'
+        # '"$ScoopedCode\snippets\${env:USERNAME}.code-snippets.json"'
         
         # Alacritty
         '"$env:APPDATA\alacritty\alacritty.yml"'
@@ -40,20 +40,19 @@
         # Visual Studio Code
         @{
             Description = 'Install Visual Studio Code Extensions'
-            Compress    = 'code --list-extensions --show-versions'
-            Expand      = 'write-verbose "code extension install, this is silent"; code --install-extension $_'
+            Push  = 'code --list-extensions --show-versions'
+            Pull     = 'write-verbose "installing vscode extension $_"; code --install-extension $_'
         } 
-
         # Scoop
         @{
             Description = 'Add endo-scoop bucket to scoop'
-            Compress    = ''
-            Expand      = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
+            Push   = ''
+            Pull     = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
         }
         @{
             Description = 'Install scoop apps'
-            Compress    = 'scoop export'
-            Expand      = 'scoop install $_'
+            Push   = 'scoop export'
+            Pull     = 'scoop install $_'
         }
     )
 }
