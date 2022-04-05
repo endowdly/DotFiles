@@ -1,0 +1,460 @@
+﻿function Get-Path { $env:Path -split ';' } # () -> string[]
+function Get-Yesterday { (Get-Date).AddDays(-1) } # () -> DateTime
+function Get-Tomorrow { (Get-Date).AddDays(1) } # () -> DateTime
+function Open {
+    <#
+    .Description
+      Opens a directory or a file with its default OS application.
+    .Notes
+      string -> () #>
+
+    if ($args.Count -eq 0) {
+        explorer.exe $PWD
+    }
+
+    foreach ($arg in $args) {
+        if ($null -ne $arg -and (Test-Path $arg)) {
+            explorer.exe $arg
+        }
+    }
+}
+
+
+function ConvertTo-TimeZone {
+    <#
+    .Description 
+      Converts the local timezone to a specified timezone.
+    .Notes 
+      string -> DateTime #>  
+
+    [CmdletBinding()] 
+    [OutputType([DateTime])]
+
+    param( 
+        [Parameter(
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [string] $ToTimeZone
+    )
+
+    begin {
+        $x = [datetime]::Now.ToString()
+        $y = [TimeZoneInfo]::Local.Id
+        $f = { 
+            Convert-Timezone -Time $x -FromTimeZone $y -ToTimeZone $_
+        }
+    }
+
+    process {
+        $ToTimeZone.ForEach($f)
+    }
+}
+
+
+function ConvertFrom-TimeZone {
+    <#
+    .Description 
+      Converts the given timezone to the local time.
+    .Notes
+      string -> DateTime #>
+
+    [CmdletBinding()] 
+    [OutputType([DateTime])]
+
+    param(
+        [Parameter(
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName)] 
+        [string[]] $FromTimeZone
+    ) 
+
+    begin {
+        $x = [datetime]::Now.ToString()
+        $y = [TimeZoneInfo]::Local.Id
+        $f = { 
+            Convert-Timezone -Time $x -FromTimeZone $_ -ToTimeZone $y
+        }
+    }
+
+    process {
+        $FromTimeZone.ForEach($f)
+    }
+}
+
+
+function Convert-TimeZone {
+    <# 
+    .Description
+      Convert between two different TimeZones.
+    .Notes
+      DateTime -> string -> string -> DateTime #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [datetime[]] $Time
+        ,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string] $FromTimeZone
+        ,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string] $ToTimeZone
+    )
+
+    begin { 
+        $f = {
+            $x = $_.ToString()
+            $to = [System.TimeZoneInfo]::GetSystemTimeZones().Where{ $_.Id -like $ToTimeZone}
+            $from = [System.TimeZoneInfo]::GetSystemTimeZones().Where{ $_.Id -like $FromTimeZone}
+
+            if (!$to) { 
+                Write-Error ('TimeZone conversion failed: {0} is not valid.' -f $ToTimeZone) -Category InvalidData -ErrorAction Stop
+            }
+
+            if (!$from) {
+                Write-Error ('TimeZone conversion failed: {0} is not valid.' -f $FromTimeZone) -Category InvalidData -ErrorAction Stop
+            }
+
+            if ($to.Count -gt 1) {
+                Write-Warning ('{0} returns more than one match; returning the first. Resolve by refining your Id string.' -f $ToTimeZone)
+            }
+
+            if ($from.Count -gt 1) {
+                Write-Warning ('{0} returns more than one match; returning the first. Resolve by refining your Id string.' -f $FromTimeZone)
+
+            }
+
+            [System.TimeZoneInfo]::ConvertTime($x, $from[0], $to[0])
+        }
+    }
+
+    process {
+        $Time.ForEach($f)  
+    }
+}
+
+
+function Switch-Monitor {
+  <#
+  .Synopsis
+      Handler for SwitchMonitor.exe or SwitchMonitorGUI.exe.
+  .Description
+      This cmdlet allows easy use of SwitchMonitor to help loading profiles stored or by opening the GUI to the dock.
+      The use of Dynamic Parameters validates the available profiles. The validated profiles are resolved for the 
+      executable so it can be called from anywhere.
+  .Example
+      PS C:\> Switch-Monitor -Load profile
+      This command will run monitorswitcher -load profile.xml 
+  .Example
+      PS C:\> Switch-Monitor -ActivateGUI
+      This command will open the GUI in the dock. This is also the default action with no parameters.
+  .Notes
+      Author: endowdly@gmail.com
+  #>
+    
+
+    [CmdletBinding(DefaultParameterSetName = "ActivateGUI")]
+    [OutputType([Void])]
+
+    param (
+        # Activates the GUI to the dock.
+        [Parameter(ParameterSetName = "ActivateGUI")]
+        [Alias("GUI")]
+        [switch]
+        $ActivateGUI
+        ,
+        [Parameter(ParameterSetName='Load',
+                   Position = 0,
+                   Mandatory,
+                   HelpMessage = 'Enter profile name to load.')]
+        [ArgumentCompleter({
+            param ($commandName, $parameterName, $wordToComplete, $cAst, $fbp)
+
+            Convert-Path ${env:USERPROFILE}/AppData/Roaming/MonitorSwitcher/Profiles | 
+            Get-ChildItem -File -Filter *.xml |
+            Foreach-Object BaseName | 
+            Where-Object { $_ -like "${wordToComplete}*" } })]
+        [ValidateScript({ 
+            $profiles = 
+                Convert-Path ${env:USERPROFILE}/AppData/Roaming/MonitorSwitcher/Profiles | 
+                Get-ChildItem -File -Filter *.xml | 
+                Foreach-Object BaseName
+                
+
+            if ($_ -notin $profiles) {
+                throw ('Invalid profile name -> {0}' -f $_)
+            }
+
+            $true })]
+        [string] $Load 
+    )
+
+    begin {
+        Convert-Path ${env:USERPROFILE}/AppData/Roaming/MonitorSwitcher/Profiles | 
+            Get-ChildItem -File -Filter *.xml |
+            Where-Object BaseName -eq $Load |
+            Set-Variable profilePath
+
+        Set-Alias MonitorSwitcher "${env:USERPROFILE}\AppData\Local\MonitorSwitcher\MonitorSwitcher.exe"
+        Set-Alias MonitorSwitcherGUI "${env:USERPROFILE}\AppData\Local\MonitorSwitcher\MonitorSwitcherGUI.exe"
+    }
+    
+    end {
+        switch ($PSCmdlet.ParameterSetName) {
+            ActivateGUI { MonitorSwitcherGUI }
+            Load { MonitorSwitcher -load:$profilePath.Fullname }
+        }
+    }
+}
+
+# Todo: Add Languages to 'Token' Parameter
+function Write-Section {
+    <#
+    .Synopsis
+      Writes a comment section divider.
+    .Description
+      Writes a comment section divider or header of a specified length.
+      Copies the result to the system clipboard for easy access.
+      
+      Supported Lanaguage Tokens    Example Language
+      --------------------------    ----------------
+      --                            Lua, AppleScript, Ada
+      #                             PowerShell, Python, Ruby
+      //                            C, CSharp, FSharp, Rust
+      %                             Matlab, Fortran, Tex
+      '                             Goddamn Visual Basic
+      "                             Vim
+      ::                            Batch Files
+    .Example
+      PS> Write-Section Test -SectionLength 13
+      Outputs "# --- Test ---" and copies it to the clipboard. 
+    .Example
+      PS> "This", "That" | Write-Section -AsHeader
+      Writes This and That as Headers
+    .Inputs
+      System.String
+    .Outputs
+      System.String
+    .Notes
+      Author: endowdly@gmail.com
+      Date: 17 Nov 2018
+    #>
+
+    [CmdletBinding(DefaultParameterSetName = 'ByArgument')]
+
+    param (
+        # For .Net languages, addes a region fold
+        [switch]
+        $AsRegion,
+
+        # The length of the Section. Default: 80
+        # Unit: Characters
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [int] $SectionLength = 80,
+
+        # Sets the comment token. Block comments are not allowed. Default: "#"
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateSet(
+            '--',  # Lua, AppleScript, VHDL, Haskell, Ada
+            '#',   # "Interpreted"
+            '//',  # "Compiled"
+            '%',   # "Old or Sciency"
+            "'",   # Damn Visual Basic
+            '"',   # Vim
+            '::'   # Batch files 
+            )]
+        [string] $Token = '#',   # assume PowerShell
+
+        # Does not return the result. Output is sent to the clipboard quietly.
+        [Parameter()]
+        [Alias(
+            'Shh',
+            'z')]
+        [switch] $Silent,
+
+        # Does not send output to the clipboard.
+        [Parameter()]
+        [switch]
+        $NoCopy,
+
+        # Creates a header banner with the string instead of a simple section.
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [Alias('Banner')]
+        [switch] $AsHeader,
+
+        # The String to add into the Section.
+        [Parameter(
+            ParameterSetName = 'ByArgument',
+            ValueFromRemainingArguments,
+            Position=0)]
+        [Alias(
+            'Message',
+            'String')]
+        [System.String] $Header,
+
+        # The Strings to add into the Section.
+        [Parameter(
+            ParameterSetName='ByPipe',
+            ValueFromPipeline)]
+        [System.String[]] $InputObject
+    )
+    
+    begin {
+        Set-Clipboard   # Clear the clipboard before we process
+        $Head = 
+            if ($AsRegion) {
+                "${Token}region"
+            }        
+            else {
+                "$Token ---"
+            }
+
+
+        # Adds a space afte the head string
+        # string -> string
+        filter PrependHead {
+            $Head, $_ -join " "
+        }
+
+
+        # Adds the remaining banner symbols after the section
+        # string -> string
+        filter AppendTail {
+
+            Write-Debug "Head <- $_"
+            
+            $HeadLength = $_.ToString().Length - 1
+
+            if ($SectionLength -lt $HeadLength) {
+                Write-Warning "SectionLength of $SectionLength is shorter than Head Length of $HeadLength! Resizing."
+
+                $SectionLength = $HeadLength
+            }
+            
+            $_, ("-" * ($SectionLength - $HeadLength - 2)) -join " " 
+
+            if ($AsRegion) {
+                "`n#endregion"
+            }
+        }
+
+
+        # Transforms a banner to a header
+        # string -> string
+        filter IfAsBanner {
+
+            Write-Debug "Head & Tail <- $_"
+
+            if ($AsHeader) {
+                Write-Verbose "Writing as Banner"
+
+                # Completely discard the incoming pipeline and start off new. A little wasted, but this is not an
+                #  expensive operation.
+                $Line = $Token, ("-" * ($SectionLength - 2)) -join " " 
+                $Title = $Token, $section -join " "
+
+                $Line, $Title, $Line -join "`n"
+            }
+            else { 
+                $_
+            } 
+        }
+
+
+        # Determines how the output is sent -- to the clipboard or not
+        # string -> string option
+        filter Xeq {
+            if ($Silent) {
+                Write-Verbose "Silent -- Result in Clipboard"
+                Set-Clipboard -Append -Value $_
+            }
+            elseif ($NoCopy) {
+                Write-Verbose "NoCopy -- Result not copied to Clipboard"
+                $_
+            } 
+            else {
+                Set-Clipboard -Append -Value $_
+                $_
+            }
+        }
+    }
+    
+    process {
+        $section = 
+            switch ($PSCmdlet.ParameterSetName) {
+                ByArgument { $Header }
+                ByPipe { $InputObject }
+            }
+
+        Write-Debug "Consuming by $( $PSCmdlet.ParameterSetName )"
+
+        $section |
+            PrependHead | 
+            AppendTail |
+            IfAsBanner | 
+            Xeq
+    } 
+}
+
+
+function Export-Icon { 
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(
+            Position = 0,
+            Mandatory,
+            HelpMessage = 'Specify the path to the file.')]
+        [ValidateScript({ Test-Path $_ })]
+        [string] $Path
+        , 
+        [Parameter()]
+        [ValidateScript({ Test-Path $_ })]
+        [string] $Destination = (Convert-Path $PWD)
+        , 
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string] $Name
+        , 
+        [Parameter()]
+        [ValidateSet('ico','bmp','png','jpg','gif')]
+        [string] $Format = 'png'
+    ) 
+
+    try {
+        Add-Type -AssemblyName System.Drawing -ErrorAction Stop
+    }
+    catch {
+        throw $_
+    }
+
+    $file = Get-Item $Path
+
+    Write-Verbose 'Processing $($file.fullname)'
+
+    $parent = Convert-Path -path $Destination
+
+    if ($Name) {
+        $base = $Name
+    }
+    else {
+        $base = $file.BaseName
+    }
+
+    $out = Join-Path -Path $parent -ChildPath ('{0}.{1}' -f $base, $format)
+
+    Write-Verbose 'Extracting $ImageFormat image to $out'
+
+    $ico =  [System.Drawing.Icon]::ExtractAssociatedIcon($file.FullName)
+
+    if ($ico) {
+        if ($PSCmdlet.ShouldProcess($out, 'Extract icon')) {
+            $ico.ToBitmap().Save($out, $Format)
+            Get-Item -Path $out
+        }
+    }
+    else {
+        Write-Error -ErrorAction Stop 'No associated icon image found in $($file.fullname)'
+    } 
+}

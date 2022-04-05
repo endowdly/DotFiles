@@ -587,8 +587,8 @@ function Sync-DotFiles {
                 return
             }
 
-            $push | Invoke-DotPush Dots
-            $pull | Invoke-DotPull Dots
+            $push | Invoke-DotPush Dot
+            $pull | Invoke-DotPull Dot
         }
     }
 }

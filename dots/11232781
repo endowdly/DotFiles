@@ -1,0 +1,248 @@
+﻿#Requires -Version 5.0
+
+#------------------------------------------------------------------------------
+#          Endowdly's PowerShell Profile
+#------------------------------------------------------------------------------ 
+# [      Author      ] endowdly           
+# [       Email      ] endowdly@gmail.com
+# [   Date Created   ] 29 Jan, 2017
+# [   Last Modified  ] 08 Mar, 2021
+# [      System      ] Windows 10
+
+#region Data ------------------------------------------------------------------- 
+data __messages {
+    @{
+        Warning     = @{
+            ProfileFileNotFound = 'Custom profile config not found'
+            ModuleNotFound      = 'Module {0} was not found in env:PSModulePath'
+            PromptFileNotFound  = 'Prompt file not found'
+            PSReadLineNotFound  = 'PSReadline file not found'
+            ModuleFileNotFound  = 'Profile module file not found'
+            ACFileNotFound      = 'ArgumentCompleter file not found'
+        }
+
+        Information = @{
+            IsAdmin           = '!!! Running as Administrator !!!'        
+            ModuleLoadWarning = '{0} of {1} {2} not loaded'
+        }
+    }
+}
+#endregion
+
+#region Persistant ------------------------------------------------------------- 
+$PromptCheckpoint = Get-Content function:\Prompt -ErrorAction SilentlyContinue 
+
+
+function Invoke-Combine {
+    <# 
+    .Description 
+        Uses managed code to quickly combine files for testing.
+        Returns the combined path as a FileInfo object.
+        obj[] -> FileInfo #>
+
+    [System.IO.FileInfo] [System.IO.Path]::Combine.Invoke($args)
+}
+
+
+function Restore-Prompt { 
+    <#
+    .Description
+        Returns the prompt to its previous setting
+        unit -> unit #>
+
+    [CmdletBinding(
+        SupportsShouldProcess,
+        ConfirmImpact = 'Medium')] 
+    param ()
+    
+    begin {
+        if ($null -eq $PromptCheckpoint) {
+            $e = @{
+                Category    = 'InvalidArgument'
+                ErrorAction = 'Stop'
+                Message     = 'No Prompt Checkpoint found; Cannot restore prompt!' 
+            }
+
+            Write-Error @e
+        }
+    } 
+
+    end {
+        if ($PSCmdlet.ShouldProcess('Prompt', 'Restore')) {
+            function global:Prompt {
+                & $PromptCheckpoint
+            }
+        }
+    }
+} 
+
+
+#endregion
+
+#region Load Config ------------------------------------------------------------ 
+$__configFile = Invoke-Combine $PSScriptRoot Profile.Config.psd1
+
+if ($__configFile.Exists) {
+    $__config = Import-PowerShellDataFile $__configFile.FullName
+}
+else {
+    Write-Warning $__messages.Warning.ProfileFileNotFound
+}
+
+#endregion
+
+#region Configuration Settings ------------------------------------------------- 
+$__config.Aliases.GetEnumerator().ForEach{ Set-Alias $_.Key $_.Value }
+$__config.Preferences.GetEnumerator().ForEach{ Set-Variable $_.Key $_.Value }
+$__config.PrivateData.GetEnumerator().ForEach{ $Host.PrivateData.($_.Key) = $_.Value }
+$__setPSReadLineOption = $__config.PSReadLineOptions
+
+Set-PSReadLineOption @__setPSReadLineOption
+Set-Variable PSDefaultParameterValues $__config.PSDefaultParameterValues
+
+# --- Alter Path --------------------------------------------------------------
+$__setPath = { 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSPossibleIncorrectComparisonWithNull', '')]
+    param() 
+
+    begin { 
+        # Filter blank lines.
+        $path = ($env:Path -split ';') -ne $null
+    }
+
+    process {
+        if ($path -notcontains $_) {
+            $path += $_
+        }
+    }
+    
+    end {
+        $env:Path = $path -join ';'
+    }
+}
+$__config.Path.ForEach($__setPath)
+
+# --- Startup Modules ---------------------------------------------------------
+$__importModule = {
+   begin { 
+        $c = 0
+        $n = 0
+    }
+
+    process {
+        $name = $_
+        try {
+            Import-Module $_ -Scope Global -ErrorAction Stop
+
+            $n++
+        }
+        catch {
+            Write-Warning ($__messages.Warning.ModuleNotFound -f $name)
+
+            $c++
+        }
+    }
+
+    end {
+        $module = ('modules', 'module')[($c + $n) -eq 1]
+        $writeHost = @{
+            ForegroundColor = [ConsoleColor]::Black
+            BackgroundColor = [ConsoleColor]::DarkYellow
+            Object = $__messages.Information.ModuleLoadWarning -f $c, ($n + $c), $module
+        }
+
+        if ($c -gt 0) {
+            Write-Host @writeHost
+        }
+    } 
+}
+$__config.StartupModules.ForEach($__importModule)
+#endregion
+
+#region File Loading ----------------------------------------------------------- 
+
+# --- ArgumentCompleters ------------------------------------------------------
+$__acFile = Invoke-Combine $PSScriptRoot .\ArgumentCompleter.ps1
+
+if ($__acFile.Exists) {
+    . $__acFile.FullName
+}
+else {
+    Write-Warning $__messages.Warning.ACFileNotFound
+}
+
+
+# --- Prompt -------------------------------------------------------------------
+$__promptFile = Invoke-Combine $PSScriptRoot .\Prompt.ps1 
+
+if ($__promptFile.Exists) {
+    . $__promptFile.FullName
+}
+else {
+    Write-Warning $__messages.Warning.PromptFileNotFound
+} 
+
+# --- PSReadLine --------------------------------------------------------------- 
+$__psReadLineFile = Invoke-Combine $PSScriptRoot .\PSReadLine.ps1 
+
+if ($__psReadLineFile.Exists) {
+    . $__psReadLineFile.FullName
+}
+else {
+    Write-Warning $__messages.Warning.PSReadLineNotFound
+}
+
+
+# --- Functions ----------------------------------------------------------------
+$__moduleFile = Invoke-Combine $PSScriptRoot profile.psm1 
+
+if ($__moduleFile.Exists) {
+    
+    $__profile = {
+        $nowFun = Get-ChildItem function:
+        
+        Import-Module $__moduleFile.FullName -ErrorAction Ignore
+        
+        $filter = @{
+            Path = 'function:*'
+            Include = $__config.FunctionsInclude
+            Exclude = $__config.FunctionsExclude
+        } 
+        $funs = (Get-ChildItem @filter).Where{ $_ -notin $nowFun }
+    
+        Export-ModuleMember -Function $funs
+    }
+}
+else {
+    Write-Warning $__messages.Warning.ModuleFileNotFound
+} 
+#endregion
+
+#region Do Stuff --------------------------------------------------------------- 
+
+# Determine Admin 
+& {
+    $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $admin = [System.Security.Principal.WindowsBuiltInRole]::Administrator 
+    $principal = [System.Security.Principal.WindowsPrincipal] $identity
+    $isAdmin = $principal.IsInRole($admin)
+
+    if ($isAdmin) {
+        $writeHost = @{
+            ForegroundColor = [System.ConsoleColor]::Red
+            BackgroundColor = $Host.UI.RawUI.ForegroundColor
+            Object = $__messages.Information.IsAdmin 
+        }
+
+        Write-Host @writeHost
+    } 
+}
+
+Write-Host $__config.Header -ForegroundColor Red
+#endregion
+
+#region Cleanup ----------------------------------------------------------------
+New-Module Profile $__profile | Import-Module
+Remove-Variable __*
+Remove-Item function:\Invoke-Combine 
+#endregion

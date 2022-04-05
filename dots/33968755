@@ -1,0 +1,95 @@
+﻿@{
+    FunctionsInclude         = '*'
+    FunctionsExclude         = ''
+
+    Aliases = @{
+        Now   = 'Get-Date'
+        New   = 'New-Object'
+        Today = 'Get-Date'
+        Unset = 'Remove-Variable'
+        Null  = 'Out-Null'
+        Time  = 'New-TimeSpan'
+        ms    = 'Switch-Monitor'
+        get   = 'Get-Variable'
+    }
+    
+    Preferences              = @{
+        ErrorView                     = 'NormalView'
+        DebugPreference               = 'SilentlyContinue'
+        ErrorActionPreference         = 'Continue'
+        ProgressPreference            = 'Continue'
+        VerbosePreference             = 'SilentlyContinue'
+        WarningPreference             = 'Continue'
+        InformationPreference         = 'SilentlyContinue'
+        PSModuleAutoLoadingPreference = 'ModuleQualified'
+    }
+
+    PrivateData = @{
+        ErrorForegroundColor    = 'Red'
+        ErrorBackgroundColor    = 'Black'
+        WarningForegroundColor  = 'DarkYellow'
+        WarningBackgroundColor  = 'Black'
+        DebugForegroundColor    = 'Magenta'
+        DebugBackgroundColor    = 'Black'
+        VerboseForegroundColor  = 'DarkCyan'
+        VerboseBackgroundColor  = 'Black'
+        ProgressForegroundColor = 'Black' 
+        ProgressBackgroundColor = 'Gray'
+    }
+
+    PSDefaultParameterValues = @{
+        '*-File:Encoding' = 'UTF8'
+        '*-Content:Encoding' = 'UTF8' 
+        '*-Csv:Encoding' = 'UTF8'
+    }
+
+    Path                     = @() 
+
+    StartupModules           = @(
+        'DirColors'
+        'GoPS'
+    )
+
+    PSReadlineOptions = @{
+        EditMode                      = 'vi'
+        # ViModeIndicator               = 'Cursor'
+        DingDuration                  = 100
+        DingTone                      = 440
+        HistorySearchCursorMovesToEnd = $true 
+        ShowToolTips                  = $true
+        Colors                        = @{
+            Selection = 'Magenta'
+        }
+    }
+
+    Header      = @'
+                  .                                                      .
+                .n                   .                 .                  n.
+          .   .dP                  dP                   9b                 9b.    .
+         4    qXb         .       dX                     Xb       .        dXp     t
+        dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
+        9XXb._       _.dXXXXb dXXXXbo.                 .odXXXXb dXXXXb._       _.dXXP
+         9XXXXXXXXXXXXXXXXXXXVXXXXXXXXOo.           .oOXXXXXXXXVXXXXXXXXXXXXXXXXXXXP
+          `9XXXXXXXXXXXXXXXXXXXXX'~   ~`OOO8b   d8OOO'~   ~`XXXXXXXXXXXXXXXXXXXXXP'
+            `9XXXXXXXXXXXP' `9XX'          `98v8P'          `XXP' `9XXXXXXXXXXXP'
+                ~~~~~~~       9X.          .db|db.          .XP       ~~~~~~~
+                                )b.  .dbo.dP'`v'`9b.odb.  .dX(
+                              ,dXXXXXXXXXXXb     dXXXXXXXXXXXb.
+                             dXXXXXXXXXXXP'   .   `9XXXXXXXXXXXb
+                            dXXXXXXXXXXXXb   d|b   dXXXXXXXXXXXXb
+                            9XXb'   `XXXXXb.dX|Xb.dXXXXX'   `dXXP
+                             `'      9XXXXXX(   )XXXXXXP      `'
+                                      XXXX X.`v'.X XXXX
+                                      XP^X'`b   d'`X^XX
+                                      X. 9  `   '  P )X
+                                      `b  `       '  d'
+                                       `             '
+        
+                              _  ____  __/ __ , , , __/ // __  ,
+                             </_/ / <_(_/_(_)(_(_/_(_/_</_/ (_/_
+                                                             /  
+        
+        
+'@
+
+}

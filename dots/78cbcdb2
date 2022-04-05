@@ -1,0 +1,6 @@
+﻿function global:Prompt {
+    $dir = [System.IO.DirectoryInfo] $pwd.Path
+    $baseName = $dir.BaseName
+    Write-Host " $baseName $('-')$('>' * ($NestedPromptLevel + 1)) " -ForegroundColor DarkBlue -NoNewline
+    return " "
+}

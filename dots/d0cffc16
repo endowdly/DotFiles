@@ -1,0 +1,68 @@
+﻿
+Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock { 
+    param ($commandName, $wordToComplete, $cursorPosition)
+
+    dotnet complete --position $cursorPosition "$wordToComplete" |
+        ForEach-Object {
+            New-Object System.Management.Automation.CompletionResult @(
+                $_
+                $_
+                'ParameterValue'
+                $_
+            )
+        } 
+} 
+
+Register-ArgumentCompleter -CommandName Get-Verb -ParameterName Verb -ScriptBlock {
+    param ($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+
+    Get-Verb |
+        Where-Object Verb -like "$wordToComplete*" |
+        ForEach-Object {
+            New-Object System.Management.Automation.CompletionResult @(
+                $_.Verb
+                $_.Verb
+                'ParameterValue'
+                'Group' + $_.Group 
+            )
+        }
+}
+
+<# Completer for Scoop:
+  Let's talk about how ASININE this code base is.
+  Too good to use PowerShell's BUILT IN PARAMETERS AND ARGUMENT COMPLETION AND COMMENT BASED HELP.
+  Too good to use objects.
+  There is no way to use PowerShell's internal AST to find commands.
+  I hope if scoop changes, the libexec directory stays the same.
+  Because I literally have to treat a _script_ like a native executable due to this tom-foolery. #> 
+Register-ArgumentCompleter -CommandName Scoop -ScriptBlock {
+    param ($wordToComplete, $commandAst)
+
+    $cmd = $commandAst.ToString()
+
+    if (-not $wordToComplete -and $cmd -ne "scoop") { return } 
+    if ($wordToComplete -notmatch '^\w?[\w\-]*$') { return } 
+    if ($cmd -notmatch "^scoop\s*$wordToComplete$") { return } 
+
+    $wild = "$wordToComplete*" 
+
+    # scoop help doesn't return text. Weird. Don't believe me? Run `scoop help | % { $_.GetType() }
+
+    # Use Scoop against itself and hopefully core and command don't change!
+    $ScoopCommands = { 
+        $scoopPrefix = scoop prefix scoop
+        $libPath = Join-Path $scoopPrefix lib
+        $core = Join-Path $libPath core.ps1
+        $command = Join-Path $libPath commands.ps1
+
+        . $core
+        . $command
+
+        return commands
+    }
+
+    & $ScoopCommands | 
+        Where-Object { $_ -like $wild } | 
+        Sort-Object | 
+        ForEach-Object { New-Object System.Management.Automation.CompletionResult $_ } 
+}
