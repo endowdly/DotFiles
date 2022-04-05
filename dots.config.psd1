@@ -1,15 +1,23 @@
 @{
     PathVariable = @{
         PowerShellCurrentUser = 'Split-Path $Profile.CurrentUserAllHosts'
+        # ScoopedCode           = 'Convert-Path $env:USERPROFILE\scoop\apps\vscode\current\data\user-data\User'
     }
 
-    Path          = @( 
+    Path = @( 
         # VSCode
         '"$env:APPDATA\Code\User\settings.json"'
-        '"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"'
-
+        '"$env:APPDATA\Code\User\keybindings.json"'
+        '"$env:APPDATA\Code\User\snippets\${env:USERNAME}.code-snippets"'   
+        # '"$ScoopedCode\settings.json"'
+        # '"$ScoopedCode\keybindings.json"'
+        # '"$ScoopedCode\snippets\${env:USERNAME}.code-snippets.json"'
+        
         # Alacritty
         '"$env:APPDATA\alacritty\alacritty.yml"'
+
+        # Windows Terminal
+        '"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"'
 
         # PowerShell
         '"$PowerShellCurrentUser\profile.ps1"'
@@ -18,36 +26,33 @@
         '"$PowerShellCurrentUser\psreadline.ps1"'
         '"$PowerShellCurrentUser\prompt.ps1"'
         '"$PowerShellCurrentUser\argumentcompleter.ps1"'
-        
-        # Windows Terminal
-        '"$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"'
-        
-        # Vim
-        '"$env:USERPROFILE\.vimrc"'
-        '"$env:USERPROFILE\.vim\general.vim"'
-        '"$env:USERPROFILE\.vim\keys.vim"'
-        '"$env:USERPROFILE\.vim\autocommands.vim"'
 
+        # GoPS
+        '"$home\.gops"'
+        
         # Grafx2
         '"$env:APPDATA\GrafX2\gfx2-win32.cfg"'
         '"$env:APPDATA\GrafX2\gfx2.ini"'
-    ) 
+    )
 
-    Command       = @(
+    Command      = @(
+        
         # Visual Studio Code
         @{
-            Compress = 'code --list-extensions --show-versions'
-            # Expand   = 'write-verbose "code extension install, this is silent"; code --install-extension $_'
+            Description = 'Install Visual Studio Code Extensions'
+            Push  = 'code --list-extensions --show-versions'
+            Pull     = 'write-verbose "installing vscode extension $_"; code --install-extension $_'
         } 
-
         # Scoop
         @{
-            Compress = ''
-            Expand   = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
+            Description = 'Add endo-scoop bucket to scoop'
+            Push   = ''
+            Pull     = 'scoop bucket add endo-scoop https://github.com/endowdly/endo-scoop.git'
         }
         @{
-            Compress = 'scoop export'
-            Expand   = 'scoop install $_'
+            Description = 'Install scoop apps'
+            Push   = 'scoop export'
+            Pull     = 'scoop install $_'
         }
     )
 }
