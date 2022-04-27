@@ -458,3 +458,34 @@ function Export-Icon {
         Write-Error -ErrorAction Stop 'No associated icon image found in $($file.fullname)'
     } 
 }
+
+
+function Get-BootShell () {
+
+    $path = 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon' 
+    $winLogon = Get-ItemProperty -Path $path -Name Shell -ErrorAction Ignore
+
+    if (!$winLogon.Shell) {
+        Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon' -Name Shell 
+        return 
+    }
+
+    $winLogon
+}
+
+
+function Switch-BootShell () {
+    $path = 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinLogon' 
+    $winLogon = Get-ItemProperty -Path $path -Name Shell -ErrorAction Ignore 
+
+    if (!$winLogon.Shell) {
+        Set-ItemProperty -Path $path -Name Shell -Value 'powershell.exe'
+    }
+    else {
+        Remove-ItemProperty -Path $path -Name Shell 
+    } 
+
+    Get-BootShell
+}
+
+

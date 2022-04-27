@@ -262,5 +262,6 @@
             "icon": "terminal-cmd"
         } 
     },
-    "omnisharp.enableRoslynAnalyzers": true
+    "omnisharp.enableRoslynAnalyzers": true,
+    "editor.accessibilitySupport": "off"
 }

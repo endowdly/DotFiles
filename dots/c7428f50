@@ -1,0 +1,319 @@
+#r "C:\Users\endow\scoop\apps\workspacer\current\workspacer.Shared.dll"
+#r "C:\Users\endow\scoop\apps\workspacer\current\plugins\workspacer.ActionMenu\workspacer.ActionMenu.dll"
+#r "C:\Users\endow\scoop\apps\workspacer\current\plugins\workspacer.Bar\workspacer.Bar.dll"
+// #r "C:\Users\endow\scoop\apps\workspacer\current\plugins\workspacer.Gap\workspacer.Gap.dll"
+#r "C:\Users\endow\scoop\apps\workspacer\current\plugins\workspacer.FocusIndicator\workspacer.FocusIndicator.dll"
+// #r "C:\Users\endow\scoop\apps\workspacer\current\plugins\workspacer.TitleBar\workspacer.TitleBar.dll"
+
+using System; 
+using System.Collections.Generic;
+using System.Linq;
+using workspacer;
+using workspacer.Bar;
+using workspacer.Bar.Widgets;
+// using workspacer.Gap;
+using workspacer.ActionMenu;
+using workspacer.FocusIndicator;
+// using workspacer.TitleBar; 
+
+return new Action<IConfigContext>((IConfigContext context) =>
+{ 
+    int fontSize = 9;
+    string fontName = "Consolas";
+    Color bgColor = Color.Black;
+    Color fgColor = Color.Silver;
+    Color wbColor = Color.Lime;
+
+    int barHeight = 13;
+    // int gap = barHeight - 8;
+    
+    // var gapPlugin = new Gap 
+
+    var bar = new BarPluginConfig()
+    {
+        FontSize = fontSize,
+        BarHeight = barHeight,
+        FontName = fontName, 
+        DefaultWidgetBackground = bgColor,
+        LeftWidgets = () => new IBarWidget[]
+        {
+            new WorkspaceWidget(),
+            new TextWidget(": "),
+            new TitleWidget() { IsShortTitle = true }
+        },
+        RightWidgets = () => new IBarWidget[]
+        {
+            new TimeWidget(1000, "yyyyMMdd HH:mm:ss"), 
+        },
+        DefaultWidgetForeground = fgColor, 
+    };
+
+    var focusIndicator = new FocusIndicatorPluginConfig()
+    { 
+        BorderColor = wbColor,
+        BorderSize = 8,
+        TimeToShow = 250
+    };
+
+    Func<ILayoutEngine[]> defaultLayouts = () => new ILayoutEngine[]
+    {
+        new TallLayoutEngine(),
+        new FullLayoutEngine(),
+    };
+
+    Func<ILayoutEngine[]> todoLayouts = () => new ILayoutEngine[]
+    {
+        new HorzLayoutEngine(),
+        new TallLayoutEngine(),
+    };
+
+    Func<ILayoutEngine[]> fullLayout = () => new ILayoutEngine[] { new FullLayoutEngine() };
+
+    (string, ILayoutEngine[])[] workspaces =
+    {
+        ( "🏠", defaultLayouts() ),
+        ( "⌨", defaultLayouts() ), 
+        ( "💬", defaultLayouts() ),
+        ( "🎶", fullLayout() ),
+        ( "✔", todoLayouts() ),
+    };
+
+    // Uncomment to switch update branch (or to disable updates) 
+    //context.Branch = Branch.None
+
+    context.AddBar(bar);
+    context.AddFocusIndicator(focusIndicator);
+    context.DefaultLayouts = defaultLayouts;
+
+    foreach ((string name, ILayoutEngine[] layouts) in workspaces)
+        context.WorkspaceContainer.CreateWorkspace(name, layouts);
+
+
+    // filters
+    context.WindowRouter.IgnoreTitle("Razer Cortex");
+    context.WindowRouter.IgnoreTitle("Razer Synapse");
+    context.WindowRouter.IgnoreTitle("Picture in picture");
+
+    // The following filter means that Edge will now open on the correct display
+    context.WindowRouter.AddFilter((window) => !window.Class.Equals("ShellTrayWnd"));
+
+    /* Routes */
+    context.WindowRouter.RouteProcessName("Discord", "💬");
+    context.WindowRouter.RouteProcessName("Spotify", "🎶");
+    context.WindowRouter.RouteProcessName("Mail", "✔");
+    context.WindowRouter.RouteProcessName("Calendar", "✔");
+    context.WindowRouter.RouteTitle("Weather", "✔");
+    context.WindowRouter.RouteTitle("Microsoft To Do", "✔");
+    context.WindowRouter.RouteTitle("Visual Studio", "⌨");
+    context.WindowRouter.AddRoute((window) =>
+        window.Title.Contains("Visual Studio Code") ? context.WorkspaceContainer["⌨"] : null);
+    context.WindowRouter.AddRoute((window) =>
+        window.Title.Contains("GitHub") ? context.WorkspaceContainer["⌨"] : null);
+
+    /* Action menu */
+    var actionMenu = context.AddActionMenu(new ActionMenuPluginConfig()
+    {
+        RegisterKeybind = false,
+        MenuHeight = barHeight,
+        FontSize = fontSize,
+        FontName = fontName,
+        Background = bgColor,
+    });
+
+    /* Action menu builder */
+    ActionMenuItemBuilder createActionMenuBuilder()
+    {
+        var menuBuilder = actionMenu.Create();
+
+        // Move window to workspace
+        menuBuilder.AddMenu("move", () =>
+        {
+            var moveMenu = actionMenu.Create();
+            var focusedWorkspace = context.Workspaces.FocusedWorkspace;
+
+
+            var workspaces = context.WorkspaceContainer.GetWorkspaces(focusedWorkspace).ToArray();
+            Func<int, Action> createChildMenu = (index) => () => { context.Workspaces.MoveFocusedWindowToWorkspace(index); };
+
+
+            for (int i = 0; i < workspaces.Length; i++)
+            {
+                moveMenu.Add(workspaces[i].Name, createChildMenu(i));
+            }
+
+
+            return moveMenu;
+        });
+
+        // Rename workspace
+        // Hmm this doesn't work... 
+        // IWorkspace.Name is not settable...
+        // menuBuilder.AddFreeForm("rename", (name) =>
+        // {
+        //     context.Workspaces.FocusedWorkspace.Name = name;
+        // });
+
+
+        // Create workspace
+        menuBuilder.AddFreeForm("create workspace", (name) =>
+        {
+            context.WorkspaceContainer.CreateWorkspace(name);
+        });
+
+        // Delete focused workspace
+        menuBuilder.Add("close", () =>
+        {
+            context.WorkspaceContainer.RemoveWorkspace(context.Workspaces.FocusedWorkspace);
+        });
+
+        // Workspacer
+        menuBuilder.Add("toggle keybind helper", () => context.Keybinds.ShowKeybindDialog());
+        menuBuilder.Add("toggle enabled", () => context.Enabled = !context.Enabled);
+        menuBuilder.Add("restart", () => context.Restart());
+        menuBuilder.Add("quit", () => context.Quit());
+
+        return menuBuilder;
+    }
+    var actionMenuBuilder = createActionMenuBuilder();   
+    
+    /* Keybinds */
+    var altShift = KeyModifiers.Alt | KeyModifiers.Shift;
+    var altCtrl = KeyModifiers.Alt | KeyModifiers.Control;
+    var altShiftCtrl = KeyModifiers.Alt | KeyModifiers.Shift | KeyModifiers.Control;
+    var win = KeyModifiers.Win;
+    var winShift = KeyModifiers.Shift | KeyModifiers.Win;
+    var winCtrl = KeyModifiers.Control | KeyModifiers.Win;
+
+    // A lot of the Alt+ codes interact poorly for dance keybinds in vscode
+    context.Keybinds.UnsubscribeAll(); 
+
+    // Set custom keybinds 
+    // Toggle Enabled
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.E,
+        () => context.Enabled = !context.Enabled,
+        "toggle enabled"); 
+
+    // Close Focused Window 
+
+    // Next Layout Engine
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.Space,
+        () => context.Workspaces.FocusedWorkspace.NextLayoutEngine(),
+        "next layout"); 
+
+    // Previous Layout Engine 
+    // Reset Layout
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.N,
+        () => context.Workspaces.FocusedWorkspace.ResetLayout(),
+        "reset layout");
+
+    // Focus Next Window
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.J,
+        () => context.Workspaces.FocusedWorkspace.FocusNextWindow(),
+        "focus next window");
+
+    // Focus Previous Window
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.K,
+        () => context.Workspaces.FocusedWorkspace.FocusPreviousWindow(),
+        "focus last window");
+
+    // Swap focus and primary window
+    context.Keybinds.Subscribe(
+        win,
+        Keys.Enter,
+        () => context.Workspaces.FocusedWorkspace.SwapFocusAndPrimaryWindow(),
+        "set focus as working window");
+    // Swap focus and next window
+    // Swap focus and previous window
+
+    // Shrink Primary Area
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.H,
+        () => context.Workspaces.FocusedWorkspace.ShrinkPrimaryArea(),
+        "shrink working window");
+
+    // Expand Primary Area
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.L,
+        () => context.Workspaces.FocusedWorkspace.ExpandPrimaryArea(),
+        "grow working window");
+
+    // Increment number of Primary Windows
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.Oemcomma,
+        () => context.Workspaces.FocusedWorkspace.IncrementNumberOfPrimaryWindows(),
+        "add working window");
+
+    // Decrement number of Primary Windows 
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.OemPeriod,
+        () => context.Workspaces.FocusedWorkspace.DecrementNumberOfPrimaryWindows(),
+        "drop working window"); 
+
+    // Toggle tiling for focused Window
+    // context.Keybinds.Subscribe(
+    //     winCtrl,
+    //     Keys.T,
+    //     () => context.Windows.ToggleFocusedWindowTiling(),
+    //     "toggle tiling");
+
+    // Open Action Menu
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.P,
+        () => actionMenu.ShowMenu(actionMenuBuilder),
+        "open action menu"); 
+
+    // Quit Workspacer
+    // context.Keybinds.Subscribe(
+    //     winCtrl,
+    //     Keys.Q,
+    //     () => context.Quit(),
+    //     "quit workspacer"); 
+
+    // Restart Workspacer 
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.R,
+        () => context.Restart(),
+        "restart workspacer"); 
+
+    // Switch to Left Workspace
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.Left,
+        () => context.Workspaces.SwitchToPreviousWorkspace(),
+        "move to left workspace");
+
+    // Switch to Right Workspace
+    context.Keybinds.Subscribe(
+        winCtrl,
+        Keys.Right,
+        () => context.Workspaces.SwitchToNextWorkspace(),
+        "move to right workspace");
+
+    // Switch to Workspace { 1 .. 9 }
+    // context
+
+    // Dispaly and toggle the workspacer console
+    context.Keybinds.Subscribe(
+        altCtrl,
+        Keys.T,
+        () => context.ToggleConsoleWindow(),
+        "toggle console window"); 
+});
+
+// cspell:words Consolas Horz

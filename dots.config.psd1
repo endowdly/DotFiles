@@ -27,6 +27,9 @@
         '"$PowerShellCurrentUser\prompt.ps1"'
         '"$PowerShellCurrentUser\argumentcompleter.ps1"'
 
+        # Workspacer Stuff
+        '"$home\.workspacer\workspacer.config.csx"'
+
         # GoPS
         '"$home\.gops"'
         

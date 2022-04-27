@@ -264,7 +264,7 @@
 
   ; Window dimensions. The program    | Dimensions de la fenêtre en mode
   ; remembers the last window size.   | fenêtré.
-  Default_window_size = 1313,764 ; (default '640,480')
+  Default_window_size = 1756,1052 ; (default '640,480')
 
   ; This setting allows you merge successive mouse movements into a single
   ; mouse movement. You should only use it if you are using a mouse which
@@ -311,7 +311,7 @@
 
   ; The program remembers the last window position, if the
   ; OS isn't able to do it by itself. (ie: Windows)
-  Window_position = 766,267; (Default 9999,9999 which means: NA)
+  Window_position = 600,134; (Default 9999,9999 which means: NA)
 
   ; This is the time (in milliseconds) between two clicks for Grafx2 to
   ; recognize a double-click. Double-click is used mostly in the palette
