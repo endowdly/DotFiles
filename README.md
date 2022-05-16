@@ -75,10 +75,6 @@ This is a string array that allows you to specify what paths you'd like to impor
 These should evaluate to a full path that is a valid path location (but does not have to exist).
 Environmental and automatic variables, and variables defined in the `PathVariable` section, are handy here.
 
-When compressing dotfiles using `pushToArchive.cmd` or running `.\dots.ps1 push`, files in this list that do not exist are _skipped_ and not loaded or saved.
-Afterwards, when expanding dotfiles using `pullFromArchive.cmd` or running `.\dots.ps1 pull [-force]`, files in this list are ignored.
-Only files saved in the `dots.xml` will be pulled.
-
 #### Example
 
 ```powershell
