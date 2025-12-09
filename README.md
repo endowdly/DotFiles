@@ -2,6 +2,42 @@
 
 endowdly's dotfiles
 
+## Current Status
+
+This project is being updated and should be considered **in beta**.
+I am completely refactoring and rewriting how manifests and archives are stored and interacted with.
+
+My current list of to-do items in no order of priority
+
+- Add ability to prune `ZipArchiveEntry` that are not found in the manifest
+    - This should be automatic|manual (decision pending) and not 'tunable' by the user (all or nothing)
+- Add ability to save `Set-(Manifest|Archive|BackupFilePaths)` to config
+- Manifest in module memory like GoPS
+    - `Get|Import-DotFilesManifest` <- add alias for import?
+    - `Update-DotFilesManifest`
+    - Add ability to add entries
+    - Add ability to remove entries
+    - Add ability to select visually
+- Promote the 'chainable' entry creators to cmdlets
+
+```powershell
+# Could look like
+New-DotFilesManifest |
+    Add-DotFilesEntry -Source $FilePath |
+    Add-DotFilesEntry -Source $AnotherFilePath |
+    Add-DotFilesEntry -Pull { scoop import $PackageJsonPath } |
+    Set-DotFilesManifest # or use this from the beginning
+
+Get-ChildItem $PowerShellDir -Filter *ps*1 |
+    Foreach-Object Fullname |
+    New-DotFilesEntry |
+    Set-DotFilesManifest -Append
+
+Save-DotFilesManifest  # Complete-DotFilesManifest could just give the Entry array without exporting
+```
+- Add ability to select which files are pulled and pushed
+
+
 ## What
 
 This module is a simple tool to sync dotfiles on your filesystem.
