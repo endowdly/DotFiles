@@ -89,8 +89,8 @@ Set-Variable -Name DefaultConfig -Option ReadOnly -Value @{
 }
 
 # For coherent messages
-function Get-PluralNoun ($n) { if ($n -gt 1) { $Message.NounPlural } }
-function Get-PluralVerb ($n) { if ($n -gt 1) { $Message.ToBePlural } else { $Message.ToBeSingular } }
+function Get-PluralNoun ($n) { if ($n -ne 1) { $Message.NounPlural } }
+function Get-PluralVerb ($n) { if ($n -ne 1) { $Message.ToBePlural } else { $Message.ToBeSingular } }
  
 function Assert-Config ($x, $y) {
     $xs = [HashSet[string]] $x
