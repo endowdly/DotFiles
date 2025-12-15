@@ -59,7 +59,7 @@ data Setting {
 $ErrorActionPreference = $Setting.ErrorActionPreference
 $ConfigFile = @{
     BindingVariable = $Setting.ConfigFileBinding
-    BaseDirectory   = $ModuleRoot
+    BaseDirectory   = $PSScriptRoot
     FileName        = $ModuleRoot + $Literal.Stop + $Setting.ConfigFile
 }
 $ResourceFile = @{
@@ -94,12 +94,13 @@ function Get-PluralNoun ($n) { if ($n -ne 1) { $Message.NounPlural } }
 function Get-PluralVerb ($n) { if ($n -ne 1) { $Message.ToBePlural } else { $Message.ToBeSingular } }
  
 function Assert-Config ($x, $y) {
-    $xs = [HashSet[string]] $x
+    $xs = [HashSet[string]] [string[]]$x
     $ys = [HashSet[string]] $y
 
     if (-not $xs.IsSubsetOf($ys)) {
         [void] $xs.ExceptWith($ys)
 
+        # BadConfig      = '''{0}'' {1} not a valid config key{2}. Valid key{3} {4}: {5}'
         throw ($Message.TerminatingError.BadConfig -f
             ($xs -join $Literal.CommaSpace),
             (PluralVerb $xs.Count),
@@ -134,7 +135,7 @@ data Formatter {
 #endregion 
 #region Helpers --------------------------------------------------------------------------------------------------------
 function Test-EmptyString ($s) { return [string]::IsNullOrWhiteSpace($s) }
-function ConvertTo-FileInfoObject ($s) { $s -as [FileInfo] }
+function ConvertTo-FileInfoObject ($s) { $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($s) -as [FileInfo] }
 function Test-DotFilesManifestPath { (ConvertTo-FileInfoObject $Config.ManifestFilePath).Exists }
 function Test-DotFilesArchivePath { (ConvertTo-FileInfoObject $Config.ArchiveFilePath).Exists }
 function Test-DotFilesBackupPath { (ConvertTo-FileInfoObject $Config.BackupFilePath).Exists }
@@ -295,9 +296,10 @@ function New-Entry {
 
         File {
 
-            $x = ConvertTo-FileInfoObject $Source # Resolves pathing for us quietly
+            $x = ConvertTo-FileInfoObject $Source
 
             if (-not $x.Exists) {
+                Write-Verbose "${x.Name} Does Not Exist"
                 return
             }
 
