@@ -1,8 +1,12 @@
 @{
+    Error = @{
+        AddEntry = 'FriendId {0} already exists in the manifest and could not be added'
+    }
     NounPlural       = 's'
     ToBePlural       = 'are'
     ToBeSingle       = 'is'
     TerminatingError = @{
+        RealBadPath    = '{0} is an invalid path and cannot be written to!'
         BadConfig      = '''{0}'' {1} not a valid config key{2}. Valid key{3} {4}: {5}'
         BadPath        = '{0} is a bad path and does not exist or is inaccessible'
         ConfigNotFound = 'Fatal: config file ''{0}'' not found or invalid!'
@@ -12,6 +16,8 @@
     }
     ShouldProcess    = @{
         ExportDotFile = 'Overwrite dotfiles manifest'
+        UpdateManifest = 'Update dotfiles manifest from target'
+        AddManifestEntry = 'Adding Entry with FriendId {0} for target'
     }
     ShouldContinue   = @{
         SyncDotFiles      = @{
@@ -79,7 +85,7 @@
 
     Warning          = @{
         ConfigFileNotFound = 'No configuration file found. Using default configuration.'
-        NoManifestFile     = 'No manifest file found. Run `Initialize-DotFilesManifest` and use `Export-DotFilesManifest to create data for push.'
+        NoManifestFile     = 'No manifest file found at {0}. Run `Initialize-DotFilesManifest`.'
     }
 }
 

@@ -74,15 +74,24 @@
         'Initialize-DotFilesArchive'
         'Initialize-DotFilesBackup'
         'Initialize-DotFiles'
+
         'Get-DotFilesManifestPath'
         'Get-DotFilesArchivePath'
         'Get-DotFilesBackupPath'
         'Set-DotFilesManifestPath'
         'Set-DotFilesArchivePath'
         'Set-DotFilesBackupPath'
-        'New-DotFilesEntry'
-        'Import-DotFilesManifest'
+
+        'Get-DotFilesManifestEntry'
+        'New-DotFilesManifestEntry'
+        'Add-DotFilesManifestEntry'
+        'Remove-DotFilesManifestEntry'
+
+        'Update-DotFilesManifest'
+
+        # 'Import-DotFilesManifest'
         'Export-DotFilesManifest'
+
         'Invoke-DotFilesSync'
         'Invoke-DotCommandSync'
         'Backup-DotFiles'
@@ -102,7 +111,9 @@
     VariablesToExport      = ''
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport        = @()
+    AliasesToExport        = @(
+        'Save-DotFilesManifest'
+    )
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()

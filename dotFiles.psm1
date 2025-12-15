@@ -5,6 +5,7 @@ using namespace System.IO.Compression
 using namespace System.IO.Compression.FileSystem
 using namespace System.Management.Automation
 using namespace System.Text
+using namespace System.Security.Cryptography
 
 <#
  ______  _________________________________       _______ _______ 
@@ -126,16 +127,20 @@ catch {
 data Formatter {
     @{
         Hex = 'x'
+        DoubleHex = 'x2'
     }
 }
 
 #endregion 
 #region Helpers --------------------------------------------------------------------------------------------------------
-function Test-EmptyString ([string] $s) { return [string]::IsNullOrWhiteSpace($s) }
-function Test-DotFilesManifestPath { Test-Path $Config.ManifestFilePath }
-function Test-DotFilesArchivePath { Test-Path $Config.ArchiveFilePath }
-function Test-DotFilesBackupPath { Test-Path $Config.BackupFilePath }
-
+function Test-EmptyString ($s) { return [string]::IsNullOrWhiteSpace($s) }
+function ConvertTo-FileInfoObject ($s) { $s -as [FileInfo] }
+function Test-DotFilesManifestPath { (ConvertTo-FileInfoObject $Config.ManifestFilePath).Exists }
+function Test-DotFilesArchivePath { (ConvertTo-FileInfoObject $Config.ArchiveFilePath).Exists }
+function Test-DotFilesBackupPath { (ConvertTo-FileInfoObject $Config.BackupFilePath).Exists }
+function Remove-StringWhiteSpace ($s) { $p = { -not ([char]::IsWhiteSpace($_)) }; -join ($s.ToCharArray().Where($p)) }
+function Get-HashString ([string] $s) { -join ([SHA256]::Create().ComputeHash([Encoding]::UTF8.GetBytes($s)).ForEach{ $_.ToString($Formatter.DoubleHex) }) }
+function New-ScriptBlock ($s) { [scriptblock]::Create($s) }
 #endregion
 #region Types ----------------------------------------------------------------------------------------------------------
 
@@ -160,12 +165,13 @@ enum DotFileChoice {
 }
 
 class Entry {
-    [string] $Id
+    [string]    $Id
     [EntryType] $Type
-    [string] $Target
-    [string] $Source
-    [string] $Hash
-    [DateTime] $RecordTime
+    [string]    $Target
+    [string]    $Source
+    [string]    $Hash
+    [DateTime]  $RecordTime
+    [string]    $FriendId
 }
 
 # A dumb class to help compare and filter entries
@@ -175,7 +181,12 @@ class EntryCompare {
 }
 
 class Manifest {
-    [List[Entry]] $Entries
+    [List[Entry]] $EntryList
+    [HashSet[string]] $FriendIdSet
+
+    [bool] IsEmpty() {
+        return ($this.EntryList.Count -eq 0 -and $this.FriendIdSet.Count -eq 0)
+    }
 }
 
 # A do nothing class that makes it much easier to smoothly serialize/deserlize PSObjects
@@ -254,74 +265,89 @@ Update-TypeData -TypeName Deserialized.Entry -TargetTypeForDeserialization Entry
 Update-TypeData -TypeName Entry -TypeConverter EntryConverter -Force
 
 #endregion
-#region Gatekeeping ----------------------------------------------------------------------------------------------------
-function Assert-Path {
-    <#
-    .Description
-      Throw on Test-Path failure. #>
-
-    if (-not (Test-Path $input)) {
-        throw ($Message.TerminatingError.BadPath -f $_)
-    }
-
-    $true
-}
-
-#endregion
 #region ClassHelpers --------------------------------------------------------------------------------------------------
 function New-Entry {
     <#
     .Description
-      Easily make an entry object.
+      Make an entry object.
 
       object -> EntryType -> Entry #>
 
+    [CmdletBinding(DefaultParameterSetName = 'File')]
+
     param (
-        # Either a string or a hashtable with 'Pull' and 'Push' Keys.
-        $Source
+        [Parameter(ParameterSetName = 'File')]
+        [string] $Source
         ,
-        # The Type of Entry.
-        [EntryType] $Type
+        [Parameter(ParameterSetName = 'Command')]
+        [string] $Push  
+        ,
+        [Parameter(ParameterSetName = 'Command')]
+        [string] $Pull
+        ,
+        [string] $FriendId
+        ,
+        [Parameter(ParameterSetName = 'Command')]
+        [switch] $Command
     )
 
-
-    switch ($Type) {
+    switch ($PSCmdlet.ParameterSetName) {
 
         File {
-            # Abort-- the path does not exist and there is nothing to push
-            if (-not (Test-Path $Source)) {
+
+            $x = ConvertTo-FileInfoObject $Source # Resolves pathing for us quietly
+
+            if (-not $x.Exists) {
                 return
             }
-            
-            $value = Convert-Path $Source
-            $id = $value.GetHashCode().ToString($Formatter.Hex)
-            $hash = (Get-FileHash $value).Hash
-            $target = $value
-            $time = (Get-Item $value).LastAccessTimeUtc
+
+            if (-not $PSBoundParameters.ContainsKey('FriendId')) {
+                $FriendId = $x.Name
+            }
+
+            $value = $target = $x.FullName                      # ! Double assign
+            $id = $value.GetHashCode().ToString($Formatter.Hex) # This id will always point to the same path
+            $hash = (Get-FileHash $value).Hash                  # This is the default file hash sha-256
+            $time = (Get-Item $value).LastAccessTimeUtc         # Hashing fallback
         }
 
         Command {
-            # Test for a pull command
-            if (Test-EmptyString ($Source.Pull)) {
-                return
-            }
 
             # We can have a naked push command
-            $value = if (Test-EmptyString $Source.Push) { $Literal.Empty } else { $Source.Push.ToString() }
-            $id = $Source.Pull.GetHashCode().ToString($Formatter.Hex)
-            $target = $Source.Pull.ToString()
-            $hash = if (Test-EmptyString $Source.Push) { $value.GetHashCode().ToString($Formatter.Hex) } else { (Invoke-Expression $value).GetHashCode().ToString($Formatter.Hex) } 
-            $time = (Get-Date -AsUTC)
+            $value = if (Test-EmptyString $Push) { $Literal.Empty } else { $Push } # No nulls please
+            $id = $Pull.GetHashCode().ToString($Formatter.Hex)
+            $target = $Pull
+            $hashStr = (New-ScriptBlock $value).Invoke()
+            $hash = HashString $hashStr
+            $time = Get-Date -AsUTC
         }
+
+        Default { Write-Error $Message.TerminatingError.What }
     }
 
     [Entry] @{
         Id         = $id
-        Type       = $Type
+        Type       = $PSCmdlet.ParameterSetName
         Target     = $Target
         Source     = $value
         Hash       = $hash
         RecordTime = $time
+        FriendId   = (Remove-StringWhiteSpace $FriendId)
+    }
+}
+
+filter Update-Entry {
+    $entry = $_
+
+    switch ($entry.Type) {
+
+        File {
+            New-Entry -FriendId $entry.FriendId -Source $entry.Source 
+        }
+
+        Command {
+            New-Entry -FriendId $entry.FriendId -Push $entry.Push -Pull $entry.Pull
+        }
     }
 }
 
@@ -340,10 +366,11 @@ filter Set-SyncTarget {
     $entryCompare = $_
     $entry = $entryCompare.Entry
 
-
     switch ($entry.Type) {
+
         File {
             $target = ($entry.Target) -as [FileInfo]
+
             if (-not $target.Exists) {
                 $entryCompare.Target = [Target]::Archive
                 return $entryCompare
@@ -362,7 +389,8 @@ filter Set-SyncTarget {
                 return $entryCompare
             }
 
-            $targetHash = (Invoke-Expression $entry.Source).GetHashCode.ToString($Formatter.Hex)
+            $targetHashStr = [scriptblock]::Create($entry.Source).Invoke()
+            $targetHash = HashString $targetHashStr
             $isTargetNewer = $true
         }
     }
@@ -381,67 +409,99 @@ filter Set-SyncTarget {
     $entryCompare
 }
 
-filter New-EntryCompare  { Initialize-EntryCompare $_ | Set-SyncTarget  }
+filter Get-EntryCompare  { Initialize-EntryCompare $_ | Set-SyncTarget  }
 
 # EntryCompare filter functions
 function Get-ArchiveEntryCompare { $input.Where{ $_.Target -eq [Target]::Archive } }
 function Get-LocalEntryCompare { $input.Where{ $_.Target -eq [Target]::Local } }
 
+function New-Manifest {
+    <#
+    .Description
+      Creates a new manifest object #>
+
+    [Manifest] @{
+        EntryList = @()
+        FriendIdSet = @()
+    }
+}
+
+filter Add-Entry ($x) {
+    <#
+    .Description
+      Adds a piped Entry to a Manifest object if the Entry does not have a duplicate Token property.
+      If the Token property of the Entrty object already exists in the Manifest, the Entry is ignored.
+      A successful operation modifies the Manifest object.
+      A failed operation emits an error.
+      seq<Entry> -> Manifest -> () #> 
+
+    if ($null -eq $_) {
+        return
+    }
+
+    if ($x.FriendIdSet.Add($_.FriendId)) {
+        [void] $x.EntryList.Add($_)
+    }
+    else {
+        Write-Error ($Message.Error.AddEntry -f $_.FriendId)
+    }
+}
+
+filter ConvertFrom-Manifest {
+    <#
+    .Description
+      Strips an EntryList off a Manifest Object #>
+    
+    $_.EntryList.ToArray()
+}
+
+#endregion
+#region Gatekeeping ----------------------------------------------------------------------------------------------------
+function Assert-Path {
+    <#
+    .Description
+      Throw on Test-Path failure. #>
+
+    if (-not (Test-Path $input)) {
+        throw ($Message.TerminatingError.BadPath -f $_)
+    }
+
+    $true
+}
+
 #endregion
 #region Inside ---------------------------------------------------------------------------------------------------------
-function New-Manifest {
-    [Manifest] @{
-        Entries = @()
-    }
-}
-
-filter Add-FileEntry ($Source) { $_.Entries.Add((New-Entry $Source File)); $_ }
-filter Add-CommandEntry ([scriptblock] $PullCommand, [scriptblock] $PushCommand) {
-
-    $Hash = @{
-        Pull = $PullCommand
-        Push = $PushCommand
-    }
-
-    $_.Entries.Add((New-Entry @Hash Command))
-
-    $_
-}
-
-filter Complete-Manifest { $_ | ForEach-Object Entries } 
-
-function New-Scriptblock {
-    param(
-        [Parameter(ValueFromPipeline)]
-        [string[]] $InputObject
-    )
+function Import-DotFilesManifest {
+    <#
+    .Description
+    .Notes
+        () -> [Entry[]]
+    #>
 
     begin {
-        $f = {
-            [scriptblock]::Create($_)
-        }
+        $f = { [PSSerializer]::Deserialize($_) }
     }
-
+     
     process {
-        $InputObject.ForEach($f)
+
+        if (-not (Test-DotFilesManifestPath)) {
+            Write-Warning ($Message.Warning.NoManifestFile -f (DotFilesManifestPath))
+
+            return 
+        }
+
+        (Get-Content -Raw -Encoding utf8 -Path (DotFilesManifestPath)).ForEach($f)
     }
 }
 
+filter ConvertTo-Manifest { $_ | Add-Entry (New-Manifest) }
 
-function New-DotFile ([DotFileChoice] $To) {
-   $Path =
-    switch ($To) {
-        Archive { $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Config.ArchiveFilePath) }
-        Backup { $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Config.BackupFilePath) }
-    }
-
-    $zipArchive = [ZipFile]::Open($path, [ZipArchiveMode]::Create)
+function Initialize-ZipFile ($Path) {
+    $zipArchive = [ZipFile]::Open($Path, [ZipArchiveMode]::Create)
     $zipArchive.Dispose()
 
     Get-Item $Path
 }
-
-
 
 filter Invoke-DotPush ([DotFileChoice] $To) {
     $path =
@@ -459,6 +519,7 @@ filter Invoke-DotPush ([DotFileChoice] $To) {
     $zipEntry = $zipArchive.CreateEntry($entry.Id)
 
     switch ($entry.Type) {
+
         File {
             $file = [File]::OpenRead($entry.Target)
             $file.CopyTo($zipEntry.Open())
@@ -474,15 +535,17 @@ filter Invoke-DotPush ([DotFileChoice] $To) {
     }
 
     $zipArchive.Dispose()
+
+    Update-DotFilesManifest
 }
 
 
 filter Invoke-DotPull ([DotFileChoice] $From) {
     $path =
-    switch ($From) {
-        Archive { Convert-Path $Config.ArchiveFilePath }
-        Backup { Convert-Path $Config.BackupFilePath }
-    }
+        switch ($From) {
+            Archive { Convert-Path $Config.ArchiveFilePath }
+            Backup { Convert-Path $Config.BackupFilePath }
+        }
     $entry = $_
     $f = New-ScriptBlock $entry.Target
 
@@ -494,6 +557,7 @@ filter Invoke-DotPull ([DotFileChoice] $From) {
     $zipEntry = $zipArchive.GetEntry($entry.Id)
 
     switch ($entry.Type) {
+
         File {
             [ZipFileExtensions]::ExtractToFile($zipEntry, $entry.Target, $true)
         }
@@ -515,6 +579,8 @@ filter Invoke-DotPull ([DotFileChoice] $From) {
     }
 
     $zipArchive.Dispose()
+
+    Update-DotFilesManifest
 }
 
 function Update-LocalFiles {
@@ -531,10 +597,11 @@ function Update-LocalFiles {
     Backup-DotFiles
 
     $fileEntries = Import-DotFilesManifest | Get-FileEntry 
+
     if ($Force -or $PSCmdlet.ShouldContinue(
             ($Message.ShouldContinue.UpdateLocalFiles.Query -f $fileEntries.Count),
             $Message.ShouldContinue.UpdateLocalFiles.Caption)) {
-        $fileEntries =  Invoke-DotPull Archive
+        $fileEntries | Invoke-DotPull Archive
     }
 }
 
@@ -574,7 +641,9 @@ function Invoke-DotCommands {
             ($Message.ShouldContinue.InvokeDotCommands.Query -f $cmdEntries.Count),
             $Message.ShouldContinue.InvokeDotCommands.Caption)) { 
 
-        $cmdEntries |  Invoke-DotPull Archive
+        $cmdEntries | Invoke-DotPull Archive
+
+        Update-DotFilesManifest
     }
 }
 
@@ -596,25 +665,26 @@ function Save-DotCommands {
             $Message.ShouldContinue.SaveDotCommands.Caption)) {
 
         $cmdEntries | Invoke-DotPush Archive
+
+        Update-DotFilesManifest 
     }
 }
 
-filter Get-NewerEntry {
-    $_ | New-EntryCompare 
-}
 
 
 function Get-PushForSync {
-    Import-DotFilesManifest |
-        Get-NewerEntry |
+    $DotFiles.CurrentManifest |
+        ConvertFrom-Manifest |
+        Get-EntryCompare |
         Get-LocalEntryCompare |
         ForEach-Object Entry
 }
 
 
 function Get-PullForSync {
-    Import-DotFilesManifest |
-        Get-NewerEntry |
+    $DotFiles.CurrentManifest | 
+        ConvertFrom-Manifest |
+        Get-EntryCompare |
         Get-ArchiveEntryCompare | 
         ForEach-Object Entry
 }
@@ -627,6 +697,7 @@ function New-ChoiceDescription ($s, $s1) {
 
 function Sync-DotFiles {
     [CmdletBinding()]
+
     param([switch] $Force)
 
     begin {
@@ -636,7 +707,9 @@ function Sync-DotFiles {
 
     end {
         if (-not (Test-Path $Config.ManifestFilePath)) {
-            throw 'shit'
+            Write-Warning $Message.Warning.NoManifestFile
+
+            return
         }
 
         if ($Force -or $PSCmdlet.ShouldContinue(
@@ -660,6 +733,14 @@ function Sync-DotFiles {
     }
 }
 
+# Module Variables go here
+$DotFiles = @{
+    LastManifest = New-Manifest
+    CurrentManifest = New-Manifest
+    ManifestFilePath = $Config.ManifestFilePath
+    ArchiveFilePath = $Config.ArchiveFilePath
+    BackupFilePath = $Config.BackupFilePath
+}
 
 #endregion
 #region Outside --------------------------------------------------------------------------------------------------------
@@ -672,8 +753,12 @@ function Initialize-DotFilesManifest {
         return
     }
 
+    if (-not (Test-Path -IsValid (DotFilesManifestPath))) {
+        Write-Error ($Message.TerminatingError.RealBadPath -f (DotFilesManifestPath))
+    }
+
     if ($PSCmdlet.ShouldProcess((DotFilesManifestPath), 'Create')) {
-        New-Item -Type File -Path $Config.ManifestFilePath -Force
+        New-Item -Type File -Path (DotFilesManifestPath) -Force
     }
 }
 
@@ -686,8 +771,12 @@ function Initialize-DotFilesArchive {
         return
     }
 
+    if (-not (Test-Path -IsValid (DotFilesArchivePath))) {
+        Write-Error ($Message.TerminatingError.RealBadPath -f (DotFilesArchivePath))
+    }
+
     if ($PSCmdlet.ShouldProcess((DotFilesArchivePath), 'Create')) {
-        New-DotFile Archive
+        Initialize-ZipFile (DotFilesArchivePath)
     }
 }
 
@@ -701,8 +790,12 @@ function Initialize-DotFilesBackup {
         return
     }
 
+    if (-not (Test-Path -IsValid (DotFilesBackupPath))) {
+        Write-Error ($Message.TerminatingError.RealBadPath -f (DotFilesBackupPath))
+    }
+
     if ($PSCmdlet.ShouldProcess((DotFilesBackupPath), 'Create')) {
-        New-DotFile Backup
+        Initialize-ZipFile (DotFilesBackupPath)
     }
 }
 
@@ -720,25 +813,25 @@ function Get-DotFilesManifestPath {
     [CmdletBinding()]
     #.Description
     #  Gets the DotFiles Manifest Path
-    param()
+    param ()
 
-    $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Config.ManifestFilePath)
+    $PSCmdlet.GetUnresolvedProviderPathFromPSPath($DotFiles.ManifestFilePath)
 }
 function Get-DotFilesArchivePath {
-    [CmdletAttribute()]
+    [CmdletBinding()]
     #.Description
     #  Gets the DotFiles Archive Path
     param ()
 
-    $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Config.ArchiveFilePath)
+    $PSCmdlet.GetUnresolvedProviderPathFromPSPath($DotFiles.ArchiveFilePath)
 }
 function Get-DotFilesBackupPath {
-    [CmdletAttribute()]
+    [CmdletBinding()]
     #.Description
     #  Gets the DotFiles Backup Path
-    param()
+    param ()
 
-    $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Config.BackupFilePath)
+    $PSCmdlet.GetUnresolvedProviderPathFromPSPath($DotFiles.BackupFilePath)
 }
 
 function Set-DotFilesManifestPath {
@@ -758,7 +851,7 @@ function Set-DotFilesManifestPath {
         $Path # The path to set
     )
 
-    $Config.ManifestFilePath = $Path
+    $DotFiles.ManifestFilePath = $Path
 }
 
 
@@ -779,7 +872,7 @@ function Set-DotFilesArchivePath {
         $Path # The path to set
     )
 
-    $Config.ArchiveFilePath = $Path
+    $DotFiles.ArchiveFilePath = $Path
 }
 
 
@@ -800,10 +893,10 @@ function Set-DotFilesBackupPath {
         $Path # The path to set
     )
 
-    $Config.BackupFilePath = $Path
+    $DotFiles.BackupFilePath = $Path
 }
 
-function New-DotFilesEntry {
+function New-DotFilesManifestEntry {
     <#
     .Description
       A wrapper for New-Entry
@@ -811,74 +904,339 @@ function New-DotFilesEntry {
     [CmdletBinding(DefaultParameterSetName = 'File')]
 
     param (
-        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'File')]
+        [Parameter(
+            ValueFromPipeline,
+            Mandatory,
+            Position = 1,
+            ParameterSetName = 'File')]
         [string] $Source
         ,
-        [Parameter(Mandatory, ParameterSetName = 'Command')]
-        [scriptblock]$Pull
+        [Parameter(
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Command',
+            Position = 3)]
+        [string] $Push
         ,
-        [Parameter(ParameterSetName = 'Command')]
-        [scriptblock] $Push
+        [Parameter(
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Command',
+            Mandatory,
+            Position = 2)]
+        [string] $Pull
+        ,
+        [Parameter(
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'File',
+            Position = 0)]
+        [Parameter(
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = 'Command',
+            Mandatory,
+            Position = 1)]
+        [ValidateNotNullOrEmpty()]
+        [string] $FriendId
+        ,
+        [Parameter(Position = 0, ParameterSetName = 'Command')]
+        [switch] $Command
     )
 
     process {
-
-        switch ($PSCmdlet.ParameterSetName) {
-            File {
-                New-Entry -Source $Source -Type File
-                
-            }
-
-            Command {
-                $Hash = @{
-                    Push = $Push
-                    Pull = $Pull
-                }
-                New-Entry -Source $Hash -Type Command                
-            }
-        }
-    }
-}
-
-
-function Import-DotFilesManifest {
-
-    begin {
-        $f = { [PSSerializer]::Deserialize($_) }
-    }
-     
-    process {
-        (Get-Content -Raw -Encoding UTF8 -Path (DotFilesManifestPath)).ForEach($f)
+        New-Entry @PSBoundParameters
     }
 }
 
 function Export-DotFilesManifest {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    [Alias('Save-DotFilesManifest')]
+
+    param()
+    
+    if ($PSCmdlet.ShouldProcess((DotFilesManifestPath), $Message.ShouldProcess.ExportDotFile)) {
+        [PSSerializer]::Serialize($DotFiles.CurrentManifest.EntryList) | Out-File (DotFilesManifestPath) -Encoding utf8 
+
+        Update-DotFilesManifest -FromFile
+    }
+}
+
+function Update-DotFilesManifest {
+    <#
+    .Synopsis
+      Update the manifest in memory with the contents of the manifest file.
+    #>
+
+    [CmdletBinding(
+        SupportsShouldProcess,
+        ConfirmImpact = 'Low')]
+
+    param ([Switch] $FromFile)
+
+    if ($PSCmdlet.ShouldProcess($Path, $Message.ShouldProcess.UpdateManifest)) {
+
+        $DotFiles.LastManifest = $DotFiles.CurrentManifest
+
+        if ($FromFile.IsPresent) {
+
+            $FileManifest = Import-DotFilesManifest 
+
+            if ($null -eq $FileManifest) {
+                return
+            }
+            
+            $DotFiles.CurrentManifest = Import-DotFilesManifest | ConvertTo-Manifest
+        }
+
+        $DotFiles.CurrentManifest =
+            $DotFiles.CurrentManifest |
+            ConvertFrom-Manifest |
+            Update-Entry |
+            ConvertTo-Manifest
+    }
+}
+
+function Get-DotFilesManifestEntry {
+    <#
+    .Synopsis
+      Returns Entry objects filtered by FriendlyId strings.
+    .Notes
+      string[] -> string[] -> bool -> Entry[] maybe
+    #>
+
+    [CmdletBinding()]
+    [OutputType([Entry[]])]
+
+    param (
+        [Parameter(
+            Position = 0,
+            ValueFromRemainingArguments)]
+        [ArgumentCompleter({
+            param ($cmdName, $paramName, $wordToComplete)
+
+            (Get-DotFilesManifestEntry).FriendId.Where{ $_ -like "${wordToComplete}*" } })]
+        [string[]] $FriendId = '*'
+        ,
+        [Alias(
+            'PathOnly',
+            'ValueOnly')]
+        [switch] $TargetPathOnly
+    )
+
+    begin {
+        $f = {
+            $currentId = $_
+            $p = { $_.FriendId -like $currentId }
+
+            $x.Where($p)
+        }
+        $x = [List[Entry]] @()
+        $y = [List[Entry]] @()
+        $g = { $y.Add($_) }
+
+        filter Add-ToList { $x.Add($_) }
+    }
+
+    process {
+        $DotFiles.CurrentManifest |
+            ConvertFrom-Manifest |
+            Add-ToList
+
+        [void] $FriendId.ForEach($f).ForEach($g)
+    }
+
+    end {
+        if ($TargetPathOnly.IsPresent) {
+            $y.ToArray().Target
+        }
+        else {
+            $y.ToArray()
+        }
+        
+    }
+}
+
+function Add-DotFilesManifestEntry {
+    <#
+    .Synopsis
+      Adds an Entry object to the Manifest.
+    .Description
+      Adds an Entry object to the Manifest.
+
+      Think of an Entry object like a bookmark.
+      Each has a FriendId property and a JumpPath property. 
+      The FriendId is the users chosen short name or bookmark name for each JumpPath.
+      The JumpPath property is a directory in the file-system they likely visit often.
+
+      The Manifest is an internal memory collection that validates and stores Entry objects.
+      It does not allow Entry objects with duplicate FriendIds.
+      However, it will allow many Entry objects that point to the same JumpPath. 
+      
+      JumpPath can point to paths that do not yet exist.
+
+      Returns the Entry object added unless the Silent switch parameter is used.
+    .Example
+      Add-ManifestEntry -FriendId docs -Path ~/Documents
+
+      Adds an Entry with the FriendId property 'docs' pointing to the user's Documents directory.
+    .Example
+      Add-ManifestEntry -FriendId here
+
+      Adds an Entry with the FriendId property 'here' pointing to the current working directory. 
+    .Example
+      Add-ManifestEntry -FriendId there -Path $there -Silent
+
+      Adds an Entry with the FriendId property 'there' pointing to the path at there.
+      Does return the Entry object created and added.
+    .Link
+      Get-ManifestEntry
+    .Link
+      Remove-ManifestEntry
+    .Link
+      Export-ManifestEntry
+    .Outputs
+      Entry
+
+      Returns the Entry object added unless the Silent switch parameter is used.
+    .Notes
+      string -> string -> bool? -> Entry?
+    #>
+
+    [CmdletBinding(
+        DefaultParameterSetName = 'Entry',
+        SupportsShouldProcess,
+        ConfirmImpact = 'Low')]
 
     param(
         [Parameter(
+            ParameterSetName = 'Entry',
             ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [List[Entry]] $InputObject
+        [Alias('EntryToAdd')]
+        $Entry
+        ,
+        # Do not emit the Entry object.
+        [switch] $Silent
+        ,
+        [Parameter(ParameterSetName = 'File')]
+        [string] $Source
+        ,
+        [Parameter(ParameterSetName = 'Command')]
+        [string] $Push
+        ,
+        [Parameter(ParameterSetName = 'Command')]
+        [string] $Pull
+        ,
+        [Parameter(ParameterSetName = 'File')]
+        [Parameter(ParameterSetName = 'Command')]
+        [string] $FriendId
     )
-    
-    begin {
-        $a = [List[Entry]] @()
-        $f = { [void] $a.Add($_) }
 
-        if (-not(Test-DotFilesManifestPath)) {
-            Initialize-DotFilesManifest
+    process {
+
+        switch ($PSCmdlet.ParameterSetName) {
+
+            File {
+                $Entry = New-DotFilesManifestEntry -FriendId $FriendId -Source $Source
+            }
+
+            Command {
+                $Entry = New-DotFilesManifestEntry -FriendId $FriendId -Pull $Pull -Push $Push
+            }
+
+        }
+   
+        $Msg = $Message.ShouldProcess.AddManifestEntry -f $Entry.FriendId 
+
+        if ($PSCmdlet.ShouldProcess($Entry.Target, $Msg)) {
+            $Entry | Add-Entry ($DotFiles.CurrentManifest)
+        }
+    }
+
+    end { 
+        if ($Silent.IsPresent) {
+            return
+        }
+
+        $Entry
+    }
+}
+
+# Done: Tab-Completion on tokens with partial matching @endowdly 
+function Remove-DotFilesManifestEntry {
+    <#
+    .Synopsis
+      Removes an Entry from the navigation database.
+    .Description
+      Removes an Entry from the navigation database.
+
+      The function accepts FriendId arguments on the pipeline, from the parameter, and from remaining arguments.
+      If a FriendId property does not exist on any Entry objects, does nothing and continues.
+
+      Unlike Get-ManifestEntry, Remove- does not accept wildcard FriendIds.
+      This is intentional in order to ensure that incorrect FriendIds are not removed by accident.
+      Remove- does accept FriendIds returned from Get-ManifestEntry.
+
+      Returns the remaining Entry array in the database if the Silent parameter switch is not used. 
+    .Example
+      Remove-ManifestEntry -FriendId 'this', 'that'
+
+      Removes Entry objects with FriendIds this and that, if they exist.
+    .Example
+      Remove-ManifestEntry this that
+
+      Removes Entry objects with FriendIds this and that, if they exist.
+    .Example
+      Get-ManifestEntry this that | Remove-ManifestEntry 
+
+      Removes Entry objects with FriendIds this and that, if they exist.
+    .Link
+      Get-ManifestEntry
+    .Link
+      Add-ManifestEntry
+    .Link
+      Export-ManifestEntry 
+    .Notes
+      string[] -> bool -> Database?
+    #>
+
+    [CmdletBinding()]
+    [OutputType([Entry[]])]
+
+    param(
+        # The FriendIds to remove from the Database.
+        [Parameter(
+            ValueFromPipeline,
+            ValueFromRemainingArguments,
+            ValueFromPipelineByPropertyName)]
+        [ArgumentCompleter({ 
+            param ($cmdName, $paramName, $wordToComplete)
+
+            (Get-DotFilesManifestEntry).FriendId.Where{ $_ -like "${wordToComplete}*" } })]
+        [string[]] $FriendId
+        , 
+        # Do not return a Database object.
+        [switch] $Silent
+    ) 
+
+    begin {
+        $f = {
+            $x = Get-ManifestEntry $_
+
+            if ($null -ne $x) { 
+                [void] $DotFiles.CurrentManifest.EntryList.Remove($x)
+                [void] $DotFiles.CurrentManifest.FriendIdSet.Remove($_)
+            }
         }
     }
 
     process {
-        $InputObject.ForEach($f)
+        $FriendId.ForEach($f)
     }
 
     end {
-        if ($PSCmdlet.ShouldProcess((DotFilesManifestPath), $Message.ShouldProcess.ExportDotFile)) {
-            [PSSerializer]::Serialize($a.ToArray()) | Out-File (DotFilesManifestPath) -Encoding utf8 -Verbose
+        if ($Silent.IsPresent) { 
+            return
         }
+
+        $DotFiles.CurrentManifest.EntryList.ToArray()
     }
 }
 
@@ -893,8 +1251,8 @@ function Invoke-DotFilesSync {
       Prompts the user with a basic function menu:
         Default -- Sync the files 'smartly' using the last write times.
         Push -- Just push all the local files into the archive, overriding them.
-                This is similiar to backup but instead of backing files up, you are overwriting the current dots.
-        Pull -- Just pull all the dots and overwrite local dots. Users should run Backup-Dots first.
+                This is similiarDotFilesManifest but instead of backing files up, you are overwriting the current dots.
+        Pull -- JustDotFilesManifest the dots and overwrite local dots. Users should run Backup-Dots first.
         Update -- Updates the dot manifest with the current configutration.
         Exit -- Provides an easy way to cancel out without using Ctrl codes.
     
@@ -1003,7 +1361,8 @@ function Backup-DotFiles {
       Restore-Dots
     #>
 
-    Import-DotFilesManifest |
+    $DotFiles.CurrentManifest | 
+        ConvertFrom-Manifest |
         Get-FileEntry |
         Invoke-DotPush Backup
 }
@@ -1026,9 +1385,11 @@ function Restore-DotFiles {
       Backup-Dots 
     #>
 
-    Import-DotFilesManifest |
+    $DotFiles.CurrentManifest | 
+        ConvertFrom-Manifest |
         Get-FileEntry | 
         Invoke-DotPull Backup
 }
 #endregion
 
+Update-DotFilesManifest -FromFile 
