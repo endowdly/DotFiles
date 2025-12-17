@@ -177,12 +177,12 @@ class Entry {
 
 # A dumb class to help compare and filter entries
 class EntryCompare {
-    [Entry] $Entry
+    [Entry]  $Entry
     [Target] $Target
 }
 
 class Manifest {
-    [List[Entry]] $EntryList
+    [List[Entry]]     $EntryList
     [HashSet[string]] $FriendIdSet
 
     [bool] IsEmpty() {
@@ -255,6 +255,7 @@ class EntryConverter : PSObjectConverter {
             Target     = $psSourceValue.Target
             Hash       = $psSourceValue.Hash
             RecordTime = $psSourceValue.RecordTime
+            FriendId   = $psSourceValue.FriendId
         }
 
         return $obj
@@ -295,7 +296,6 @@ function New-Entry {
     switch ($PSCmdlet.ParameterSetName) {
 
         File {
-
             $x = ConvertTo-FileInfoObject $Source
 
             if (-not $x.Exists) {
@@ -314,7 +314,6 @@ function New-Entry {
         }
 
         Command {
-
             # We can have a naked push command
             $value = if (Test-EmptyString $Push) { $Literal.Empty } else { $Push } # No nulls please
             $id = $Pull.GetHashCode().ToString($Formatter.Hex)
@@ -480,23 +479,22 @@ function Import-DotFilesManifest {
         () -> [Entry[]]
     #>
 
-    begin {
-        $f = { [PSSerializer]::Deserialize($_) }
+    if (-not (Test-DotFilesManifestPath)) {
+        Write-Warning ($Message.Warning.NoManifestFile -f (DotFilesManifestPath))
+
+        return 
     }
-     
-    process {
 
-        if (-not (Test-DotFilesManifestPath)) {
-            Write-Warning ($Message.Warning.NoManifestFile -f (DotFilesManifestPath))
-
-            return 
-        }
-
-        (Get-Content -Raw -Encoding utf8 -Path (DotFilesManifestPath)).ForEach($f)
-    }
+    [PSSerializer]::Deserialize((Get-Content -Raw -Encoding utf8 -Path (DotFilesManifestPath)))
 }
 
-filter ConvertTo-Manifest { $_ | Add-Entry (New-Manifest) }
+function ConvertTo-Manifest {
+    $manifest = New-Manifest
+
+    [void] $input.ForEach{ $_ | Add-Entry $manifest }
+
+    $manifest
+}
 
 function Initialize-ZipFile ($Path) {
     $zipArchive = [ZipFile]::Open($Path, [ZipArchiveMode]::Create)
@@ -508,8 +506,8 @@ function Initialize-ZipFile ($Path) {
 filter Invoke-DotPush ([DotFileChoice] $To) {
     $path =
         switch ($To) {
-            Archive { Convert-Path $Config.ArchiveFilePath }
-            Backup { Convert-Path $Config.BackupFilePath }
+            Archive { DotFilesArchivePath }
+            Backup { DotFilesBackupPath }
         }
     $entry = $_
 
@@ -537,16 +535,14 @@ filter Invoke-DotPush ([DotFileChoice] $To) {
     }
 
     $zipArchive.Dispose()
-
-    Update-DotFilesManifest
 }
 
 
 filter Invoke-DotPull ([DotFileChoice] $From) {
     $path =
-        switch ($From) {
-            Archive { Convert-Path $Config.ArchiveFilePath }
-            Backup { Convert-Path $Config.BackupFilePath }
+        switch ($To) {
+            Archive { DotFilesArchivePath }
+            Backup { DotFilesBackupPath }
         }
     $entry = $_
     $f = New-ScriptBlock $entry.Target
@@ -581,8 +577,6 @@ filter Invoke-DotPull ([DotFileChoice] $From) {
     }
 
     $zipArchive.Dispose()
-
-    Update-DotFilesManifest
 }
 
 function Update-LocalFiles {
@@ -644,8 +638,6 @@ function Invoke-DotCommands {
             $Message.ShouldContinue.InvokeDotCommands.Caption)) { 
 
         $cmdEntries | Invoke-DotPull Archive
-
-        Update-DotFilesManifest
     }
 }
 
@@ -667,8 +659,6 @@ function Save-DotCommands {
             $Message.ShouldContinue.SaveDotCommands.Caption)) {
 
         $cmdEntries | Invoke-DotPush Archive
-
-        Update-DotFilesManifest 
     }
 }
 
@@ -735,6 +725,20 @@ function Sync-DotFiles {
     }
 }
 
+# I think this is it, right? 
+function Remove-OldArchiveEntries ([EntryType] $To) {
+    $path =
+        switch ($To) {
+            Archive { DotFilesArchivePath }
+            Backup  { DotFilesBackupPath }
+        }
+    $manifestEntries = (Get-DotFilesManifestEntry).Id
+    $zipFile = [ZipFile]::Open($path, [ZipArchiveMode]::Update)
+    $zipFile.Entries.Where{ $_ -notin  $manifestEntries }.ForEach{ $_.Delete() }
+    $zipFile.Dispose()
+}
+
+    
 # Module Variables go here
 $DotFiles = @{
     LastManifest = New-Manifest
@@ -986,12 +990,14 @@ function Update-DotFilesManifest {
             
             $DotFiles.CurrentManifest = Import-DotFilesManifest | ConvertTo-Manifest
         }
+        else {
+            $DotFiles.CurrentManifest =
+                $DotFiles.CurrentManifest |
+                ConvertFrom-Manifest |
+                Update-Entry |
+                ConvertTo-Manifest
+        }
 
-        $DotFiles.CurrentManifest =
-            $DotFiles.CurrentManifest |
-            ConvertFrom-Manifest |
-            Update-Entry |
-            ConvertTo-Manifest
     }
 }
 
@@ -1289,6 +1295,8 @@ function Invoke-DotFilesSync {
         2 { Update-LocalFiles -Force:$Force }
         default { return }
     }
+
+    Update-DotFilesManifest
 }
 
 
@@ -1342,6 +1350,8 @@ function Invoke-DotCommandSync {
         1 { Invoke-DotCommands -Force:$Force }
         default { return }
     }
+
+    Update-DotFilesManifest
 }
 
 
@@ -1363,8 +1373,7 @@ function Backup-DotFiles {
       Restore-Dots
     #>
 
-    $DotFiles.CurrentManifest | 
-        ConvertFrom-Manifest |
+    Import-DotFilesManifest | 
         Get-FileEntry |
         Invoke-DotPush Backup
 }
@@ -1387,8 +1396,7 @@ function Restore-DotFiles {
       Backup-Dots 
     #>
 
-    $DotFiles.CurrentManifest | 
-        ConvertFrom-Manifest |
+    Import-DotFilesManifest | 
         Get-FileEntry | 
         Invoke-DotPull Backup
 }

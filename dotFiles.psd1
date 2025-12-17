@@ -89,7 +89,7 @@
 
         'Update-DotFilesManifest'
 
-        # 'Import-DotFilesManifest'
+        'Import-DotFilesManifest'
         'Export-DotFilesManifest'
 
         'Invoke-DotFilesSync'
