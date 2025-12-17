@@ -86,6 +86,7 @@
         'New-DotFilesManifestEntry'
         'Add-DotFilesManifestEntry'
         'Remove-DotFilesManifestEntry'
+        'Remove-OldArchiveEntries' # This is temporary and should be removed before main merge
 
         'Update-DotFilesManifest'
 

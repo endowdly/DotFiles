@@ -726,6 +726,7 @@ function Sync-DotFiles {
 }
 
 # I think this is it, right? 
+# Expose this temporarily. 
 function Remove-OldArchiveEntries ([EntryType] $To) {
     $path =
         switch ($To) {
